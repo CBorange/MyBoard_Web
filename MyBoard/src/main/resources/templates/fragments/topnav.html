@@ -1,29 +1,27 @@
 <!DOCTYPE html>
 <html xmlns:th="http://thymeleaf.org">
     <div th:fragment="topnav">
-        <!--상단 Header, md 이하의 크기에서 collapase 된다-->
-        <div class="d-flex flex-row align-items-center bg-secondary bg-gradient">
-            <button class="ms-2 btn btn-primary" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#colllapseHeader" aria-expanded="false" aria-controls="colllapseHeader">C</button>
-            <a class="ms-2 link__nounderline" style="font-size: 30px;" href="#">Logo</a>
-            <!--lg 이상의 크기에서 출력되는 영역-->
-            <div class="d-none d-lg-block ms-5 d-flex flex-row">
-                <a class="me-5 link__nounderline" style="font-size: 30px;" href="#">베스트</a>
-                <a class="me-5 link__nounderline" style="font-size: 30px;" href="#">자유게시판</a>
-                <a class="me-5 link__nounderline" style="font-size: 30px;" href="#">커뮤니티</a>
-                <a class="me-5 link__nounderline" style="font-size: 30px;" href="#">건의사항</a>
-                <a class="me-5 link__nounderline" style="font-size: 30px;" href="#">기타</a>
-            </div>
-            <a class="ms-auto me-2 link__nounderline" style="font-size: 30px;">End</a>
-        </div>
-        <!--lg 이하 크기에서 출력 되는 영역-->
-        <div class="collapse" id="colllapseHeader" style="z-index: 5;">
-            <div class="d-flex flex-column bg-secondary" style="height: 230px;">
-                <a class="me-5 link__nounderline" style="font-size: 30px;" href="#">베스트</a>
-                <a class="me-5 link__nounderline" style="font-size: 30px;" href="#">자유게시판</a>
-                <a class="me-5 link__nounderline" style="font-size: 30px;" href="#">커뮤니티</a>
-                <a class="me-5 link__nounderline" style="font-size: 30px;" href="#">건의사항</a>
-                <a class="me-5 link__nounderline" style="font-size: 30px;" href="#">기타</a>
+        <!--상단 Header-->
+        <div class="bg-secondary bg-gradient">
+            <div class="mx-auto container-lg bg-transparent">
+                <div class="d-flex flex-row justify-content-between">
+                    <!--item1 : Collapse Button, Logo-->
+                    <div class="d-flex flex-row ms-2">
+                        <button class="btn btn-primary me-2" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#colllapseHeader" aria-expanded="false" aria-controls="colllapseHeader">C</button>
+                        <a class="navlinkitem" href="#">Logo</a>
+                    </div>
+                    <!--item2 : Link List-->
+                    <div class="d-flex flex-row d-none d-lg-block">
+                        <a class="navlinkitem mx-3" href="#">베스트</a>
+                        <a class="navlinkitem mx-3" href="#">자유게시판</a>
+                        <a class="navlinkitem mx-3" href="#">커뮤니티</a>
+                        <a class="navlinkitem mx-3" href="#">건의사항</a>
+                        <a class="navlinkitem mx-3" href="#">기타</a>
+                    </div>
+                    <!--item3 : End-->
+                    <a class="me-2 navlinkitem">End</a>
+                </div>
             </div>
         </div>
     </div>

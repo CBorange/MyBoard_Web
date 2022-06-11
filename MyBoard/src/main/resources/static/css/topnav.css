@@ -1,4 +1,5 @@
-.link__nounderline{
+.navlinkitem{
     text-decoration: none;
     color: white;
+    font-size: 25px;
 }
