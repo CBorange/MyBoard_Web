@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://thymeleaf.org">
+<div th:fragment="sidebar">
+    <!--화면을 덮는 Sidebar, 기존 영역보다 위에 출력된다.-->
+    <div class="position-absolute top-0 start-0">
+        <div class="collapse collapse-horizontal" id="collapseSidebar">
+            <div class="d-flex flex-row vw-100">
+                <!--Sidebar 영역-->
+                <div class="vh-100 bg-secondary bg-gradient" style="width:300px">
+                    <span>dasdsadasd</span>
+                </div>
+                <!--배경 영역 클릭하면 Sidebar collapse-->
+                <div class="d-flex flex-fill vh-100 bg-dark" id="sidebarBG" style="--bs-bg-opacity: .2;">
+                    <button class="flex-fill bg-transparent border-0" data-bs-toggle="collapse" data-bs-target="#collapseSidebar"></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</html>
