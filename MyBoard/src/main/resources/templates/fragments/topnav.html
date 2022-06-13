@@ -4,7 +4,7 @@
         <!--상단 Header-->
         <div class="bg-secondary bg-gradient">
             <div class="mx-auto container-lg bg-transparent">
-                <div class="d-flex flex-row justify-content-between">
+                <div class="d-flex flex-row justify-content-between align-items-center" style="height: 60px;">
                     <!--item1 : Collapse Button, Logo-->
                     <div class="d-flex flex-row ms-2">
                         <!--Sidebar Collapse Button-->
@@ -18,7 +18,16 @@
                         <a class="navlinkitem mx-3" href="#">자유게시판</a>
                         <a class="navlinkitem mx-3" href="#">커뮤니티</a>
                         <a class="navlinkitem mx-3" href="#">건의사항</a>
-                        <a class="navlinkitem mx-3" href="#">기타</a>
+                        <div class="d-inline-flex dropdown">
+                            <a class="dropdown-toggle navlinkitem mx-3" href="#" id="dropdownMenuLink-0"
+                            data-bs-toggle="dropdown" aria-expanded="false">기타</a>
+                            <ul class="dropdown-menu" aria-lebelledby="dropdownMenuLink-0">
+                                <li><a class="dropdown-item" href="#">기타-1</a></li>
+                                <li><a class="dropdown-item" href="#">기타-2</a></li>
+                                <li><a class="dropdown-item" href="#">기타-3</a></li>
+                                <li><a class="dropdown-item" href="#">기타-4</a></li>
+                            </ul>
+                        </div>
                     </div>
                     <!--item3 : End-->
                     <a class="me-2 navlinkitem">End</a>
