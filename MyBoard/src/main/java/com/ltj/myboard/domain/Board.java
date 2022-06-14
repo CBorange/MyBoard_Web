@@ -1,6 +1,8 @@
 package com.ltj.myboard.domain;
 
 import java.sql.Timestamp;
+import java.util.HashSet;
+import java.util.List;
 
 public class Board {
     private int ID;
@@ -18,6 +20,9 @@ public class Board {
     private Timestamp ModifyDay;
 
     private Timestamp DeleteDay;
+
+    // 여기부터 비즈니스 로직 관련 변수
+    private HashSet<Board> childBoardSet;
 
     public int getID() {
         return ID;
@@ -81,5 +86,43 @@ public class Board {
 
     public void setDeleteDay(Timestamp deleteDay) {
         DeleteDay = deleteDay;
+    }
+
+    public HashSet<Board> getChildBoardSet() {
+        return childBoardSet;
+    }
+
+    public boolean addChildBoard(Board newBoard){
+        return childBoardSet.add(newBoard);
+    }
+
+    public boolean removeChildBoard(Board removeBoard){
+        return childBoardSet.remove(removeBoard);
+    }
+
+    public boolean removeChildBoardByID(int removeBoardID){
+        return false;
+    }
+
+    @Override
+    public int hashCode(){
+        // ID가 유일한 PK다. ID가 같으면 같은 Board다.
+        return this.ID;
+    }
+
+    @Override
+    public boolean equals(Object object){
+        if(object == null)
+            return false;
+
+        if(this.getClass() != object.getClass())
+            return false;
+
+        Board board = (Board)object;
+
+        // ID가 같으면 같은 Board다 ID가 유일한 PK다.
+        if(board.getID() == this.ID)
+            return true;
+        return false;
     }
 }
