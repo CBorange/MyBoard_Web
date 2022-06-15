@@ -3,6 +3,8 @@ package com.ltj.myboard.domain;
 import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class Board {
     private int ID;
@@ -92,6 +94,10 @@ public class Board {
         return childBoardSet;
     }
 
+    public int getChildBoardCount(){
+        return (int)childBoardSet.stream().count();
+    }
+
     public boolean addChildBoard(Board newBoard){
         return childBoardSet.add(newBoard);
     }
@@ -101,6 +107,17 @@ public class Board {
     }
 
     public boolean removeChildBoardByID(int removeBoardID){
+        Optional<Board> boardOptional = childBoardSet.stream().filter(board -> {
+            if(board.ID == removeBoardID)
+                return true;
+            return false;
+        }).findAny();
+
+        Board foundBoard =  boardOptional.get();
+        if(foundBoard != null){
+            childBoardSet.remove(foundBoard);
+            return true;
+        }
         return false;
     }
 
