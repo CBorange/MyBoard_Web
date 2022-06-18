@@ -12,6 +12,7 @@ import javax.sql.DataSource;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Repository
 public class JDBC_BoardRepository implements BoardRepository{
@@ -30,17 +31,37 @@ public class JDBC_BoardRepository implements BoardRepository{
 
     @Override
     public List<Board> getAllBoards() {
+        // 쿼리 실행
         String sql = "SELECT * FROM board;";
-        List<Board> boards = jdbcTemplate.query(
-                "SELECT * FROM board;",
+        List<Board> allBoards = jdbcTemplate.query(
+                sql,
                 BeanPropertyRowMapper.newInstance(Board.class)
         );
-        return boards;
+
+        // 자식 Board 객체 맵핑
+        for(Board board : allBoards) {
+            if(board.getParentBoardID() == 0){  // 루트 Board만 해당
+                List<Board> childBoards = allBoards.stream().filter(item -> {
+                    if(item.getParentBoardID() == board.getID())
+                        return true;
+                    return false;
+                }).collect(Collectors.toList());
+
+                board.addChildBoard(childBoards);
+            }
+        }
+
+        return allBoards;
     }
 
     @Override
     public List<Board> getAllRootBoards() {
-
-        return null;
+        List<Board> allBoards = getAllBoards();
+        List<Board> rootBoards = allBoards.stream().filter(board -> {
+            if(board.getParentBoardID() == 0)
+                return true;
+            return false;
+        }).collect(Collectors.toList());
+        return rootBoards;
     }
 }

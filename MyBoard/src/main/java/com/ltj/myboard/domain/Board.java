@@ -7,6 +7,11 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class Board {
+
+    public Board(){
+        childBoardSet = new HashSet<Board>();
+    }
+
     private int ID;
 
     private String BoardName;
@@ -100,6 +105,10 @@ public class Board {
 
     public boolean addChildBoard(Board newBoard){
         return childBoardSet.add(newBoard);
+    }
+
+    public boolean addChildBoard(List<Board> newBoards){
+        return childBoardSet.addAll(newBoards);
     }
 
     public boolean removeChildBoard(Board removeBoard){

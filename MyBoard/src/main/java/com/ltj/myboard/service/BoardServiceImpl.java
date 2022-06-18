@@ -28,6 +28,6 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     public List<Board> getAllRootBoards() {
-        return null;
+        return boardRepository.getAllRootBoards();
     }
 }
