@@ -1,10 +1,11 @@
 package com.ltj.myboard.service;
 import com.ltj.myboard.domain.Board;
 
-import java.util.Enumeration;
+import java.util.List;
+import java.util.Optional;
 
 public interface BoardService {
-    Board findBoardByID(int id);
-    Enumeration<Board> getAllBoards();
-    Enumeration<Board> getAllRootBoards();
+    Optional<Board> findBoardByID(int id);
+    List<Board> getAllBoards();
+    List<Board> getAllRootBoards();
 }

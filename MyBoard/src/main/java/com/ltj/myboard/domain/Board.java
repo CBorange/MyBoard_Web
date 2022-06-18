@@ -122,6 +122,21 @@ public class Board {
     }
 
     @Override
+    public String toString() {
+        return "Board{" +
+                "ID=" + ID +
+                ", BoardName='" + BoardName + '\'' +
+                ", BoardOwnerID='" + BoardOwnerID + '\'' +
+                ", ParentBoardID=" + ParentBoardID +
+                ", BoardIcon='" + BoardIcon + '\'' +
+                ", CreatedDay=" + CreatedDay +
+                ", ModifyDay=" + ModifyDay +
+                ", DeleteDay=" + DeleteDay +
+                ", childBoardSet=" + childBoardSet +
+                '}';
+    }
+
+    @Override
     public int hashCode(){
         // ID가 유일한 PK다. ID가 같으면 같은 Board다.
         return this.ID;

@@ -1,23 +1,33 @@
 package com.ltj.myboard.service;
 import com.ltj.myboard.domain.Board;
+import com.ltj.myboard.repository.BoardRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import java.util.Enumeration;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class BoardServiceImpl implements BoardService {
 
+    private final BoardRepository boardRepository;
+
+    @Autowired
+    public BoardServiceImpl(BoardRepository boardRepository){
+        this.boardRepository = boardRepository;
+    }
+
     @Override
-    public Board findBoardByID(int id) {
+    public Optional<Board> findBoardByID(int id) {
         return null;
     }
 
     @Override
-    public Enumeration<Board> getAllBoards() {
-        return null;
+    public List<Board> getAllBoards() {
+        return boardRepository.getAllBoards();
     }
 
     @Override
-    public Enumeration<Board> getAllRootBoards() {
+    public List<Board> getAllRootBoards() {
         return null;
     }
 }
