@@ -22,6 +22,8 @@ public class Board {
 
     private String BoardIcon;
 
+    private String ConnectURL;
+
     private Timestamp CreatedDay;
 
     private Timestamp ModifyDay;
@@ -69,6 +71,14 @@ public class Board {
 
     public void setBoardIcon(String boardIcon) {
         BoardIcon = boardIcon;
+    }
+
+    public String getConnectURL() {
+        return ConnectURL;
+    }
+
+    public void setConnectURL(String connectURL) {
+        ConnectURL = connectURL;
     }
 
     public Timestamp getCreatedDay() {
@@ -138,6 +148,7 @@ public class Board {
                 ", BoardOwnerID='" + BoardOwnerID + '\'' +
                 ", ParentBoardID=" + ParentBoardID +
                 ", BoardIcon='" + BoardIcon + '\'' +
+                ", ConnectURL='" + ConnectURL + '\'' +
                 ", CreatedDay=" + CreatedDay +
                 ", ModifyDay=" + ModifyDay +
                 ", DeleteDay=" + DeleteDay +

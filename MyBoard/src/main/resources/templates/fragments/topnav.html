@@ -14,20 +14,29 @@
                     </div>
                     <!--item2 : Link List-->
                     <div class="d-flex flex-row d-none d-lg-block">
-                        <a class="navlinkitem mx-3" href="#">베스트</a>
-                        <a class="navlinkitem mx-3" href="#">자유게시판</a>
-                        <a class="navlinkitem mx-3" href="#">커뮤니티</a>
-                        <a class="navlinkitem mx-3" href="#">건의사항</a>
-                        <div class="d-inline-flex dropdown">
-                            <a class="dropdown-toggle navlinkitem mx-3" href="#" id="dropdownMenuLink-0"
-                            data-bs-toggle="dropdown" aria-expanded="false">기타</a>
-                            <ul class="dropdown-menu" aria-lebelledby="dropdownMenuLink-0">
-                                <li><a class="dropdown-item" href="#">기타-1</a></li>
-                                <li><a class="dropdown-item" href="#">기타-2</a></li>
-                                <li><a class="dropdown-item" href="#">기타-3</a></li>
-                                <li><a class="dropdown-item" href="#">기타-4</a></li>
-                            </ul>
-                        </div>
+                        <!--하위 게시판이 존재하지 않는 경우 : getChildBoardCount() 가 0 이다-->
+                        <!--하위 게시판이 존재하는 경우 : getChildBoardCount() 가 0이 아니다-->
+                        <th:block th:each="rootBoard : ${rootBoards}">
+                            <th:block th:if="${rootBoard.getChildBoardCount().equals(0)}">
+                                <a class="navlinkitem mx-3" th:href="${rootBoard.ConnectURL}">
+                                    <span th:text="${rootBoard.BoardName}"></span>
+                                </a>
+                            </th:block>
+                            <th:block th:unless="${rootBoard.getChildBoardCount().equals(0)}">
+                                <div class="d-inline-flex dropdown">
+                                    <a class="dropdown-toggle navlinkitem mx-3" href="#" id="dropdownMenuLink-0"
+                                       data-bs-toggle="dropdown" aria-expanded="false">
+                                        <span th:text="${rootBoard.BoardName}"></span>
+                                    </a>
+                                    <ul class="dropdown-menu" aria-lebelledby="dropdownMenuLink-0">
+                                        <li><a class="dropdown-item" href="#">기타-1</a></li>
+                                        <li><a class="dropdown-item" href="#">기타-2</a></li>
+                                        <li><a class="dropdown-item" href="#">기타-3</a></li>
+                                        <li><a class="dropdown-item" href="#">기타-4</a></li>
+                                    </ul>
+                                </div>
+                            </th:block>
+                        </th:block>
                     </div>
                     <!--item3 : End-->
                     <a class="me-2 navlinkitem">End</a>
