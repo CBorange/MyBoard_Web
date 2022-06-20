@@ -6,18 +6,33 @@
         <div class="collapse collapse-horizontal" id="collapseSidebar">
             <div class="d-flex flex-row vw-100">
                 <!--Sidebar 영역-->
-                <div class="vh-100 bg-secondary bg-gradient" style="width:300px">
+                <div class="vh-100 bg-secondary bg-gradient" style="width:250px">
                     <div class="d-flex flex-column">
                         <!--Section1 : 유저정보, 로그인/로그아웃 제어패널-->
                         <div class="bg-dark" style="height:150px;">
 
                         </div>
                         <!--Section2 : 게시판 리스트-->
-                        <a class="sidebarlinkitem mx-3" href="#">베스트</a>
-                        <a class="sidebarlinkitem mx-3" href="#">자유게시판</a>
-                        <a class="sidebarlinkitem mx-3" href="#">커뮤니티</a>
-                        <a class="sidebarlinkitem mx-3" href="#">건의사항</a>
-                        <a class="sidebarlinkitem mx-3" href="#">기타</a>
+                        <th:block th:each="rootBoard : ${rootBoards}">
+                            <th:block th:if="${rootBoard.getChildBoardCount().equals(0)}">
+                                <a class="navlinkitem mx-3" th:href="${rootBoard.ConnectURL}">
+                                    <span th:text="${rootBoard.BoardName}"></span>
+                                </a>
+                            </th:block>
+                            <th:block th:unless="${rootBoard.getChildBoardCount().equals(0)}">
+                                <div class="d-inline-flex dropdown">
+                                    <a class="dropdown-toggle navlinkitem mx-3" href="#" id="dropdownMenuLink-0"
+                                       data-bs-toggle="dropdown" aria-expanded="false">
+                                        <span th:text="${rootBoard.BoardName}"></span>
+                                    </a>
+                                    <ul class="dropdown-menu" aria-lebelledby="dropdownMenuLink-0">
+                                        <th:block th:each="childBoard : ${rootBoard.getChildBoardSet()}">
+                                            <li><a class="dropdown-item" th:href="${childBoard.ConnectURL}"><span th:text="${childBoard.BoardName}"></span></a></li>
+                                        </th:block>
+                                    </ul>
+                                </div>
+                            </th:block>
+                        </th:block>
                     </div>
                 </div>
                 <!--배경 영역 클릭하면 Sidebar collapse-->
