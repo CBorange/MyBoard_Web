@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -26,7 +27,13 @@ public class JDBC_BoardRepository implements BoardRepository{
 
     @Override
     public Optional<Board> findBoardByID(int id) {
-        return null;
+        String sql = "SELECT * FROM board WHERE ID = :id";
+
+        MapSqlParameterSource namedParameter = new MapSqlParameterSource();
+        namedParameter.addValue("id", id);
+
+        Optional<Board> ret = Optional.<Board>of((Board)jdbcTemplate.queryForObject(sql, namedParameter, new BeanPropertyRowMapper(Board.class)));
+        return ret;
     }
 
     @Override

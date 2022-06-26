@@ -18,7 +18,7 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     public Optional<Board> findBoardByID(int id) {
-        return null;
+        return boardRepository.findBoardByID(id);
     }
 
     @Override
