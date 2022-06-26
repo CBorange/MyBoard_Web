@@ -2,14 +2,33 @@
 <html xmlns:th="http://thymeleaf.org">
     <div th:fragment="footer">
         <div class="mx-auto container-lg bg-transparent">
+            <hr/>
             <div style="height: 30px;"></div>
-            <div class="d-flex flex-row justify-content-between" style="max-width:400px;">
+            <!--게시판 바로가기-->
+            <div class="d-flex flex-row justify-content-between" style="max-width:350px;">
                 <th:block th:each="rootBoard : ${rootBoards}">
                     <a class="board_link" th:href="${rootBoard.getConnectURL()}">
                         <span th:text="${rootBoard.getBoardName()}"></span>
                     </a>
                 </th:block>
             </div>
+            <!--사용 Resource 저작권 및 Github 주소, 개발자 연락처 등 페이지 관련정보-->
+            <div style="height: 15px;"></div>
+            <p class="footer_explain_test">
+                본 웹사이트는 포트폴리오용으로 제작되었습니다.<br>
+                이미지 Resource 출처 : https://www.flaticon.com/kr/authors/dave-gandy<br>
+                <br>
+                Copyrightⓒ. 이태준 All Rights Reserved
+            </p>
+            <!--Github 링크, 연락처-->
+            <div class="d-flex flex-row align-items-center">
+                <a href="https://github.com/CBorange">
+                    <img src="/img/github-logo.png" style="width: 50px; height :50px;">
+                </a>
+                <div class="ms-2" style="height: 50px; width: 0.1px; border: 1px solid #999999"></div>
+                <span class="ms-2" style="color: #999999">Contact : ltjbs2020@gmail.com</span>
+            </div>
+            <div style="height: 15px;"></div>
         </div>
     </div>
 </html>

@@ -1,4 +1,13 @@
 .board_link{
     text-decoration: none;
-    color: black;
+    color: #999999;
+}
+
+.footer_explain_test{
+    color: #999999;
+    font-size: 14px;
+}
+
+.link_button{
+    border: none;
 }
