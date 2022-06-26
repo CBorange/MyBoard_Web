@@ -1,77 +1,57 @@
-<html>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="/css/bootstrap.css">
-    <title>Title</title>
-</head>
-<body>
-    <div class="container">
-        <table class="table table-bordered table-hover">
-            <thead>
-            <tr>
-                <th>번호</th>
-                <th>제목</th>
-                <th>작성자</th>
-                <th>날짜</th>
-                <th>조회수</th>
-            </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>1</td>
-                    <td>게시판 테스트 12323</td>
-                    <td>이태준</td>
-                    <td>2022-05-16</td>
-                    <td>111</td>
-                </tr>
-                <tr>
-                    <td>1</td>
-                    <td>게시판 테스트 12323</td>
-                    <td>이태준</td>
-                    <td>2022-05-16</td>
-                    <td>111</td>
-                </tr>
-                <tr>
-                    <td>1</td>
-                    <td>게시판 테스트 12323</td>
-                    <td>이태준</td>
-                    <td>2022-05-16</td>
-                    <td>111</td>
-                </tr>
-                <tr>
-                    <td>1</td>
-                    <td>게시판 테스트 12323</td>
-                    <td>이태준</td>
-                    <td>2022-05-16</td>
-                    <td>111</td>
-                </tr>
-                <tr>
-                    <td>1</td>
-                    <td>게시판 테스트 12323</td>
-                    <td>이태준</td>
-                    <td>2022-05-16</td>
-                    <td>111</td>
-                </tr>
-            </tbody>
-        </table>
-        <hr/>
-        <div class="justify-content-md-center">
-            <nav aria-label="Page navigation example">
-                <ul class="pagination">
-                    <li class="page-item">
-                        <a class="page-link" href="#">1</a>
-                    </li>
-                    <li class="page-item">
-                        <a class="page-link" href="#">2</a>
-                    </li>
-                    <li class="page-item">
-                        <a class="page-link" href="#">3</a>
-                    </li>
-                </ul>
-            </nav>
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <th:block th:fragment="board">
+        <div class="mx-auto container-lg bg-light">
+            <!--게시판 레이아웃 Flex 배치-->
+            <div class="d-flex flex-column" style="min-height: 800px;">
+                <!--게시판 타이틀 상단 여백-->
+                <div style="height: 100px;"></div>
+                <!--게시판 타이틀 표기-->
+                <h2 class="my-5">자유게시판</h2>
+                <!--게시판 메인 테이블-->
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th class="text-center" scope="col" style="width:70%">제목</th>
+                        <th class="text-center" scope="col" style="width:10%">작성자</th>
+                        <th class="text-center" scope="col" style="width:10%">추천수</th>
+                        <th class="text-center" scope="col" style="width:10%">날짜</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>게시판 테스트 12323</td>
+                        <td>이태준</td>
+                        <td>111</td>
+                        <td>2022-05-16</td>
+                    </tr>
+                    <tr>
+                        <td>asdasdas</td>
+                        <td>이태준</td>
+                        <td>111</td>
+                        <td>2022-05-16</td>
+                    </tr>
+                    </tbody>
+                </table>
+                <!--게시판 메인 테이블 / 하단 페이지 제어 및 버튼 구분선-->
+                <hr/>
+                <!--하단 페이지 제어 버튼-->
+                <div class="d-flex justify-content-center mt-auto">
+                    <nav aria-label="Page navigation example">
+                        <ul class="pagination">
+                            <li class="page-item">
+                                <a class="page-link" href="#">1</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="#">2</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="#">3</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
         </div>
-    </div>
-    <script src="/js/bootstrap.bundle.js"></script>
-</body>
+    </th:block>
 </html>

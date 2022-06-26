@@ -1,4 +1,5 @@
 package com.ltj.myboard.controller;
+import ch.qos.logback.core.Layout;
 import com.ltj.myboard.domain.Board;
 import com.ltj.myboard.service.BoardService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,20 +11,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import java.util.List;
 
 @Controller
-public class HomeController {
-
-    private final BoardService boardService;
-
-    @Autowired
-    public HomeController(BoardService boardService){
-        this.boardService = boardService;
-    }
-
+public class HomeController extends LayoutControllerBase {
     @GetMapping("/")
     public String home(Model model){
-        List<Board> rootBoards = boardService.getAllRootBoards();
-        model.addAttribute("rootBoards", rootBoards);
+        addLayoutModel_FragmentContent(model,"hello.html", "hello");
 
-        return "layout/default_layout.html";
+        return LayoutViewPath;
     }
 }

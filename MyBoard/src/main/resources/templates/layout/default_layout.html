@@ -5,7 +5,9 @@
     <!--Layout Nav Header-->
     <div th:replace="/fragments/topnav.html :: topnav"></div>
     <!--Layout Content(Page)-->
-    <div th:replace="/page/hello.html :: hello"></div>
+    <div th:replace="@{'/page/' + ${layoutContent_Page}} :: ${layoutContent_Fragment}"></div>
+    <!--Layout Footer-->
+    <div th:replace="/fragments/footer.html :: footer"></div>
     <!--Sidebar(Collapsed)-->
     <div th:replace="/fragments/sidebar.html :: sidebar"></div>
 </html>
