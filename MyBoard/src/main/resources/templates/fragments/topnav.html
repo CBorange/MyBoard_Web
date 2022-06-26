@@ -18,7 +18,7 @@
                         <!--하위 게시판이 존재하는 경우 : getChildBoardCount() 가 0이 아니다-->
                         <th:block th:each="rootBoard : ${rootBoards}">
                             <th:block th:if="${rootBoard.getChildBoardCount().equals(0)}">
-                                <a class="navlinkitem mx-3" th:href="${rootBoard.ConnectURL}">
+                                <a class="navlinkitem mx-3" th:href="'/board?id=' + ${rootBoard.getID()}">
                                     <span th:text="${rootBoard.BoardName}"></span>
                                 </a>
                             </th:block>
@@ -30,7 +30,9 @@
                                     </a>
                                     <ul class="dropdown-menu" aria-lebelledby="dropdownMenuLink-0">
                                         <th:block th:each="childBoard : ${rootBoard.getChildBoardSet()}">
-                                            <li><a class="dropdown-item" th:href="${childBoard.ConnectURL}"><span th:text="${childBoard.BoardName}"></span></a></li>
+                                            <li><a class="dropdown-item" th:href="'/board?id=' + ${childBoard.getID()}">
+                                                <span th:text="${childBoard.BoardName}"></span></a>
+                                            </li>
                                         </th:block>
                                     </ul>
                                 </div>

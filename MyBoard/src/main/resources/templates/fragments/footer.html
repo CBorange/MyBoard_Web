@@ -7,7 +7,7 @@
             <!--게시판 바로가기-->
             <div class="d-flex flex-row justify-content-between" style="max-width:350px;">
                 <th:block th:each="rootBoard : ${rootBoards}">
-                    <a class="board_link" th:href="${rootBoard.getConnectURL()}">
+                    <a class="board_link" th:href="'/board?id=' + ${rootBoard.getID()}">
                         <span th:text="${rootBoard.getBoardName()}"></span>
                     </a>
                 </th:block>
