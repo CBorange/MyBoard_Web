@@ -1,6 +1,7 @@
-package com.ltj.myboard.repository;
+package com.ltj.myboard.repository.jdbc;
 
 import com.ltj.myboard.domain.Board;
+import com.ltj.myboard.repository.BoardRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -16,7 +17,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Repository
-public class JDBC_BoardRepository implements BoardRepository{
+public class JDBC_BoardRepository implements BoardRepository {
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
 

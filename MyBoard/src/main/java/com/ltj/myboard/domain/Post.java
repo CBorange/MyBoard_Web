@@ -1,6 +1,5 @@
 package com.ltj.myboard.domain;
-
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 public class Post {
     private int ID;
@@ -19,13 +18,11 @@ public class Post {
 
     private int BadCount;
 
-    private Timestamp CreatedDay;
+    private LocalDateTime CreatedDay;
 
-    private Timestamp ModifyDay;
+    private LocalDateTime ModifyDay;
 
-    private Timestamp DeleteDay;
-
-    private int PostNumber;
+    private LocalDateTime DeleteDay;
 
     public int getID() {
         return ID;
@@ -91,35 +88,27 @@ public class Post {
         BadCount = badCount;
     }
 
-    public Timestamp getCreatedDay() {
+    public LocalDateTime getCreatedDay() {
         return CreatedDay;
     }
 
-    public void setCreatedDay(Timestamp createdDay) {
+    public void setCreatedDay(LocalDateTime createdDay) {
         CreatedDay = createdDay;
     }
 
-    public Timestamp getModifyDay() {
+    public LocalDateTime getModifyDay() {
         return ModifyDay;
     }
 
-    public void setModifyDay(Timestamp modifyDay) {
+    public void setModifyDay(LocalDateTime modifyDay) {
         ModifyDay = modifyDay;
     }
 
-    public Timestamp getDeleteDay() {
+    public LocalDateTime getDeleteDay() {
         return DeleteDay;
     }
 
-    public void setDeleteDay(Timestamp deleteDay) {
+    public void setDeleteDay(LocalDateTime deleteDay) {
         DeleteDay = deleteDay;
-    }
-
-    public int getPostNumber() {
-        return PostNumber;
-    }
-
-    public void setPostNumber(int postNumber) {
-        PostNumber = postNumber;
     }
 }

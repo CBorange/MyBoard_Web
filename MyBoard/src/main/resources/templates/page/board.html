@@ -21,22 +21,33 @@
                     </tr>
                     </thead>
                     <tbody>
+                    <th:block th:each="post : ${postList}">
                     <tr>
-                        <td>게시판 테스트 12323</td>
-                        <td>이태준</td>
-                        <td>111</td>
-                        <td>2022-05-16</td>
+                        <td>
+                            <a href="#"><span th:text="${post.getTitle()}"></span></a>
+                        </td>
+                        <td><span th:text="${post.getWriterID()}"></span></td>
+                        <td><span th:text="${post.getGoodCount()}"></span></td>
+                        <td><span th:text="${#temporals.format(post.getCreatedDay(),'yyyy-MM-dd')}"></span></td>
                     </tr>
-                    <tr>
-                        <td>asdasdas</td>
-                        <td>이태준</td>
-                        <td>111</td>
-                        <td>2022-05-16</td>
-                    </tr>
+                    </th:block>
                     </tbody>
                 </table>
                 <!--게시판 메인 테이블 / 하단 페이지 제어 및 버튼 구분선-->
                 <hr/>
+                <!--게시글 검색, 글쓰기 버튼-->
+                <div>
+                    <form class="d-flex flex-row">
+                        <!--게시글 검색 Input-->
+                        <input type="search" style="width: 60%;">
+                        <!--검색 실행 Button-->
+                        <input type="image" src="/img/search_icon.png" style="width: 30px; height: 30px;">
+                        <!--글쓰기 Button-->
+                        <input class="ms-auto" type="button" value="글쓰기">
+                    </form>
+                </div>
+                <!--조회 기능 영역 <-> Pagination 분리 여백-->
+                <div style="height: 20px;"></div>
                 <!--하단 페이지 제어 버튼-->
                 <div class="d-flex justify-content-center mt-auto">
                     <nav aria-label="Page navigation example">

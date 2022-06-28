@@ -1,6 +1,7 @@
 package com.ltj.myboard.domain;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -22,11 +23,11 @@ public class Board {
 
     private String BoardIcon;
 
-    private Timestamp CreatedDay;
+    private LocalDateTime CreatedDay;
 
-    private Timestamp ModifyDay;
+    private LocalDateTime ModifyDay;
 
-    private Timestamp DeleteDay;
+    private LocalDateTime DeleteDay;
 
     // 여기부터 비즈니스 로직 관련 변수
     private HashSet<Board> childBoardSet;
@@ -71,27 +72,27 @@ public class Board {
         BoardIcon = boardIcon;
     }
 
-    public Timestamp getCreatedDay() {
+    public LocalDateTime getCreatedDay() {
         return CreatedDay;
     }
 
-    public void setCreatedDay(Timestamp createdDay) {
+    public void setCreatedDay(LocalDateTime createdDay) {
         CreatedDay = createdDay;
     }
 
-    public Timestamp getModifyDay() {
+    public LocalDateTime getModifyDay() {
         return ModifyDay;
     }
 
-    public void setModifyDay(Timestamp modifyDay) {
+    public void setModifyDay(LocalDateTime modifyDay) {
         ModifyDay = modifyDay;
     }
 
-    public Timestamp getDeleteDay() {
+    public LocalDateTime getDeleteDay() {
         return DeleteDay;
     }
 
-    public void setDeleteDay(Timestamp deleteDay) {
+    public void setDeleteDay(LocalDateTime deleteDay) {
         DeleteDay = deleteDay;
     }
 
