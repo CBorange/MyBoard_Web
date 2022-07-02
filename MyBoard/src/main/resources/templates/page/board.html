@@ -8,8 +8,9 @@
                 <div style="height: 100px;"></div>
                 <!--게시판 타이틀 표기-->
                 <h2 class="my-5">
-                    <span th:text="${boardInfo.getBoardName()}"></span>
+                    <span th:text="${boardInfo.getBoardName()}" style="font-weight: bold;"></span>
                 </h2>
+
                 <!--게시판 메인 테이블-->
                 <table class="table table-hover">
                     <thead>
@@ -24,7 +25,7 @@
                     <th:block th:each="post : ${postList}">
                     <tr>
                         <td>
-                            <a href="#"><span th:text="${post.getTitle()}"></span></a>
+                            <a th:href="'/post?id=' + ${post.getID()}"><span th:text="${post.getTitle()}"></span></a>
                         </td>
                         <td><span th:text="${post.getWriterID()}"></span></td>
                         <td><span th:text="${post.getGoodCount()}"></span></td>

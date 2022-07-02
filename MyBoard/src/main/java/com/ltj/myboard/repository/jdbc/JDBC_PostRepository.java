@@ -10,6 +10,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import javax.sql.DataSource;
 import java.util.List;
+import java.util.Optional;
 
 public class JDBC_PostRepository implements PostRepository {
 
@@ -18,6 +19,17 @@ public class JDBC_PostRepository implements PostRepository {
     @Autowired
     public JDBC_PostRepository(DataSource dataSource){
         jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+    }
+
+    @Override
+    public Optional<Post> findPostByID(int postID) {
+        String sql = "SELECT * FROM post WHERE ID = :id";
+
+        MapSqlParameterSource namedParameter = new MapSqlParameterSource();
+        namedParameter.addValue("id", postID);
+
+        Optional<Post> ret = Optional.<Post>of((Post)jdbcTemplate.queryForObject(sql, namedParameter, new BeanPropertyRowMapper(Post.class)));
+        return ret;
     }
 
     @Override

@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PostServiceImpl implements PostService{
@@ -15,6 +16,11 @@ public class PostServiceImpl implements PostService{
     @Autowired
     public PostServiceImpl(PostRepository postRepository){
         this.postRepository = postRepository;
+    }
+
+    @Override
+    public Optional<Post> findPostByID(int postID) {
+        return postRepository.findPostByID(postID);
     }
 
     @Override
