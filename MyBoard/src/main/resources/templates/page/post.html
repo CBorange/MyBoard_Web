@@ -1,24 +1,23 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
     <th:block th:fragment="post">
-        <div class="mx-auto container-lg" style="background-color: #F5F5F5;">
+        <div class="mx-auto container-lg top-div">
             <!--게시글 레이아웃 Flex 배치-->
             <div class="d-flex flex-column" style="min-height: 800px;">
                 <!--게시판 타이틀 상단 여백-->
                 <div style="height: 70px;"></div>
                 <!--게시판 타이틀 표기-->
                 <h3 class="my-5">
-                    <span th:text="${boardInfo.getBoardName()}" style="font-weight: bold;"></span>
+                    <span class="text-title" th:text="${boardInfo.getBoardName()}"></span>
                 </h3>
                 <div style="height: 30px;"></div>
                 <!--게시글 타이틀 표기-->
                 <h4>
                     <span th:text="${postInfo.getTitle()}"></span>
                 </h4>
-                <hr style="height: 3px; width:100%; border:none; background-color: #1D153E;
-                           text-align:center; margin: 0 auto;"/>
+                <hr class="hr-title"/>
                 <!--게시글 작성자 정보-->
-                <div class="d-flex flex-row align-items-center" style="background-color: #B3F5FF; min-height: 40px;">
+                <div class="d-flex flex-row align-items-center writerinfo-div">
                     <!--작성자 이름-->
                     <img src="/img/user.png" style="width: 20px; height: 20px;"/>
                     <span class="ms-1" th:text="${postInfo.getWriterID()}"></span>
@@ -29,7 +28,7 @@
                 <!--게시글 링크 정보-->
                 <div class="mt-3 mb-5 d-flex flex-row">
                     <img src="/img/link2.png" style="width: 20px; height: 20px;"/>
-                    <a class="ms-1" href="./" id="postLink" style="text-decoration: none; color:gray;"></a>
+                    <a class="ms-1 text-postlink" href="./" id="postLink"></a>
                 </div>
                 <!--게시글 출력 영역-->
                 <div class="mb-4" style="min-height: 500px; background-color: white;">
@@ -39,6 +38,9 @@
                     <button class="btn-primary">추천</button>
                     <button class="ms-3 btn-primary">비추천</button>
                 </div>
+                <hr/>
+                <!--댓글 영역-->
+
             </div>
         </div>
     </th:block>

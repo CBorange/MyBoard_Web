@@ -1,6 +1,7 @@
 package com.ltj.myboard.service;
 import com.ltj.myboard.domain.Board;
 import com.ltj.myboard.repository.BoardRepository;
+import com.ltj.myboard.service.serviceinterface.BoardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;

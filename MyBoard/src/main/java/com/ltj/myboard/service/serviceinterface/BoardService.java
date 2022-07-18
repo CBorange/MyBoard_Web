@@ -1,4 +1,4 @@
-package com.ltj.myboard.service;
+package com.ltj.myboard.service.serviceinterface;
 import com.ltj.myboard.domain.Board;
 
 import java.util.List;

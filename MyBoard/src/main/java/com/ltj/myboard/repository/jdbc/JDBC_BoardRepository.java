@@ -40,7 +40,7 @@ public class JDBC_BoardRepository implements BoardRepository {
     @Override
     public List<Board> getAllBoards() {
         // 쿼리 실행
-        String sql = "SELECT * FROM board;";
+        String sql = "SELECT * FROM board WHERE BoardName != 'root';";
         List<Board> allBoards = jdbcTemplate.query(
                 sql,
                 BeanPropertyRowMapper.newInstance(Board.class)

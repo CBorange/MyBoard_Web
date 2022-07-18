@@ -1,8 +1,8 @@
 package com.ltj.myboard.controller;
 import com.ltj.myboard.domain.Board;
 import com.ltj.myboard.domain.Post;
-import com.ltj.myboard.service.BoardService;
-import com.ltj.myboard.service.PostService;
+import com.ltj.myboard.service.serviceinterface.BoardService;
+import com.ltj.myboard.service.serviceinterface.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,6 +16,7 @@ import java.util.Optional;
 public class BoardController extends LayoutControllerBase {
     private final BoardService boardService;
     private final PostService postService;
+    private final int MAX_VISIBLE_POST_COUNT = 20;
 
     @Autowired
     public BoardController(BoardService boardService, PostService postService){
@@ -24,7 +25,10 @@ public class BoardController extends LayoutControllerBase {
     }
 
     @GetMapping("/board")
-    public String board_Request(Model model, @RequestParam int id) {
+    public String board_Request(Model model, @RequestParam() int id,
+                                             @RequestParam(required = false, defaultValue = "1") int pageNumber,
+                                             @RequestParam(required = false, defaultValue = "Title,") String[] searchMethodConditionPair,
+                                             @RequestParam(required = false, defaultValue = "ModifyDay") String sortOrderTarget) {
         addLayoutModel_FragmentContent(model,"board.html","board");
 
         // Board 정보 Model에 추가
@@ -33,9 +37,9 @@ public class BoardController extends LayoutControllerBase {
             model.addAttribute("boardInfo", foundBoard.get());
         });
 
-        // 게시글 정보 Model에 추가
-        List<Post> postList = postService.findPostByBoardID(id);
-        model.addAttribute("postList", postList);
+        // 게시글 리스트 Select 하여 Model에 추가
+/*        List<Post> postList = postService.findPost_UserParam(id, pageNumber);
+        model.addAttribute("postList", postList);*/
         return LayoutViewPath;
     }
 }
