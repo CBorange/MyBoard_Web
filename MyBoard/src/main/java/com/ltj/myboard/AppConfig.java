@@ -1,7 +1,9 @@
 package com.ltj.myboard;
 
 import com.ltj.myboard.repository.BoardRepository;
+import com.ltj.myboard.repository.FilteredPostRepository;
 import com.ltj.myboard.repository.jdbc.JDBC_BoardRepository;
+import com.ltj.myboard.repository.jdbc.JDBC_FilteredPostRepository;
 import com.ltj.myboard.repository.jdbc.JDBC_PostRepository;
 import com.ltj.myboard.repository.PostRepository;
 import com.ltj.myboard.service.serviceinterface.BoardService;
@@ -36,11 +38,16 @@ public class AppConfig {
 
     @Bean
     public PostService postService(){
-        return new PostServiceImpl(postRepository());
+        return new PostServiceImpl(postRepository(), filteredPostRepository());
     }
 
     @Bean
     public PostRepository postRepository(){
         return new JDBC_PostRepository(dataSource());
+    }
+
+    @Bean
+    public FilteredPostRepository filteredPostRepository(){
+        return new JDBC_FilteredPostRepository(dataSource());
     }
 }

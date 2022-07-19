@@ -1,15 +1,13 @@
 package com.ltj.myboard.service;
 
 import com.ltj.myboard.domain.Post;
-import com.ltj.myboard.dto.OrderedPost;
+import com.ltj.myboard.dto.FilteredPost;
+import com.ltj.myboard.repository.FilteredPostRepository;
 import com.ltj.myboard.repository.PostRepository;
-import com.ltj.myboard.repository.jdbc.JDBC_PostRepository;
 import com.ltj.myboard.service.serviceinterface.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.thymeleaf.util.StringUtils;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -20,10 +18,12 @@ import java.util.stream.Collectors;
 public class PostServiceImpl implements PostService {
 
     private final PostRepository postRepository;
+    private final FilteredPostRepository filteredPostRepository;
 
     @Autowired
-    public PostServiceImpl(PostRepository postRepository){
+    public PostServiceImpl(PostRepository postRepository, FilteredPostRepository filteredPostRepository){
         this.postRepository = postRepository;
+        this.filteredPostRepository = filteredPostRepository;
     }
 
     @Override
@@ -42,16 +42,14 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<OrderedPost> findPost_UserParam(int boardID, String searchMethod, String searchCondition, String sortOrderTarget) {
-        List<OrderedPost> selectRet = new ArrayList<OrderedPost>();
-        List<Post> unorderedPostList = new ArrayList<Post>();
+    public List<FilteredPost> findPost_UserParam(int boardID, String searchMethod, String searchCondition, String sortOrderTarget,
+                                                 String orderByMethod) {
+        List<FilteredPost> selectRet = new ArrayList<FilteredPost>();
 
         // 검색 Method에 따른 검색 쿼리 수행
         switch (searchMethod){
             case "Title":
-                unorderedPostList = postRepository.findPost_UseSearch_Title(boardID, searchCondition);
-                unorderedPostList = unorderedPostList.stream().sorted(Comparator.comparing(Post::getTitle))
-                        .collect(Collectors.toList());
+                filteredPostRepository.findPost_UseSearch_Title(boardID, searchCondition, sortOrderTarget, orderByMethod);
                 break;
             case "Content":
                 break;
@@ -59,18 +57,6 @@ public class PostServiceImpl implements PostService {
                 break;
             case "Nickname":
                 break;
-        }
-
-        // 정렬 Target에 따른 정렬 기능 수행
-
-
-        // 정렬된 순서대로 DTO 생성
-        int orderNo = 0;
-        for(Post post : unorderedPostList){
-            OrderedPost orderedPost = new OrderedPost();
-            orderedPost.setOrderedPostNo(orderNo);
-            orderedPost.setPostData(post);
-            selectRet.add(orderedPost);
         }
 
         return selectRet;

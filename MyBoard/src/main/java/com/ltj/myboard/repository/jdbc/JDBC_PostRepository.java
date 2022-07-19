@@ -49,26 +49,6 @@ public class JDBC_PostRepository implements PostRepository {
     }
 
     @Override
-    public List<Post> findPost_UseSearch_Title(int boardID, String condition_title) {
-        return null;
-    }
-
-    @Override
-    public List<Post> findPost_UseSearch_Content(int boardID, String condition_content) {
-        return null;
-    }
-
-    @Override
-    public List<Post> findPost_UseSearch_Comment(int boardID, String condition_comment) {
-        return null;
-    }
-
-    @Override
-    public List<Post> findPost_UseSearch_Nickname(int boardID, String condition_nickname) {
-        return null;
-    }
-
-    @Override
     public List<Post> findPostByWriterID(String writerID) {
         // 쿼리 실행
         String sql = "SELECT * FROM post WHERE WriterID = :writerID;";
