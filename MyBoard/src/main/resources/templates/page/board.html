@@ -40,7 +40,7 @@
                 <hr/>
                 <!--게시글 검색, 글쓰기 버튼-->
                 <div>
-                    <form class="d-flex flex-row">
+                    <form action="#" th:action="@{/searchPost}" class="d-flex flex-row">
                         <!--게시글 검색 조건 지정 Dropdown List-->
                         <select class="custom-select">
                             <option selected>검색 조건</option>
@@ -51,6 +51,8 @@
                         <!--검색 실행 Button-->
                         <input type="image" src="/img/search_icon.png" style="width: 30px; height: 30px;">
                         <!--글쓰기 Button-->
+                    </form>
+                    <form>
                         <input class="ms-auto" type="button" value="글쓰기">
                     </form>
                 </div>
