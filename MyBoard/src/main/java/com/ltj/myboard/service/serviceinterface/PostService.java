@@ -12,4 +12,6 @@ public interface PostService {
     List<Post> findPostByWriterID(String writerID);
     List<FilteredPost> findPost_UserParam(int boardID, String searchMethod, String searchCondition, String sortOrderTarget,
                                           String orderByMethod);
+    List<FilteredPost> filterPostDataOnCurPage(List<FilteredPost> sourceList, int pageCount, int curPage, int maxVisiblePostCountInPage);
+    int getPageCountOnPostList(List<FilteredPost> sourceList, int maxVisiblePostCountInPage);
 }

@@ -16,7 +16,7 @@ public class PostServiceTest {
 
     @Test
     public void 제목검색조건으로_게시글조회(){
-        List<FilteredPost> findResult = postService.findPost_UserParam(115,"Tttle", "21","ModifyDay","ASC");
+        List<FilteredPost> findResult = postService.findPost_UserParam(115,"Title", "21","ModifyDay","ASC");
         Assertions.assertTrue(findResult.stream().count() > 0);
     }
 

@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -49,7 +48,7 @@ public class PostServiceImpl implements PostService {
         // 검색 Method에 따른 검색 쿼리 수행
         switch (searchMethod){
             case "Title":
-                filteredPostRepository.findPost_UseSearch_Title(boardID, searchCondition, sortOrderTarget, orderByMethod);
+                selectRet = filteredPostRepository.findPost_UseSearch_Title(boardID, searchCondition, sortOrderTarget, orderByMethod);
                 break;
             case "Content":
                 break;
@@ -60,5 +59,30 @@ public class PostServiceImpl implements PostService {
         }
 
         return selectRet;
+    }
+
+    @Override
+    public List<FilteredPost> filterPostDataOnCurPage(List<FilteredPost> sourceList, int pageCount, int curPage, int maxVisiblePostCountInPage) {
+        int pageStartRowNo = (curPage - 1) * maxVisiblePostCountInPage;
+        int pageEndRowNo = curPage * maxVisiblePostCountInPage;
+
+        List<FilteredPost> filteredPostList = sourceList.stream().filter((source) -> {
+            if(source.getOrderedPostNo() >= pageStartRowNo &&
+               source.getOrderedPostNo() <= pageEndRowNo)
+                return true;
+            return false;
+        }).collect(Collectors.toList());
+
+        return filteredPostList;
+    }
+
+    @Override
+    public int getPageCountOnPostList(List<FilteredPost> sourceList, int maxVisiblePostCountInPage) {
+        long sourceCount = sourceList.stream().count();
+
+        int pageCount = (int)(sourceCount / maxVisiblePostCountInPage);
+        if(sourceCount % maxVisiblePostCountInPage > 0)
+            pageCount += 1;
+        return pageCount;
     }
 }

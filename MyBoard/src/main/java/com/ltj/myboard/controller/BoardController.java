@@ -1,6 +1,6 @@
 package com.ltj.myboard.controller;
 import com.ltj.myboard.domain.Board;
-import com.ltj.myboard.domain.Post;
+import com.ltj.myboard.dto.FilteredPost;
 import com.ltj.myboard.service.serviceinterface.BoardService;
 import com.ltj.myboard.service.serviceinterface.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,8 +27,10 @@ public class BoardController extends LayoutControllerBase {
     @GetMapping("/board")
     public String board_Request(Model model, @RequestParam() int id,
                                              @RequestParam(required = false, defaultValue = "1") int pageNumber,
-                                             @RequestParam(required = false, defaultValue = "Title,") String[] searchMethodConditionPair,
-                                             @RequestParam(required = false, defaultValue = "ModifyDay") String sortOrderTarget) {
+                                             @RequestParam(required = false, defaultValue = "Title") String searchMethod,
+                                             @RequestParam(required = false, defaultValue = "") String searchCondition,
+                                             @RequestParam(required = false, defaultValue = "ModifyDay") String sortOrderTarget,
+                                             @RequestParam(required = false, defaultValue = "ASC") String sortMethod){
         addLayoutModel_FragmentContent(model,"board.html","board");
 
         // Board 정보 Model에 추가
@@ -38,8 +40,19 @@ public class BoardController extends LayoutControllerBase {
         });
 
         // 게시글 리스트 Select 하여 Model에 추가
-/*        List<Post> postList = postService.findPost_UserParam(id, pageNumber);
-        model.addAttribute("postList", postList);*/
+        // 페이지 개수 구하기
+        List<FilteredPost> postList = postService.findPost_UserParam(id, searchMethod, searchCondition, sortOrderTarget, sortMethod);
+        int pageCount = postService.getPageCountOnPostList(postList, MAX_VISIBLE_POST_COUNT);
+        if(pageCount < 1) pageCount = 1;
+
+        // Filtering 된 게시글 리스트에서 현재 페이지에 해당하는 부분만 선택
+        List<FilteredPost> filteredPostList = postService.filterPostDataOnCurPage(postList, pageCount, pageNumber, MAX_VISIBLE_POST_COUNT);
+        model.addAttribute("filteredPostList", filteredPostList);
+
+        // 현재 페이지 정보 Model에 추가
+        model.addAttribute("curPageNo", pageNumber);
+        model.addAttribute("pageCount", pageCount);
+        model.addAttribute("searchCondition", searchCondition);
         return LayoutViewPath;
     }
 }
