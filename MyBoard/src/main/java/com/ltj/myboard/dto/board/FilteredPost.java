@@ -1,4 +1,4 @@
-package com.ltj.myboard.dto;
+package com.ltj.myboard.dto.board;
 
 import com.ltj.myboard.domain.Post;
 

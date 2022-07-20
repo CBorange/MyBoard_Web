@@ -1,6 +1,5 @@
 package com.ltj.myboard.repository;
-import com.ltj.myboard.domain.Post;
-import com.ltj.myboard.dto.FilteredPost;
+import com.ltj.myboard.dto.board.FilteredPost;
 
 import java.util.List;
 

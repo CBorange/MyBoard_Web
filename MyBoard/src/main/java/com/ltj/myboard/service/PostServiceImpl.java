@@ -1,7 +1,7 @@
 package com.ltj.myboard.service;
 
 import com.ltj.myboard.domain.Post;
-import com.ltj.myboard.dto.FilteredPost;
+import com.ltj.myboard.dto.board.FilteredPost;
 import com.ltj.myboard.repository.FilteredPostRepository;
 import com.ltj.myboard.repository.PostRepository;
 import com.ltj.myboard.service.serviceinterface.PostService;

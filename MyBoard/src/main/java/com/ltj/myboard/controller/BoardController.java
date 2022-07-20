@@ -1,6 +1,6 @@
 package com.ltj.myboard.controller;
 import com.ltj.myboard.domain.Board;
-import com.ltj.myboard.dto.FilteredPost;
+import com.ltj.myboard.dto.board.FilteredPost;
 import com.ltj.myboard.service.serviceinterface.BoardService;
 import com.ltj.myboard.service.serviceinterface.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,7 +52,10 @@ public class BoardController extends LayoutControllerBase {
         // 현재 페이지 정보 Model에 추가
         model.addAttribute("curPageNo", pageNumber);
         model.addAttribute("pageCount", pageCount);
+        model.addAttribute("searchMethod", searchMethod);
         model.addAttribute("searchCondition", searchCondition);
+        model.addAttribute("sortOrderTarget", sortOrderTarget);
+        model.addAttribute("sortMethod", sortMethod);
         return LayoutViewPath;
     }
 }

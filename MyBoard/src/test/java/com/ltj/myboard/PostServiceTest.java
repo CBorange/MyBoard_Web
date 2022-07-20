@@ -1,6 +1,6 @@
 package com.ltj.myboard;
 
-import com.ltj.myboard.dto.FilteredPost;
+import com.ltj.myboard.dto.board.FilteredPost;
 import com.ltj.myboard.service.serviceinterface.PostService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

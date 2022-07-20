@@ -1,7 +1,7 @@
 package com.ltj.myboard.repository.jdbc;
 
 import com.ltj.myboard.domain.Post;
-import com.ltj.myboard.dto.FilteredPost;
+import com.ltj.myboard.dto.board.FilteredPost;
 import com.ltj.myboard.repository.FilteredPostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
