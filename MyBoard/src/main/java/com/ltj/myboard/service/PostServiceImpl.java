@@ -63,9 +63,11 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public List<FilteredPost> filterPostDataOnCurPage(List<FilteredPost> sourceList, int pageCount, int curPage, int maxVisiblePostCountInPage) {
+        // 현재 페이지의 첫번째, 마지막 게시글 범위 지정
         int pageStartRowNo = (curPage - 1) * maxVisiblePostCountInPage;
         int pageEndRowNo = curPage * maxVisiblePostCountInPage;
 
+        // 게시글의 범위에 해당하는 게시글을 Stream으로 filtering 한다
         List<FilteredPost> filteredPostList = sourceList.stream().filter((source) -> {
             if(source.getOrderedPostNo() >= pageStartRowNo &&
                source.getOrderedPostNo() <= pageEndRowNo)
@@ -84,5 +86,13 @@ public class PostServiceImpl implements PostService {
         if(sourceCount % maxVisiblePostCountInPage > 0)
             pageCount += 1;
         return pageCount;
+    }
+
+    @Override
+    public int getCurSessionByCurPage(int curPage, int maxVisibleSessionCountInPage){
+        int curSession = curPage / maxVisibleSessionCountInPage;
+        if(curPage % maxVisibleSessionCountInPage > 0)
+            curSession += 1;
+        return curSession;
     }
 }

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
     <th:block th:fragment="board">
+        <script src="/js/board.js"></script>
         <div class="mx-auto container-lg" style="background-color: #F5F5F5;">
             <!--게시판 레이아웃 Flex 배치-->
             <div class="d-flex flex-column" style="min-height: 800px;">
@@ -52,8 +53,7 @@
 
                         <!--게시글 검색 조건 지정 Dropdown List-->
                         <select class="custom-select" th:name="searchMethod">
-                            <option selected>검색 조건</option>
-                            <option value="Title">제목</option>
+                            <option selected value="Title">제목</option>
                         </select>
 
                         <!--게시글 검색 Input-->
@@ -86,7 +86,7 @@
                                 </li>
                             </th:block>
                             <!--페이지 번호 버튼-->
-                            <th:block th:each="pageNo : ${#numbers.sequence(1, pageCount)}">
+                            <th:block th:each="pageNo : ${#numbers.sequence(startPageNoInCurSession, endPageNoInCurSession)}">
                                     <th:block th:if="${pageNo == curPageNo}">
                                         <li class="page-item active">
                                             <a class="page-link" th:href="'/board?id=' + ${boardInfo.getID()} + '&pageNumber=' + ${pageNo} +

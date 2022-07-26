@@ -14,4 +14,5 @@ public interface PostService {
                                           String orderByMethod);
     List<FilteredPost> filterPostDataOnCurPage(List<FilteredPost> sourceList, int pageCount, int curPage, int maxVisiblePostCountInPage);
     int getPageCountOnPostList(List<FilteredPost> sourceList, int maxVisiblePostCountInPage);
+    int getCurSessionByCurPage(int curPage,  int maxVisibleSessionCountInPage);
 }

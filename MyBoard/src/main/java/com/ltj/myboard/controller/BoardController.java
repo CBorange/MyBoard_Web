@@ -16,7 +16,8 @@ import java.util.Optional;
 public class BoardController extends LayoutControllerBase {
     private final BoardService boardService;
     private final PostService postService;
-    private final int MAX_VISIBLE_POST_COUNT = 20;
+    private final int MAX_VISIBLE_SESSION_COUNT = 9;
+    private final int MAX_VISIBLE_POST_COUNT = 25;
 
     @Autowired
     public BoardController(BoardService boardService, PostService postService){
@@ -39,18 +40,27 @@ public class BoardController extends LayoutControllerBase {
             model.addAttribute("boardInfo", foundBoard.get());
         });
 
-        // 게시글 리스트 Select 하여 Model에 추가
-        // 페이지 개수 구하기
+        // 검색 조건에 따라 게시글 리스트 Select
         List<FilteredPost> postList = postService.findPost_UserParam(id, searchMethod, searchCondition, sortOrderTarget, sortMethod);
-        int pageCount = postService.getPageCountOnPostList(postList, MAX_VISIBLE_POST_COUNT);
-        if(pageCount < 1) pageCount = 1;
 
-        // Filtering 된 게시글 리스트에서 현재 페이지에 해당하는 부분만 선택
+        // 페이지 개수 구하기
+        int pageCount = postService.getPageCountOnPostList(postList, MAX_VISIBLE_POST_COUNT);
+
+        // 현재 페이지의 세션 구하기
+        int curSession = postService.getCurSessionByCurPage(pageNumber, MAX_VISIBLE_SESSION_COUNT);
+        int endPageNoInCurSession = curSession * MAX_VISIBLE_SESSION_COUNT;
+        int startPageNoInCurSession = endPageNoInCurSession - (MAX_VISIBLE_SESSION_COUNT - 1);
+        if(pageCount < endPageNoInCurSession) endPageNoInCurSession = pageCount;
+
+
+        // 검색된 게시글 리스트에서 현재 페이지에 해당하는 부분만 filtering
         List<FilteredPost> filteredPostList = postService.filterPostDataOnCurPage(postList, pageCount, pageNumber, MAX_VISIBLE_POST_COUNT);
         model.addAttribute("filteredPostList", filteredPostList);
 
         // 현재 페이지 정보 Model에 추가
         model.addAttribute("curPageNo", pageNumber);
+        model.addAttribute("endPageNoInCurSession", endPageNoInCurSession);
+        model.addAttribute("startPageNoInCurSession", startPageNoInCurSession);
         model.addAttribute("pageCount", pageCount);
         model.addAttribute("searchMethod", searchMethod);
         model.addAttribute("searchCondition", searchCondition);
