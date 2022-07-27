@@ -1,7 +1,7 @@
 # 자유게시판 샘플 게시글 INSERT
 DELIMITER $$
-DROP PROCEDURE IF EXISTS loopSampleInsert;
-CREATE PROCEDURE loopSampleInsert()
+DROP PROCEDURE IF EXISTS loopSamplePostInsert;
+CREATE PROCEDURE loopSamplePostInsert()
 BEGIN
     DECLARE i INT;
     SET i = 1;
@@ -13,4 +13,4 @@ BEGIN
             SET i = i + 1;
 	END WHILE;
 END $$
-CALL loopSampleInsert();
+CALL loopSamplePostInsert();

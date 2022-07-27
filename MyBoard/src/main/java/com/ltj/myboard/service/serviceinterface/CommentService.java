@@ -7,5 +7,6 @@ import java.util.List;
 
 @Service
 public interface CommentService {
-    List<Comment> findAllCommentInPost();
+    List<Comment> findAllCommentInPost(int postID);
+    
 }
