@@ -1,7 +1,7 @@
 package myboard;
 
 import com.ltj.myboard.dto.board.FilteredPost;
-import com.ltj.myboard.service.serviceinterface.PostService;
+import com.ltj.myboard.service.PostService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

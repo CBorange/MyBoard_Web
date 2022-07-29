@@ -6,10 +6,8 @@ import com.ltj.myboard.repository.jdbc.JDBC_BoardRepository;
 import com.ltj.myboard.repository.jdbc.JDBC_FilteredPostRepository;
 import com.ltj.myboard.repository.jdbc.JDBC_PostRepository;
 import com.ltj.myboard.repository.PostRepository;
-import com.ltj.myboard.service.serviceinterface.BoardService;
-import com.ltj.myboard.service.BoardServiceImpl;
-import com.ltj.myboard.service.serviceinterface.PostService;
-import com.ltj.myboard.service.PostServiceImpl;
+import com.ltj.myboard.service.BoardService;
+import com.ltj.myboard.service.PostService;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
@@ -28,7 +26,7 @@ public class AppConfig {
 
     @Bean
     public BoardService boardService(){
-        return new BoardServiceImpl(boardRepository());
+        return new BoardService(boardRepository());
     }
 
     @Bean
@@ -38,7 +36,7 @@ public class AppConfig {
 
     @Bean
     public PostService postService(){
-        return new PostServiceImpl(postRepository(), filteredPostRepository());
+        return new PostService(postRepository(), filteredPostRepository());
     }
 
     @Bean

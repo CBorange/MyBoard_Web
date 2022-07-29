@@ -1,7 +1,7 @@
 package myboard;
 
 import com.ltj.myboard.domain.Board;
-import com.ltj.myboard.service.serviceinterface.BoardService;
+import com.ltj.myboard.service.BoardService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
