@@ -1,4 +1,4 @@
-package com.ltj.myboard;
+package myboard;
 
 import com.ltj.myboard.domain.Board;
 import com.ltj.myboard.service.serviceinterface.BoardService;
