@@ -3,6 +3,7 @@ package com.ltj.myboard.repository.jdbc;
 import com.ltj.myboard.domain.Post;
 import com.ltj.myboard.dto.board.FilteredPost;
 import com.ltj.myboard.repository.FilteredPostRepository;
+import com.ltj.myboard.util.MyResourceLoader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
@@ -17,18 +18,19 @@ import java.util.List;
 public class JDBC_FilteredPostRepository implements FilteredPostRepository {
     private final NamedParameterJdbcTemplate jdbcTemplate;
 
+    private final String findPost_UseSearch_Title_SQL;
+
     @Autowired
     public JDBC_FilteredPostRepository(DataSource dataSource){
         jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+
+        String daoName = "JDBC_FilteredPostRepository";
+        findPost_UseSearch_Title_SQL = MyResourceLoader.loadProductionQuery(daoName, "findPost_UseSearch_Title.sql");
     }
 
     @Override
     public List<FilteredPost> findPost_UseSearch_Title(int boardID, String condition_title, String sortTargetColumn, String orderByMethod) {
         // 쿼리 실행
-        String sql = "SELECT @ROWNUM:=@ROWNUM+1 as OrderedPostNo, p.*\n" +
-                     "FROM post p, (SELECT @ROWNUM:=0) R\n" +
-                     "WHERE BoardID = :boardID AND Title LIKE :condition\n" +
-                     "ORDER BY :sortColumn;";
 
         MapSqlParameterSource namedParameter = new MapSqlParameterSource();
         namedParameter.addValue("boardID", boardID);
@@ -37,7 +39,7 @@ public class JDBC_FilteredPostRepository implements FilteredPostRepository {
         namedParameter.addValue("orderByMethod", orderByMethod);
 
         List<FilteredPost> filteredPostList = jdbcTemplate.query(
-          sql,
+          findPost_UseSearch_Title_SQL,
           namedParameter,
           new FilteredObjectRowMapper()
         );

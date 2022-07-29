@@ -2,6 +2,7 @@ package com.ltj.myboard.repository.jdbc;
 
 import com.ltj.myboard.domain.Board;
 import com.ltj.myboard.repository.BoardRepository;
+import com.ltj.myboard.util.MyResourceLoader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -18,31 +19,34 @@ import java.util.stream.Collectors;
 
 @Repository
 public class JDBC_BoardRepository implements BoardRepository {
-
     private final NamedParameterJdbcTemplate jdbcTemplate;
+
+    private final String findBoardByID_SQL;
+    private final String getAllBoards_SQL;
 
     @Autowired
     public JDBC_BoardRepository(DataSource dataSource){
         jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+
+        String daoName = "JDBC_BoardRepository";
+        findBoardByID_SQL = MyResourceLoader.loadProductionQuery(daoName, "findBoardByID.sql");
+        getAllBoards_SQL = MyResourceLoader.loadProductionQuery(daoName, "getAllBoards.sql");
     }
 
     @Override
     public Optional<Board> findBoardByID(int id) {
-        String sql = "SELECT * FROM board WHERE ID = :id";
-
         MapSqlParameterSource namedParameter = new MapSqlParameterSource();
         namedParameter.addValue("id", id);
 
-        Optional<Board> ret = Optional.<Board>of((Board)jdbcTemplate.queryForObject(sql, namedParameter, new BeanPropertyRowMapper(Board.class)));
+        Optional<Board> ret = Optional.<Board>of((Board)jdbcTemplate.queryForObject(findBoardByID_SQL, namedParameter, new BeanPropertyRowMapper(Board.class)));
         return ret;
     }
 
     @Override
     public List<Board> getAllBoards() {
         // 쿼리 실행
-        String sql = "SELECT * FROM board WHERE BoardName != 'root';";
         List<Board> allBoards = jdbcTemplate.query(
-                sql,
+                getAllBoards_SQL,
                 BeanPropertyRowMapper.newInstance(Board.class)
         );
 
