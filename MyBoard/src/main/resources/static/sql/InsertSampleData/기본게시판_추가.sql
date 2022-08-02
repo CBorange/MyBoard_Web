@@ -1,38 +1,21 @@
-# Root Board Insert
-
 # Root 게시판
 # 베스트, 자유게시판, 커뮤니티, 건의사항, 기타
-INSERT INTO board(BoardName, BoardOwnerID, ID) VALUES('Root', 'admin', 0);
+INSERT INTO board(BoardName, BoardOwnerID, SortOrder)
+VALUES('베스트', 'admin', 0);
 
-# Root 게시판은 ID 0 으로 고정
-UPDATE board SET ID = 0 WHERE BoardName = 'Root';
+INSERT INTO board(BoardName, BoardOwnerID, SortOrder)
+VALUES('자유게시판', 'admin', 0);
 
-INSERT INTO board(BoardName, BoardOwnerID, ParentBoardID, SortOrder)
-SELECT '베스트', 'admin', ID, 0
-FROM board
-WHERE BoardName = 'Root';
+INSERT INTO board(BoardName, BoardOwnerID, SortOrder)
+VALUES('커뮤니티', 'admin', 0);
 
-INSERT INTO board(BoardName, BoardOwnerID, ParentBoardID, SortOrder)
-SELECT '자유게시판', 'admin', ID, 0
-FROM board
-WHERE BoardName = 'Root';
+INSERT INTO board(BoardName, BoardOwnerID, SortOrder)
+VALUES('건의사항', 'admin', 0);
 
-INSERT INTO board(BoardName, BoardOwnerID, ParentBoardID, SortOrder)
-SELECT '커뮤니티', 'admin', ID, 0
-FROM board
-WHERE BoardName = 'Root';
+INSERT INTO board(BoardName, BoardOwnerID, SortOrder)
+VALUES('기타', 'admin', 0);
 
-INSERT INTO board(BoardName, BoardOwnerID, ParentBoardID, SortOrder)
-SELECT '건의사항', 'admin', ID, 0
-FROM board
-WHERE BoardName = 'Root';
-
-INSERT INTO board(BoardName, BoardOwnerID, ParentBoardID, SortOrder)
-SELECT '기타', 'admin', ID, 0
-FROM board
-WHERE BoardName = 'Root';
-
-# Child Board Insert
+# 하위 게시판 INSERT
 
 # 베스트 게시판 하위 게시판 INSERT
 # 일일베스트 게시판

@@ -12,6 +12,9 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Optional;
@@ -38,7 +41,9 @@ public class JDBC_BoardRepository implements BoardRepository {
         MapSqlParameterSource namedParameter = new MapSqlParameterSource();
         namedParameter.addValue("id", id);
 
-        Optional<Board> ret = Optional.<Board>of((Board)jdbcTemplate.queryForObject(findBoardByID_SQL, namedParameter, new BeanPropertyRowMapper(Board.class)));
+        Optional<Board> ret = Optional.<Board>of((Board)jdbcTemplate.queryForObject(findBoardByID_SQL,
+                                                                                    namedParameter,
+                                                                                    new BoardRowMapper()));
         return ret;
     }
 
@@ -47,7 +52,7 @@ public class JDBC_BoardRepository implements BoardRepository {
         // 쿼리 실행
         List<Board> allBoards = jdbcTemplate.query(
                 getAllBoards_SQL,
-                BeanPropertyRowMapper.newInstance(Board.class)
+                new BoardRowMapper()
         );
 
         // 자식 Board 객체 맵핑
@@ -75,5 +80,23 @@ public class JDBC_BoardRepository implements BoardRepository {
             return false;
         }).collect(Collectors.toList());
         return rootBoards;
+    }
+
+    public class BoardRowMapper implements RowMapper<Board>{
+        @Override
+        public Board mapRow(ResultSet rs, int rowNum) throws SQLException {
+            Board result = new Board();
+            result.setID(rs.getInt("ID"));
+            result.setBoardName(rs.getString("BoardName"));
+            result.setBoardOwnerID(rs.getString("BoardOwnerID"));
+            result.setParentBoardID(rs.getInt("ParentBoardID"));
+            result.setBoardIcon(rs.getString("BoardIcon"));
+            result.setCreatedDay(rs.getTimestamp("CreatedDay").toLocalDateTime());
+            result.setModifyDay(rs.getTimestamp("ModifyDay").toLocalDateTime());
+            Timestamp deleteDayTS = rs.getTimestamp("DeleteDay");
+            if(deleteDayTS != null)
+                result.setDeleteDay(deleteDayTS.toLocalDateTime());
+            return result;
+        }
     }
 }
