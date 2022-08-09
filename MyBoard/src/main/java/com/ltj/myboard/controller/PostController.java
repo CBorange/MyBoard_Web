@@ -37,7 +37,7 @@ public class PostController extends LayoutControllerBase {
     }
 
     @GetMapping("/post")
-    public String post_Request(Model model, @RequestParam int id,
+    public String getPostPage(Model model, @RequestParam int id,
                                             @RequestParam(required = false, defaultValue = "1") int pageNumber){
         addLayoutModel_FragmentContent(model, "post.html", "post");
 
@@ -81,6 +81,21 @@ public class PostController extends LayoutControllerBase {
         model.addAttribute("endPageNoInCurSession", endPageNoInCurSession);
         model.addAttribute("startPageNoInCurSession", startPageNoInCurSession);
         model.addAttribute("pageCount", pageCount);
+
+        return LayoutViewPath;
+    }
+
+    @GetMapping("/writepost")
+    public String getWritePostPage(Model model, @RequestParam(required = true) int boardID){
+        addLayoutModel_FragmentContent(model, "write_post.html", "write_post");
+
+        // Board 정보 Model에 추가
+        Optional<Board> foundBoard = boardService.findBoardByID(boardID);
+        foundBoard.ifPresentOrElse((board) -> {
+            model.addAttribute("boardInfo", foundBoard.get());
+        }, () -> {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+        });
 
         return LayoutViewPath;
     }

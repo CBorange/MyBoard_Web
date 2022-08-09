@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <th:block th:fragment="write_post">
+        <div class="mx-auto container-lg top-div">
+            <!--게시글 작성 레이아웃 배치-->
+            <div class="d-flex flex-column" style="min-height: 800px;">
+                <!--게시판 타이틀 상단 여백-->
+                <div style="height: 70px;"></div>
+                <!--게시판 타이틀 표기-->
+                <h3 class="my-5">
+                    <span class="text-title" th:text="${boardInfo.getBoardName()}"></span>
+                </h3>
+                <div style="height: 30px;"></div>
+                <!--게시글 작성 Form-->
+                <form>
+                    <div class="d-flex flex-column">
+                        <input type="text" class="form-control" placeholder="제목을 입력해주세요.">
+                    </div>
+                    <div class="d-flex flex-row-reverse">
+                        <!--작성 제어 버튼-->
+                        <input type="submit" class="btn btn-info" value="작성">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </th:block>
+</html>
