@@ -40,14 +40,84 @@
                     <button class="ms-3 btn-primary">비추천</button>
                 </div>
                 <hr/>
-                <!--댓글 영역-->
+                <!--댓글 타이틀 영역-->
                 <div class="d-flex flex-row">
                     <img src="/img/chat.png" style="width: 30px; height: 30px;"/>
                     <h3 class="ms-2">
-                        <span>0</span>
+                        <span th:text="${commentCount}"></span>
                         <span> 개의 댓글</span>
-                    </h3>    
-                </div>  
+                    </h3>
+                </div>
+                <!--댓글 내용 영역-->
+                <div class="d-flex flex-column">
+                    <th:block th:each="comment : ${filteredCommentList}">
+                        <!--댓글 작성자 표시-->
+                        <div style="min-height: 30px; background-color:#c1c7c7; border-radius: 5px / 5px;">
+                            <span class="ms-2" th:text="${comment.getCommentData().getWriterID()}"></span>
+                        </div>
+                        <!--댓글 본문 내용-->
+                        <div class="ms-2">
+                            <span th:text="${comment.getCommentData().getContent()}"></span>
+                        </div>
+                        <div style="height: 20px;"></div>
+                        <!--대댓글 영역-->
+                        <th:block th:each="subComment : ${comment.getCommentData().getChildCommentSet()}">
+                            <div class="ms-4">
+                                <!--대댓글 작성자 표시-->
+                                <div style="min-height: 30px; background-color:#c1c7c7; border-radius: 5px / 5px;">
+                                    <span class="ms-2" th:text="${subComment.getWriterID()}"></span>
+                                </div>
+                                <!--대댓글 본문 내용-->
+                                <div class="ms-2">
+                                    <span th:text="${subComment.getContent()}"></span>
+                                </div>
+                            </div>
+                            <div style="height: 20px;"></div>
+                        </th:block>
+                    </th:block>
+                </div>
+                <!--댓글 리스트 / 하단 페이지 제어 구분선-->
+                <hr/>
+                <!--하단 페이지 제어 버튼-->
+                <div class="d-flex justify-content-center mt-auto">
+                    <nav aria-label="Page navigation example">
+                        <ul class="pagination">
+                            <!--이전 페이지로 이동 버튼, 현재 페이지가 1이 아닌 경우에만 표시-->
+                            <th:block th:unless="${curPageNo == 1}">
+                                <li class="page-item">
+                                    <a class="page-link" th:href="'/post?id=' + ${postInfo.getID()} + '&pageNumber=' + ${curPageNo - 1}">
+                                        <span><</span>
+                                    </a>
+                                </li>
+                            </th:block>
+                            <!--페이지 번호 버튼-->
+                            <th:block th:each="pageNo : ${#numbers.sequence(startPageNoInCurSession, endPageNoInCurSession)}">
+                                <th:block th:if="${pageNo == curPageNo}">
+                                    <li class="page-item active">
+                                        <a class="page-link" th:href="'/post?id=' + ${postInfo.getID()} + '&pageNumber=' + ${pageNo}">
+                                            <span th:text="${pageNo}"></span>
+                                        </a>
+                                    </li>
+                                </th:block>
+                                <th:block th:unless="${pageNo == curPageNo}">
+                                    <li class="page-item">
+                                        <a class="page-link" th:href="'/post?id=' + ${postInfo.getID()} + '&pageNumber=' + ${pageNo}">
+                                            <span th:text="${pageNo}"></span>
+                                        </a>
+                                    </li>
+                                </th:block>
+                            </th:block>
+                            <!--다음 페이지로 이동 버튼, 현재 페이지번호가 페이지 개수 와 같지 않은 경우에만 표시-->
+                            <th:block th:unless="${curPageNo == pageCount}">
+                                <li class="page-item">
+                                    <a class="page-link" th:href="'/post?id=' + ${postInfo.getID()} + '&pageNumber=' + ${curPageNo + 1}">
+                                        <span>></span>
+                                    </a>
+                                </li>
+                            </th:block>
+                        </ul>
+                    </nav>
+                </div>
             </div>
         </div>
     </th:block>

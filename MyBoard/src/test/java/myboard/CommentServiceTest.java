@@ -2,6 +2,7 @@ package myboard;
 
 import com.ltj.myboard.MyBoardApplication;
 import com.ltj.myboard.domain.Comment;
+import com.ltj.myboard.dto.post.OrderedComment;
 import com.ltj.myboard.service.CommentService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -19,12 +20,12 @@ public class CommentServiceTest {
     @Test
     public void 댓글조회(){
         // given
-        int postId = 1;
+        int postId = 11;
 
         // when
-        List<Comment> rets = commentService.findCommentInPost(postId);
+        List<OrderedComment> rets = commentService.findRootCommentInPost(postId);
 
         // then
-        Assertions.assertThat(rets.stream().count() > 0);
+        Assertions.assertThat(rets.stream().count()).isGreaterThan(0);
     }
 }

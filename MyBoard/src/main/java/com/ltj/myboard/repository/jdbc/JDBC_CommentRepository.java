@@ -1,9 +1,9 @@
 package com.ltj.myboard.repository.jdbc;
 
 import com.ltj.myboard.domain.Comment;
+import com.ltj.myboard.dto.post.OrderedComment;
 import com.ltj.myboard.repository.CommentRepository;
 import com.ltj.myboard.util.MyResourceLoader;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -25,65 +25,72 @@ public class JDBC_CommentRepository implements CommentRepository {
         jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 
         String daoName = "JDBC_CommentRepository";
-        findCommentByPostID_SQL = MyResourceLoader.loadProductionQuery(daoName, "findCommentByPostID.sql");
+        findCommentByPostID_SQL = MyResourceLoader.loadProductionQuery(daoName, "findOrderedCommentByPostID.sql");
     }
 
     @Override
-    public List<Comment> findCommentByPostID(int postID){
+    public List<OrderedComment> findOrderedCommentByPostID(int postID){
         MapSqlParameterSource namedParameter = new MapSqlParameterSource();
         namedParameter.addValue("postID", postID);
 
         // 쿼리 실행
-        List<Comment> comments = jdbcTemplate.query(
+        List<OrderedComment> comments = jdbcTemplate.query(
                 findCommentByPostID_SQL,
                 namedParameter,
-                new CommentRowMapper()
+                new OrderedCommentRowMapper()
         );
 
         return comments;
     }
 
     @Override
-    public List<Comment> findAllRootComment(int postID) {
-        List<Comment> comments = findCommentByPostID(postID);
+    public List<OrderedComment> findOrderedRootComment(int postID) {
+        List<OrderedComment> comments = findOrderedCommentByPostID(postID);
 
         // Root 댓글만 취합
-        List<Comment> rootComments = comments.stream().filter(target -> {
-            if(target.getParentCommentID() == 0)
+        List<OrderedComment> rootComments = comments.stream().filter(target -> {
+            if(target.getCommentData().getParentCommentID() == 0)
                 return true;
             return false;
         }).collect(Collectors.toList());
 
         // 자식 Comment 객체 맵핑
-        for(Comment comment : rootComments){
-            List<Comment> childComments = comments.stream().filter(target -> {
-                if(target.getParentCommentID() == comment.getID())
+        for(OrderedComment comment : rootComments){
+            List<OrderedComment> childComments = comments.stream().filter(target -> {
+                if(target.getCommentData().getParentCommentID() == comment.getCommentData().getID())
                     return true;
                 return false;
             }).collect(Collectors.toList());
 
-            comment.addChildComment(childComments);
+            for (OrderedComment childComment : childComments){
+                comment.getCommentData().addChildComment(childComment.getCommentData());
+            }
         }
 
         return rootComments;
     }
 
-    public class CommentRowMapper implements RowMapper<Comment>{
+    public class OrderedCommentRowMapper implements RowMapper<OrderedComment>{
         @Override
-        public Comment mapRow(ResultSet rs, int rowNum) throws SQLException {
-            Comment result = new Comment();
-            result.setID(rs.getInt("ID"));
-            result.setPostID(rs.getInt("PostID"));
-            result.setParentCommentID(rs.getInt("ParentCommentID"));
-            result.setWriterID(rs.getString("WriterID"));
-            result.setContent(rs.getString("Content"));
-            result.setGoodCount(rs.getInt("GoodCount"));
-            result.setBadCount(rs.getInt("BadCount"));
-            result.setCreatedDay(rs.getTimestamp("CreatedDay").toLocalDateTime());
-            result.setModifyDay(rs.getTimestamp("ModifyDay").toLocalDateTime());
+        public OrderedComment mapRow(ResultSet rs, int rowNum) throws SQLException {
+            OrderedComment result = new OrderedComment();
+            result.setOrderedCommentNo(rs.getInt("OrderedCommentNo"));
+
+            Comment commentData = new Comment();
+            commentData.setID(rs.getInt("ID"));
+            commentData.setPostID(rs.getInt("PostID"));
+            commentData.setParentCommentID(rs.getInt("ParentCommentID"));
+            commentData.setWriterID(rs.getString("WriterID"));
+            commentData.setContent(rs.getString("Content"));
+            commentData.setGoodCount(rs.getInt("GoodCount"));
+            commentData.setBadCount(rs.getInt("BadCount"));
+            commentData.setCreatedDay(rs.getTimestamp("CreatedDay").toLocalDateTime());
+            commentData.setModifyDay(rs.getTimestamp("ModifyDay").toLocalDateTime());
             Timestamp deleteDayTS = rs.getTimestamp("DeleteDay");
             if(deleteDayTS != null)
-                result.setDeleteDay(deleteDayTS.toLocalDateTime());
+                commentData.setDeleteDay(deleteDayTS.toLocalDateTime());
+
+            result.setCommentData(commentData);
             return result;
         }
     }

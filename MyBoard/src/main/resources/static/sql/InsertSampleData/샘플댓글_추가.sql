@@ -6,7 +6,7 @@ CREATE PROCEDURE loopSampleCommentInsert()
 BEGIN
     DECLARE i INT;
     SET i = 1;
-    WHILE (i <= 10) DO
+    WHILE (i <= 300) DO
             INSERT INTO comment(PostID, WriterID, Content)
             SELECT p.ID, "admin", CONCAT("테스트 Root 댓글 입력 ", i)
             FROM post p

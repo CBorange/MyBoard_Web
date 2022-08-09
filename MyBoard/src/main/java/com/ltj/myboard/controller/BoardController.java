@@ -3,6 +3,7 @@ import com.ltj.myboard.domain.Board;
 import com.ltj.myboard.dto.board.FilteredPost;
 import com.ltj.myboard.service.BoardService;
 import com.ltj.myboard.service.PostService;
+import com.ltj.myboard.util.Paginator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,8 +17,8 @@ import java.util.Optional;
 public class BoardController extends LayoutControllerBase {
     private final BoardService boardService;
     private final PostService postService;
-    private final int MAX_VISIBLE_SESSION_COUNT = 9;
-    private final int MAX_VISIBLE_POST_COUNT = 25;
+    private final int MAX_VISIBLE_PAGE_COUNT_INSESSION = 9;
+    private final int MAX_VISIBLE_POST_COUNT_INPAGE = 25;
 
     @Autowired
     public BoardController(BoardService boardService, PostService postService){
@@ -44,17 +45,18 @@ public class BoardController extends LayoutControllerBase {
         List<FilteredPost> postList = postService.findPost_UserParam(id, searchMethod, searchCondition, sortOrderTarget, sortMethod);
 
         // 페이지 개수 구하기
-        int pageCount = postService.getPageCountOnPostList(postList, MAX_VISIBLE_POST_COUNT);
+        long postCount = postList.stream().count();
+        int pageCount = Paginator.getPageCount(postCount, MAX_VISIBLE_POST_COUNT_INPAGE);
 
         // 현재 페이지의 세션 구하기
-        int curSession = postService.getCurSessionByCurPage(pageNumber, MAX_VISIBLE_SESSION_COUNT);
-        int endPageNoInCurSession = curSession * MAX_VISIBLE_SESSION_COUNT;
-        int startPageNoInCurSession = endPageNoInCurSession - (MAX_VISIBLE_SESSION_COUNT - 1);
+        int curSession = Paginator.getCurSessionByCurPage(pageNumber, MAX_VISIBLE_PAGE_COUNT_INSESSION);
+        int endPageNoInCurSession = curSession * MAX_VISIBLE_PAGE_COUNT_INSESSION;
+        int startPageNoInCurSession = endPageNoInCurSession - (MAX_VISIBLE_PAGE_COUNT_INSESSION - 1);
         if(pageCount < endPageNoInCurSession) endPageNoInCurSession = pageCount;
 
 
         // 검색된 게시글 리스트에서 현재 페이지에 해당하는 부분만 filtering
-        List<FilteredPost> filteredPostList = postService.filterPostDataOnCurPage(postList, pageCount, pageNumber, MAX_VISIBLE_POST_COUNT);
+        List<FilteredPost> filteredPostList = postService.filterPostDataInCurPage(postList, pageNumber, MAX_VISIBLE_POST_COUNT_INPAGE);
         model.addAttribute("filteredPostList", filteredPostList);
 
         // 현재 페이지 정보 Model에 추가
