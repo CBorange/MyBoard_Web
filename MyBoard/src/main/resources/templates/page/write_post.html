@@ -15,6 +15,7 @@
                 <form>
                     <div class="d-flex flex-column">
                         <input type="text" class="form-control" placeholder="제목을 입력해주세요.">
+                        <div id="editor"></div>
                     </div>
                     <div class="d-flex flex-row-reverse">
                         <!--작성 제어 버튼-->
@@ -23,5 +24,13 @@
                 </form>
             </div>
         </div>
+        <!--에디터 소스 CDN 다운로드-->
+        <script src="https://cdn.ckeditor.com/ckeditor5/35.0.1/classic/ckeditor.js"></script>
+        <script src="/js/write_post.js"></script>
+        <style>
+            .ck-editor__editable{
+                min-height:600px;
+            }
+        </style>
     </th:block>
 </html>
