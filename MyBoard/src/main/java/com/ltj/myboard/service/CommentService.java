@@ -4,15 +4,14 @@ import com.ltj.myboard.domain.Comment;
 import com.ltj.myboard.dto.board.FilteredPost;
 import com.ltj.myboard.dto.post.OrderedComment;
 import com.ltj.myboard.repository.CommentRepository;
+import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+@RequiredArgsConstructor
 public class CommentService {
     private final CommentRepository commentRepository;
-    public CommentService(CommentRepository commentRepository){
-        this.commentRepository = commentRepository;
-    }
 
     public List<OrderedComment> findRootCommentInPost(int postID){
         List<OrderedComment> rets = commentRepository.findOrderedRootComment(postID);

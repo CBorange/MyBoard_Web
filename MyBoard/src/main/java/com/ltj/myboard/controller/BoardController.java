@@ -4,6 +4,7 @@ import com.ltj.myboard.dto.board.FilteredPost;
 import com.ltj.myboard.service.BoardService;
 import com.ltj.myboard.service.PostService;
 import com.ltj.myboard.util.Paginator;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,17 +15,12 @@ import java.util.List;
 import java.util.Optional;
 
 @Controller
+@RequiredArgsConstructor
 public class BoardController extends LayoutControllerBase {
     private final BoardService boardService;
     private final PostService postService;
     private final int MAX_VISIBLE_PAGE_COUNT_INSESSION = 9;
     private final int MAX_VISIBLE_POST_COUNT_INPAGE = 25;
-
-    @Autowired
-    public BoardController(BoardService boardService, PostService postService){
-        this.boardService = boardService;
-        this.postService = postService;
-    }
 
     @GetMapping("/board")
     public String board_Request(Model model, @RequestParam() int id,

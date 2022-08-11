@@ -4,6 +4,7 @@ import com.ltj.myboard.domain.Post;
 import com.ltj.myboard.dto.board.FilteredPost;
 import com.ltj.myboard.repository.FilteredPostRepository;
 import com.ltj.myboard.repository.PostRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
@@ -11,16 +12,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@RequiredArgsConstructor
 public class PostService{
 
     private final PostRepository postRepository;
     private final FilteredPostRepository filteredPostRepository;
-
-    @Autowired
-    public PostService(PostRepository postRepository, FilteredPostRepository filteredPostRepository){
-        this.postRepository = postRepository;
-        this.filteredPostRepository = filteredPostRepository;
-    }
 
     public Optional<Post> findPostByID(int postID) {
         return postRepository.findPostByID(postID);

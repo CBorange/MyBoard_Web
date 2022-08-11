@@ -8,12 +8,15 @@ import com.ltj.myboard.service.BoardService;
 import com.ltj.myboard.service.CommentService;
 import com.ltj.myboard.service.PostService;
 import com.ltj.myboard.util.Paginator;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -21,6 +24,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Controller
+@RequiredArgsConstructor
 public class PostController extends LayoutControllerBase {
     private final BoardService boardService;
     private final PostService postService;
@@ -28,13 +32,6 @@ public class PostController extends LayoutControllerBase {
 
     private final int MAX_VISIBLE_PAGE_COUNT_INSESSION = 9;
     private final int MAX_VISIBLE_COMMENT_COUNT_INPAGE = 30;
-
-    @Autowired
-    public PostController(BoardService boardService, PostService postService, CommentService commentService){
-        this.boardService = boardService;
-        this.postService = postService;
-        this.commentService = commentService;
-    }
 
     @GetMapping("/post")
     public String getPostPage(Model model, @RequestParam int id,
@@ -98,5 +95,13 @@ public class PostController extends LayoutControllerBase {
         });
 
         return LayoutViewPath;
+    }
+
+    @PostMapping("/submitpost")
+    public String submitPost(@RequestParam() String content,
+                             @RequestParam() int boardID){
+
+        String redirectURI = String.format("redirect:/board?id=%d", boardID);
+        return redirectURI;
     }
 }
