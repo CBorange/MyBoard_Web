@@ -28,7 +28,7 @@ public class BoardController extends LayoutControllerBase {
                                              @RequestParam(required = false, defaultValue = "Title") String searchMethod,
                                              @RequestParam(required = false, defaultValue = "") String searchCondition,
                                              @RequestParam(required = false, defaultValue = "ModifyDay") String sortOrderTarget,
-                                             @RequestParam(required = false, defaultValue = "ASC") String sortMethod){
+                                             @RequestParam(required = false, defaultValue = "DESC") String sortMethod){
         addLayoutModel_FragmentContent(model,"board.html","board");
 
         // Board 정보 Model에 추가

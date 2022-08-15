@@ -35,8 +35,6 @@ public class JDBC_FilteredPostRepository implements FilteredPostRepository {
         MapSqlParameterSource namedParameter = new MapSqlParameterSource();
         namedParameter.addValue("boardID", boardID);
         namedParameter.addValue("condition", "%" + condition_title + "%");
-        namedParameter.addValue("sortColumn", sortTargetColumn);
-        namedParameter.addValue("orderByMethod", orderByMethod);
 
         List<FilteredPost> filteredPostList = jdbcTemplate.query(
           findPost_UseSearch_Title_SQL,

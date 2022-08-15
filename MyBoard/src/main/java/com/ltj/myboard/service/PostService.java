@@ -2,17 +2,21 @@ package com.ltj.myboard.service;
 
 import com.ltj.myboard.domain.Post;
 import com.ltj.myboard.dto.board.FilteredPost;
+import com.ltj.myboard.dto.post.SubmitPostData;
 import com.ltj.myboard.repository.FilteredPostRepository;
 import com.ltj.myboard.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
+@Slf4j
 public class PostService{
 
     private final PostRepository postRepository;
@@ -65,5 +69,13 @@ public class PostService{
         }).collect(Collectors.toList());
 
         return filteredPostList;
+    }
+
+    public Post insertPost(String title, String content, int boardID, String writerID) throws SQLException {
+        int generatedRowKey = postRepository.insertPost(title, content, boardID, writerID);
+        Optional<Post> newPost = findPostByID(generatedRowKey);
+        return newPost.orElseThrow(() -> {
+            return new SQLException("PostService : insertPost Error, can't not found from generatedKey = " + generatedRowKey);
+        });
     }
 }

@@ -9,6 +9,7 @@ import com.ltj.myboard.service.CommentService;
 import com.ltj.myboard.service.PostService;
 import com.ltj.myboard.util.Paginator;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
@@ -20,11 +21,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
 @Controller
 @RequiredArgsConstructor
+@Slf4j
 public class PostController extends LayoutControllerBase {
     private final BoardService boardService;
     private final PostService postService;
@@ -98,10 +101,19 @@ public class PostController extends LayoutControllerBase {
     }
 
     @PostMapping("/submitpost")
-    public String submitPost(@RequestParam() String content,
-                             @RequestParam() int boardID){
+    public String submitPost(@RequestParam() String title,
+                             @RequestParam() String content,
+                             @RequestParam() int boardID,
+                             @RequestParam() String writerID){
 
-        String redirectURI = String.format("redirect:/board?id=%d", boardID);
-        return redirectURI;
+        try {
+            Post insertedPost = postService.insertPost(title, content, boardID, writerID);
+            String redirectURI = String.format("redirect:/post?id=%d", insertedPost.getID());
+            return redirectURI;
+        } catch (SQLException e) {
+            log.error(e.getMessage());
+            e.printStackTrace();
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }

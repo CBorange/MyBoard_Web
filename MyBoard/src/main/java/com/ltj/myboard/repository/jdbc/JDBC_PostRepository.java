@@ -2,17 +2,24 @@ package com.ltj.myboard.repository.jdbc;
 
 import com.ltj.myboard.domain.Board;
 import com.ltj.myboard.domain.Post;
+import com.ltj.myboard.dto.post.SubmitPostData;
 import com.ltj.myboard.repository.PostRepository;
 import com.ltj.myboard.util.MyResourceLoader;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 
 import javax.sql.DataSource;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 public class JDBC_PostRepository implements PostRepository {
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
@@ -20,6 +27,7 @@ public class JDBC_PostRepository implements PostRepository {
     private final String findPostByID_SQL;
     private final String findAllPostByBoardID_SQL;
     private final String findPostByWriterID_SQL;
+    private final String insertPost_SQL;
 
     @Autowired
     public JDBC_PostRepository(DataSource dataSource){
@@ -29,6 +37,7 @@ public class JDBC_PostRepository implements PostRepository {
         findPostByID_SQL = MyResourceLoader.loadProductionQuery(daoName, "findPostByID.sql");
         findAllPostByBoardID_SQL = MyResourceLoader.loadProductionQuery(daoName, "findAllPostByBoardID.sql");
         findPostByWriterID_SQL = MyResourceLoader.loadProductionQuery(daoName, "findPostByWriterID.sql");
+        insertPost_SQL = MyResourceLoader.loadProductionQuery(daoName, "insertPost.sql");
     }
 
     @Override
@@ -66,5 +75,20 @@ public class JDBC_PostRepository implements PostRepository {
                 BeanPropertyRowMapper.newInstance(Post.class)
         );
         return postList;
+    }
+
+    public int insertPost(String title, String content, int boardID, String writerID) {
+        // 쿼리 실행
+        MapSqlParameterSource namedParameter = new MapSqlParameterSource();
+        namedParameter.addValue("boardID", boardID);
+        namedParameter.addValue("writerID", writerID);
+        namedParameter.addValue("title", title);
+        namedParameter.addValue("content", content);
+
+        KeyHolder idKeyHolder = new GeneratedKeyHolder();
+
+        jdbcTemplate.update(insertPost_SQL, namedParameter, idKeyHolder, new String[]{"ID"});
+        Number generatedID = idKeyHolder.getKey();
+        return generatedID.intValue();
     }
 }
