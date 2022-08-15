@@ -20,7 +20,7 @@ public class Comment {
 
     private int PostID;
 
-    private int ParentCommentID;
+    private Integer ParentCommentID;
 
     private String WriterID;
 

@@ -4,15 +4,19 @@ import com.ltj.myboard.domain.Comment;
 import com.ltj.myboard.dto.post.OrderedComment;
 import com.ltj.myboard.repository.CommentRepository;
 import com.ltj.myboard.util.MyResourceLoader;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 
 import javax.sql.DataSource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class JDBC_CommentRepository implements CommentRepository {
@@ -20,12 +24,16 @@ public class JDBC_CommentRepository implements CommentRepository {
     private final NamedParameterJdbcTemplate jdbcTemplate;
 
     private final String  findCommentByPostID_SQL;
+    private final String findCommentByID_SQL;
+    private final String insertComment_SQL;
 
     public JDBC_CommentRepository(DataSource dataSource){
         jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 
         String daoName = "JDBC_CommentRepository";
         findCommentByPostID_SQL = MyResourceLoader.loadProductionQuery(daoName, "findOrderedCommentByPostID.sql");
+        findCommentByID_SQL = MyResourceLoader.loadProductionQuery(daoName, "findCommentByID.sql");
+        insertComment_SQL = MyResourceLoader.loadProductionQuery(daoName, "insertComment.sql");
     }
 
     @Override
@@ -68,6 +76,31 @@ public class JDBC_CommentRepository implements CommentRepository {
         }
 
         return rootComments;
+    }
+
+    @Override
+    public Optional<Comment> findCommentByID(int commentID) {
+        MapSqlParameterSource namedParameter = new MapSqlParameterSource();
+        namedParameter.addValue("commentID", commentID);
+
+        Optional<Comment> ret = Optional.of((Comment)jdbcTemplate.queryForObject(findCommentByID_SQL, namedParameter, new BeanPropertyRowMapper(Comment.class)));
+        return ret;
+    }
+
+    @Override
+    public int insertComment(int postID, Integer parentCommentID, String writerID, String content) {
+        MapSqlParameterSource namedParameter = new MapSqlParameterSource();
+
+        namedParameter.addValue("postID", postID);
+        namedParameter.addValue("parentCommentID", parentCommentID);
+        namedParameter.addValue("writerID", writerID);
+        namedParameter.addValue("content", content);
+
+        KeyHolder generatedIDHolder = new GeneratedKeyHolder();
+
+        jdbcTemplate.update(insertComment_SQL, namedParameter, generatedIDHolder, new String[]{"ID"});
+        Number generatedID = generatedIDHolder.getKey();
+        return generatedID.intValue();
     }
 
     public class OrderedCommentRowMapper implements RowMapper<OrderedComment>{

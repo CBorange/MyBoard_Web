@@ -1,7 +1,6 @@
 package com.ltj.myboard.controller;
 
 import com.ltj.myboard.domain.Board;
-import com.ltj.myboard.domain.Comment;
 import com.ltj.myboard.domain.Post;
 import com.ltj.myboard.dto.post.OrderedComment;
 import com.ltj.myboard.service.BoardService;
@@ -116,4 +115,6 @@ public class PostController extends LayoutControllerBase {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+
 }

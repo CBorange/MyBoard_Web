@@ -6,7 +6,9 @@ import com.ltj.myboard.dto.post.OrderedComment;
 import com.ltj.myboard.repository.CommentRepository;
 import lombok.RequiredArgsConstructor;
 
+import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -33,5 +35,13 @@ public class CommentService {
         }).collect(Collectors.toList());
 
         return filteredCommentList;
+    }
+
+    public Comment insertComment( int postID, Integer parentCommentID, String writerID, String content) throws SQLException {
+        int generatedRowKey = commentRepository.insertComment(postID, parentCommentID, writerID, content);
+        Optional<Comment> newComment = commentRepository.findCommentByID(generatedRowKey);
+        return newComment.orElseThrow(() -> {
+           return new SQLException("CommentService : insertComment Error, can't not found from generatedKey = " + generatedRowKey);
+        });
     }
 }
