@@ -20,13 +20,12 @@ public class CommentController {
 
     @PostMapping("/submitcomment")
     public String submitComment(@RequestParam() int postID,
-                                @RequestParam() Integer parentCommentID,
+                                @RequestParam(required = false) Integer parentCommentID,
                                 @RequestParam() String writerID,
-                                @RequestParam() String content,
-                                @RequestParam() int lastPageNumber){
+                                @RequestParam() String content){
         try {
             Comment insertedComment = commentService.insertComment(postID, parentCommentID, writerID, content);
-            String redirectURI = String.format("redirect:/post?id=%d&pageNumber=%d", postID, lastPageNumber);
+            String redirectURI = String.format("redirect:/post?id=%d", postID);
             return redirectURI;
         } catch (SQLException e) {
             log.error(e.getMessage());
