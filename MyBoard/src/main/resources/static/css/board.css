@@ -1,0 +1,28 @@
+@media (min-width: 550px) {
+    .table_column_title{
+        width: 70%;
+    }
+    .table_column_writer{
+        width: 10%;
+    }
+    .table_column_good{
+        width: 10%;
+    }
+    .table_column_date{
+        width: 10%;
+    }
+}
+@media (max-width: 551px) {
+    .table_column_title{
+        width: 50%;
+    }
+    .table_column_writer{
+        width: 10%;
+    }
+    .table_column_good{
+        width: 20%;
+    }
+    .table_column_date{
+        width: 20%;
+    }
+}
