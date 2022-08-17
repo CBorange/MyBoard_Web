@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://thymeleaf.org">
     <!--Layout Head-->
-    <div th:replace="/fragments/head.html :: head"></div>
+    <div th:replace="fragments/head.html :: head"></div>
     <!--Layout Nav Header-->
-    <div th:replace="/fragments/topnav.html :: topnav"></div>
+    <div th:replace="fragments/topnav.html :: topnav"></div>
     <!--Layout Content(Page)-->
-    <div th:replace="@{'/page/' + ${layoutContent_Page}} :: ${layoutContent_Fragment}"></div>
+    <div th:replace="@{'page/' + ${layoutContent_Page}} :: ${layoutContent_Fragment}"></div>
     <!--Layout Footer-->
-    <div th:replace="/fragments/footer.html :: footer"></div>
+    <div th:replace="fragments/footer.html :: footer"></div>
     <!--Sidebar(Collapsed)-->
-    <div th:replace="/fragments/sidebar.html :: sidebar"></div>
+    <div th:replace="fragments/sidebar.html :: sidebar"></div>
 </html>

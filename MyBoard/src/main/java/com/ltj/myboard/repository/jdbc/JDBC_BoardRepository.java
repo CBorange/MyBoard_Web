@@ -4,6 +4,8 @@ import com.ltj.myboard.domain.Board;
 import com.ltj.myboard.repository.BoardRepository;
 import com.ltj.myboard.util.MyResourceLoader;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -24,6 +26,9 @@ import java.util.stream.Collectors;
 public class JDBC_BoardRepository implements BoardRepository {
     private final NamedParameterJdbcTemplate jdbcTemplate;
 
+    @Autowired
+    private ResourceLoader resourceLoader;
+
     private final String findBoardByID_SQL;
     private final String getAllBoards_SQL;
 
@@ -32,6 +37,7 @@ public class JDBC_BoardRepository implements BoardRepository {
         jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 
         String daoName = "JDBC_BoardRepository";
+
         findBoardByID_SQL = MyResourceLoader.loadProductionQuery(daoName, "findBoardByID.sql");
         getAllBoards_SQL = MyResourceLoader.loadProductionQuery(daoName, "getAllBoards.sql");
     }
