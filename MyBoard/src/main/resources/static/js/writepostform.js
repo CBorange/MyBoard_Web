@@ -1,9 +1,9 @@
-let editor;
+let editorRef;
 
 ClassicEditor
     .create( document.querySelector( '#editor' ))
     .then( newEditor => {
-        editor = newEditor;
+        editorRef = newEditor;
     } )
     .catch( error => {
         console.error( error );
@@ -11,5 +11,5 @@ ClassicEditor
 
 function onSubmitPost() {
     // editor Data 얻어냄
-    const editorData = editor.getData();
+    const editorData = editorRef.getData();
 }

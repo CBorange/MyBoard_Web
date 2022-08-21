@@ -84,9 +84,9 @@ public class PostController extends LayoutControllerBase {
         return LayoutViewPath;
     }
 
-    @GetMapping("/writepost")
+    @GetMapping("/writepostform")
     public String getWritePostPage(Model model, @RequestParam(required = true) int boardID){
-        addLayoutModel_FragmentContent(model, "write_post.html", "write_post");
+        addLayoutModel_FragmentContent(model, "writepostform.html", "writepostform");
 
         // Board 정보 Model에 추가
         Optional<Board> foundBoard = boardService.findBoardByID(boardID);

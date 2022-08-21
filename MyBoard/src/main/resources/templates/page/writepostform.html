@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-    <th:block th:fragment="write_post">
+    <th:block th:fragment="writepostform">
         <div class="mx-auto container-lg top-div">
             <!--게시글 작성 레이아웃 배치-->
             <div class="d-flex flex-column" style="min-height: 800px;">
@@ -27,12 +27,8 @@
             </div>
         </div>
         <!--에디터 소스 CDN 다운로드-->
-        <script src="https://cdn.ckeditor.com/ckeditor5/35.0.1/classic/ckeditor.js"></script>
-        <script src="/js/write_post.js"></script>
-        <style>
-            .ck-editor__editable{
-                min-height:600px;
-            }
-        </style>
+        <script src="/js/ckeditor5-35.0/build/ckeditor.js"></script>
+        <script src="/js/writepostform.js"></script>
+        <link rel="stylesheet" href="/css/writepostform.css">
     </th:block>
 </html>
