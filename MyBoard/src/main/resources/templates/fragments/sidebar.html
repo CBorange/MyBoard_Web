@@ -15,7 +15,7 @@
                         <!--Section2 : 게시판 리스트-->
                         <th:block th:each="rootBoard : ${rootBoards}">
                             <th:block th:if="${rootBoard.getChildBoardCount().equals(0)}">
-                                <a class="navlinkitem mx-3" th:href="'/board?id=' + ${rootBoard.getID()}">
+                                <a class="navlinkitem mx-3" th:href="'/board/' + ${rootBoard.getID()}">
                                     <span th:text="${rootBoard.BoardName}"></span>
                                 </a>
                             </th:block>
@@ -27,7 +27,7 @@
                                     </a>
                                     <ul class="dropdown-menu" aria-lebelledby="dropdownMenuLink-0">
                                         <th:block th:each="childBoard : ${rootBoard.getChildBoardSet()}">
-                                            <li><a class="dropdown-item" th:href="'/board?id=' + ${childBoard.getID()}">
+                                            <li><a class="dropdown-item" th:href="'/board/' + ${childBoard.getID()}">
                                                 <span th:text="${childBoard.BoardName}"></span></a></li>
                                         </th:block>
                                     </ul>

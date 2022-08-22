@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
@@ -22,8 +23,8 @@ public class BoardController extends LayoutControllerBase {
     private final int MAX_VISIBLE_PAGE_COUNT_INSESSION = 9;
     private final int MAX_VISIBLE_POST_COUNT_INPAGE = 25;
 
-    @GetMapping("/board")
-    public String board_Request(Model model, @RequestParam() int id,
+    @GetMapping("/board/{id}")
+    public String board_Request(Model model, @PathVariable("id") int id,
                                              @RequestParam(required = false, defaultValue = "1") int pageNumber,
                                              @RequestParam(required = false, defaultValue = "Title") String searchMethod,
                                              @RequestParam(required = false, defaultValue = "") String searchCondition,
