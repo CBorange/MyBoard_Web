@@ -8,7 +8,8 @@ import lombok.ToString;
 @Setter
 @ToString
 public class SubmitPostData {
-    private String postName;
+    private String title;
     private String content;
     private int boardID;
+    private String writerID;
 }

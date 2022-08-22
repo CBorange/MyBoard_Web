@@ -27,7 +27,7 @@
                     <th:block th:each="filteredPost : ${filteredPostList}">
                     <tr>
                         <td>
-                            <a th:href="'/post?id=' + ${filteredPost.getPostData().getID()}">
+                            <a th:href="'/post/' + ${filteredPost.getPostData().getID()}">
                                 <span th:text="${filteredPost.getPostData().getTitle()}"></span>
                             </a>
                         </td>

@@ -3,6 +3,7 @@ package com.ltj.myboard.controller;
 import com.ltj.myboard.domain.Board;
 import com.ltj.myboard.domain.Post;
 import com.ltj.myboard.dto.post.OrderedComment;
+import com.ltj.myboard.dto.post.SubmitPostData;
 import com.ltj.myboard.service.BoardService;
 import com.ltj.myboard.service.CommentService;
 import com.ltj.myboard.service.PostService;
@@ -14,11 +15,10 @@ import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.RedirectView;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -35,8 +35,8 @@ public class PostController extends LayoutControllerBase {
     private final int MAX_VISIBLE_PAGE_COUNT_INSESSION = 9;
     private final int MAX_VISIBLE_COMMENT_COUNT_INPAGE = 30;
 
-    @GetMapping("/post")
-    public String getPostPage(Model model, @RequestParam int id,
+    @GetMapping("/post/{id}")
+    public String getPostPage(Model model, @PathVariable("id") int id,
                                             @RequestParam(required = false, defaultValue = "1") int pageNumber){
         addLayoutModel_FragmentContent(model, "post.html", "post");
 
@@ -99,16 +99,15 @@ public class PostController extends LayoutControllerBase {
         return LayoutViewPath;
     }
 
-    @PostMapping("/submitpost")
-    public String submitPost(@RequestParam() String title,
-                             @RequestParam() String content,
-                             @RequestParam() int boardID,
-                             @RequestParam() String writerID){
-
+    @PutMapping("/post")
+    public RedirectView submitPost(@RequestBody SubmitPostData submitPostData){
         try {
-            Post insertedPost = postService.insertPost(title, content, boardID, writerID);
-            String redirectURI = String.format("redirect:/post?id=%d", insertedPost.getID());
-            return redirectURI;
+            Post insertedPost = postService.insertPost(submitPostData.getTitle(), submitPostData.getContent(),
+                    submitPostData.getBoardID(), submitPostData.getWriterID());
+            String redirectURI = String.format("redirect:/post/%d", insertedPost.getID());
+            RedirectView redirectView = new RedirectView();
+            redirectView.setUrl(redirectURI);
+            return redirectView;
         } catch (SQLException e) {
             log.error(e.getMessage());
             e.printStackTrace();
