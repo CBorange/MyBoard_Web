@@ -12,7 +12,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -100,14 +102,15 @@ public class PostController extends LayoutControllerBase {
     }
 
     @PutMapping("/post")
-    public RedirectView submitPost(@RequestBody SubmitPostData submitPostData){
+    public ResponseEntity submitPost(@RequestBody SubmitPostData submitPostData){
         try {
             Post insertedPost = postService.insertPost(submitPostData.getTitle(), submitPostData.getContent(),
                     submitPostData.getBoardID(), submitPostData.getWriterID());
-            String redirectURI = String.format("redirect:/post/%d", insertedPost.getID());
-            RedirectView redirectView = new RedirectView();
-            redirectView.setUrl(redirectURI);
-            return redirectView;
+            String redirectURL = String.format("/post/%d", insertedPost.getID());
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Location", redirectURL);
+            return new ResponseEntity<String>(headers, HttpStatus.SEE_OTHER);
         } catch (SQLException e) {
             log.error(e.getMessage());
             e.printStackTrace();

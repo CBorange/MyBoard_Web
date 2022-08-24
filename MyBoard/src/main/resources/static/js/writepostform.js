@@ -18,9 +18,7 @@ function onSubmitPost() {
         boardID: writePostForm.elements['boardID'].value,
         writerID: writePostForm.elements['writerID'].value,
     };
-    console.log(sendData);
-
-    const url = 'http://localhost:8080/post';
+    const url = makeURL('/post');
     fetch(url, {
         method: 'PUT',
         headers: {
@@ -28,9 +26,13 @@ function onSubmitPost() {
         },
         body: JSON.stringify(sendData)
     })
-    .then((response) => response.json())
-    .then((data) => {
-        console.log('onSubmitPost 성공 : ', data);
+    /*.then((response) => {
+        response.json()
+    })*/
+    .then((response) => {
+        console.log('onSubmitPost 성공 : ', response);
+        if(response.redirected)
+            window.location.href = response.url;
     })
     .catch((error) => {
         console.log('onSubmitPost 실패 : ', error);
