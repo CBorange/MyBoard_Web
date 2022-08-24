@@ -12,3 +12,35 @@ function onClickShowReplyForm(id){
     else
         subReplyForm.style.display = "none";
 }
+
+function onSubmitComment(rootCommentID, isSubComment) {
+    var formID = "#subReplyForm";
+    if(isSubComment)
+        formID = "#subReplyForm_" + rootCommentID;
+    const writeCommentForm = document.querySelector(formID);
+
+    const sendData = {
+        postID: writeCommentForm.elements['postID'],
+        parentCommentID: {
+            rootCommentID
+        },
+        writerID: writeCommentForm.elements['writerID'],
+        content: writeCommentForm.elements['content'],
+    };
+    const url = makeURL('/comment');
+    fetch(url, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(sendData)
+    })
+    .then((response) => {
+        console.log('onSubmitComment 성공 : ', response);
+        if(response.redirected)
+            window.location.href = response.url;
+    })
+    .catch((error) => {
+        console.log('onSubmitComment 실패 : ', error);
+    })
+}

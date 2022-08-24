@@ -26,9 +26,6 @@ function onSubmitPost() {
         },
         body: JSON.stringify(sendData)
     })
-    /*.then((response) => {
-        response.json()
-    })*/
     .then((response) => {
         console.log('onSubmitPost 성공 : ', response);
         if(response.redirected)
