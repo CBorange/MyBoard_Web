@@ -20,12 +20,10 @@ function onSubmitComment(rootCommentID, isSubComment) {
     const writeCommentForm = document.querySelector(formID);
 
     const sendData = {
-        postID: writeCommentForm.elements['postID'],
-        parentCommentID: {
-            rootCommentID
-        },
-        writerID: writeCommentForm.elements['writerID'],
-        content: writeCommentForm.elements['content'],
+        postID: writeCommentForm.elements['postID'].value,
+        parentCommentID: rootCommentID,
+        writerID: writeCommentForm.elements['writerID'].value,
+        content: writeCommentForm.elements['content'].value,
     };
     const url = makeURL('/comment');
     fetch(url, {
