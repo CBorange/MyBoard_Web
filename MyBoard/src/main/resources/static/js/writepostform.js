@@ -1,7 +1,12 @@
 let editorRef;
 
 ClassicEditor
-    .create( document.querySelector( '#editor' ))
+    .create( document.querySelector( '#editor' ), {
+        /*plugins: [ SimpleUploadAdapter, ],*/
+        simpleUpload: {
+            uploadUrl: host + '/image'
+        }
+    })
     .then( newEditor => {
         editorRef = newEditor;
     } )
