@@ -1,4 +1,5 @@
 let editorRef;
+let imgAddedCount = 1;
 
 ClassicEditor
     .create( document.querySelector( '#editor' ), {
@@ -25,6 +26,9 @@ function onEditorCreated (newEditor){
 
         // img에 attribute 추가
         conversionApi.writer.setAttribute('id', data.attributeNewValue, imageElement);
+
+        // img에 class 추가
+        conversionApi.writer.addClass('post_image', imageElement);
     });
 
     // 이미지 업로드 시 이벤트
@@ -33,13 +37,14 @@ function onEditorCreated (newEditor){
         // 이미지 업로드 시 EditView에 attribute 추가
         editorRef.editing.view.change( writer => {
             const viewImage = editorRef.editing.mapper.toViewElement(imageElement).getChild(0);
-            writer.setAttribute( 'id', '1212121212', viewImage );
+            writer.setAttribute( 'imageID', imgAddedCount, viewImage );
         } );
 
         // 이미지 업로드 시 Model에 attribute 추가
         editorRef.model.change( writer => {
-            writer.setAttribute('imageID', '1121212', imageElement);
+            writer.setAttribute('imageID', imgAddedCount, imageElement);
         });
+        imgAddedCount += 1;
     })
 }
 

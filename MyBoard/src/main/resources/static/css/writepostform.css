@@ -1,3 +1,10 @@
-.ck-editor__editable {
-    min-height: 600px;
+@media (min-width: 550px) {
+    .ck-editor__editable {
+        min-height: 600px;
+    }
+}
+@media (max-width: 551px) {
+    .ck-editor__editable {
+        min-height: 600px;
+    }
 }
