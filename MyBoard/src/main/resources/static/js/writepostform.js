@@ -34,10 +34,12 @@ function onEditorCreated (newEditor){
     // 이미지 업로드 시 이벤트
     const imageUploadEditing = editorRef.plugins.get('ImageUploadEditing');
     imageUploadEditing.on('uploadComplete', (evt, { data, imageElement} ) => {
-        // 이미지 업로드 시 EditView에 attribute 추가
+        // 이미지 업로드 시 EditView에 attribute, class 추가
         editorRef.editing.view.change( writer => {
+            //
             const viewImage = editorRef.editing.mapper.toViewElement(imageElement).getChild(0);
             writer.setAttribute( 'imageID', imgAddedCount, viewImage );
+            writer.addClass('post_image', viewImage);
         } );
 
         // 이미지 업로드 시 Model에 attribute 추가
@@ -49,11 +51,22 @@ function onEditorCreated (newEditor){
 }
 
 function onSubmitPost() {
+    // 이미지 src 얻어냄
+    const images = document.querySelectorAll('.post_image');
+    var imageSources = new Array();
+    for(let i =0; i < images.length; ++i) {
+        var src = images[i].getAttribute('src');
+        var splitedSrc = src.split(',');
+        var base64Src = splitedSrc[1];
+        imageSources[i] = base64Src;
+    }
+
     const writePostForm = document.querySelector('#writePostForm');
     
     const sendData = {
         title: writePostForm.elements['title'].value,
         content: editorRef.getData(),
+        imageSource: imageSources,
         boardID: writePostForm.elements['boardID'].value,
         writerID: writePostForm.elements['writerID'].value,
     };
