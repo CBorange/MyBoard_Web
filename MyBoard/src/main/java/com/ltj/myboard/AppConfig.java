@@ -1,15 +1,10 @@
 package com.ltj.myboard;
 
-import com.ltj.myboard.repository.BoardRepository;
-import com.ltj.myboard.repository.CommentRepository;
-import com.ltj.myboard.repository.FilteredPostRepository;
-import com.ltj.myboard.repository.jdbc.JDBC_BoardRepository;
-import com.ltj.myboard.repository.jdbc.JDBC_CommentRepository;
-import com.ltj.myboard.repository.jdbc.JDBC_FilteredPostRepository;
-import com.ltj.myboard.repository.jdbc.JDBC_PostRepository;
-import com.ltj.myboard.repository.PostRepository;
+import com.ltj.myboard.repository.*;
+import com.ltj.myboard.repository.jdbc.*;
 import com.ltj.myboard.service.BoardService;
 import com.ltj.myboard.service.CommentService;
+import com.ltj.myboard.service.FtpService;
 import com.ltj.myboard.service.PostService;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
@@ -34,7 +29,7 @@ public class AppConfig {
 
     @Bean
     public PostService postService(){
-        return new PostService(postRepository(), filteredPostRepository());
+        return new PostService(postRepository(), filteredPostRepository(), postFileRepository());
     }
 
     @Bean
@@ -42,6 +37,13 @@ public class AppConfig {
         return new CommentService(commentRepository());
     }
 
+    @Bean(initMethod = "init", destroyMethod = "destroy")
+    public FtpService ftpService(){
+        return new FtpService();
+    }
+
+    // Repository, 추후 JPA 사용할 수 있으므로 Configure에서 Bean 등록
+    
     @Bean
     public BoardRepository boardRepository(){
         return new JDBC_BoardRepository(dataSource());
@@ -55,6 +57,10 @@ public class AppConfig {
     @Bean
     public FilteredPostRepository filteredPostRepository(){
         return new JDBC_FilteredPostRepository(dataSource());
+    }
+
+    public PostFileRepository postFileRepository(){
+        return new JDBC_PostFileRepository((dataSource()));
     }
 
     @Bean

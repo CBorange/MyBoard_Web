@@ -111,7 +111,7 @@ public class PostController extends LayoutControllerBase {
             HttpHeaders headers = new HttpHeaders();
             headers.add("Location", redirectURL);
             return new ResponseEntity<String>(headers, HttpStatus.SEE_OTHER);
-        } catch (SQLException e) {
+        } catch (Exception e) {
             log.error(e.getMessage());
             e.printStackTrace();
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);

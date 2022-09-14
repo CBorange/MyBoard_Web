@@ -3,6 +3,9 @@ let imgAddedCount = 1;
 
 ClassicEditor
     .create( document.querySelector( '#editor' ), {
+        simpleUpload: {
+             uploadUrl: makeURL('/ftp/userimage')
+        }
     })
     .then( newEditor => {
         onEditorCreated(newEditor);
@@ -56,13 +59,9 @@ function onSubmitPost() {
     var imageSources = new Array();
     for(let i =0; i < images.length; ++i) {
         var src = images[i].getAttribute('src');
-        var splitedSrc = src.split(',');
-        var base64Src = splitedSrc[1];
-        imageSources[i] = base64Src;
+        imageSources[i] = src;
     }
-
     const writePostForm = document.querySelector('#writePostForm');
-    
     const sendData = {
         title: writePostForm.elements['title'].value,
         content: editorRef.getData(),

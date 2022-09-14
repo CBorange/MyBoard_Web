@@ -1,13 +1,18 @@
 package com.ltj.myboard.service;
 
+
 import com.ltj.myboard.domain.Post;
+import com.ltj.myboard.domain.PostFile;
+import com.ltj.myboard.dto.post.PostAndFilesData;
 import com.ltj.myboard.dto.board.FilteredPost;
 import com.ltj.myboard.dto.post.SubmitPostData;
 import com.ltj.myboard.repository.FilteredPostRepository;
+import com.ltj.myboard.repository.PostFileRepository;
 import com.ltj.myboard.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -21,6 +26,7 @@ public class PostService{
 
     private final PostRepository postRepository;
     private final FilteredPostRepository filteredPostRepository;
+    private final PostFileRepository postFileRepository;
 
     public Optional<Post> findPostByID(int postID) {
         return postRepository.findPostByID(postID);
@@ -71,11 +77,29 @@ public class PostService{
         return filteredPostList;
     }
 
-    public Post insertPost(String title, String content, int boardID, String writerID) throws SQLException {
+    @Transactional
+    public PostAndFilesData insertPostProcess(SubmitPostData submitPostData) {
+        // 1. Post Master Data Insert, 신규 ID 채번
+        Post insertedPost = insertPost(submitPostData.getTitle(), submitPostData.getContent(), submitPostData.getBoardID(),
+                submitPostData.getWriterID());
+
+        // 2. Postfiles Detail Data Insert
+
+        // 3. Post Master Data, Post File URL 조합 DTO 반환.
+
+        return null;
+    }
+
+    public Post insertPost(String title, String content, int boardID, String writerID) {
         int generatedRowKey = postRepository.insertPost(title, content, boardID, writerID);
         Optional<Post> newPost = findPostByID(generatedRowKey);
         return newPost.orElseThrow(() -> {
-            return new SQLException("PostService : insertPost Error, can't not found from generatedKey = " + generatedRowKey);
+            log.error("PostService : insertPost Error, can't not found from generatedKey = " + generatedRowKey);
+            return new IllegalStateException("PostService : insertPost Error, can't not found from generatedKey = " + generatedRowKey);
         });
+    }
+
+    public int insertPostFile(int postID, String fileID, String fileName){
+        return postFileRepository.insertPostFile(postID, fileID, fileName);
     }
 }

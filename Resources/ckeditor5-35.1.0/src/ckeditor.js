@@ -4,7 +4,6 @@
  */
 import ClassicEditor from '@ckeditor/ckeditor5-editor-classic/src/classiceditor.js';
 import Autoformat from '@ckeditor/ckeditor5-autoformat/src/autoformat.js';
-import Base64UploadAdapter from '@ckeditor/ckeditor5-upload/src/adapters/base64uploadadapter.js';
 import BlockQuote from '@ckeditor/ckeditor5-block-quote/src/blockquote.js';
 import Bold from '@ckeditor/ckeditor5-basic-styles/src/bold.js';
 import CloudServices from '@ckeditor/ckeditor5-cloud-services/src/cloudservices.js';
@@ -22,6 +21,7 @@ import List from '@ckeditor/ckeditor5-list/src/list.js';
 import MediaEmbed from '@ckeditor/ckeditor5-media-embed/src/mediaembed.js';
 import Paragraph from '@ckeditor/ckeditor5-paragraph/src/paragraph.js';
 import PasteFromOffice from '@ckeditor/ckeditor5-paste-from-office/src/pastefromoffice.js';
+import SimpleUploadAdapter from '@ckeditor/ckeditor5-upload/src/adapters/simpleuploadadapter.js';
 import Table from '@ckeditor/ckeditor5-table/src/table.js';
 import TableToolbar from '@ckeditor/ckeditor5-table/src/tabletoolbar.js';
 import TextTransformation from '@ckeditor/ckeditor5-typing/src/texttransformation.js';
@@ -31,7 +31,6 @@ class Editor extends ClassicEditor {}
 // Plugins to include in the build.
 Editor.builtinPlugins = [
 	Autoformat,
-	Base64UploadAdapter,
 	BlockQuote,
 	Bold,
 	CloudServices,
@@ -49,6 +48,7 @@ Editor.builtinPlugins = [
 	MediaEmbed,
 	Paragraph,
 	PasteFromOffice,
+	SimpleUploadAdapter,
 	Table,
 	TableToolbar,
 	TextTransformation
@@ -62,7 +62,6 @@ Editor.defaultConfig = {
 			'|',
 			'bold',
 			'italic',
-			'link',
 			'bulletedList',
 			'numberedList',
 			'|',
@@ -73,7 +72,8 @@ Editor.defaultConfig = {
 			'blockQuote',
 			'insertTable',
 			'undo',
-			'redo'
+			'redo',
+			'link'
 		]
 	},
 	language: 'ko',
