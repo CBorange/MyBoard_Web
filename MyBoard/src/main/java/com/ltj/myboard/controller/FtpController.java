@@ -61,6 +61,8 @@ public class FtpController {
         UserImageURL userImageURL = new UserImageURL();
         String imageRequestURL = serverURL + "/ftp/userimage?filename=" + uploadFileName;
         userImageURL.setUrl(imageRequestURL);
+        userImageURL.setUploadedFileID(uuidAsString);
+        userImageURL.setUploadedFileName(uploadFileName);
         return new ResponseEntity<UserImageURL>(userImageURL, HttpStatus.OK);
     }
 }

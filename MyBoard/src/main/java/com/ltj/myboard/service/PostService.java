@@ -2,8 +2,6 @@ package com.ltj.myboard.service;
 
 
 import com.ltj.myboard.domain.Post;
-import com.ltj.myboard.domain.PostFile;
-import com.ltj.myboard.dto.post.PostAndFilesData;
 import com.ltj.myboard.dto.board.FilteredPost;
 import com.ltj.myboard.dto.post.SubmitPostData;
 import com.ltj.myboard.repository.FilteredPostRepository;
@@ -11,10 +9,8 @@ import com.ltj.myboard.repository.PostFileRepository;
 import com.ltj.myboard.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -78,16 +74,15 @@ public class PostService{
     }
 
     @Transactional
-    public PostAndFilesData insertPostProcess(SubmitPostData submitPostData) {
+    public int insertPostProcess(SubmitPostData submitPostData) {
         // 1. Post Master Data Insert, 신규 ID 채번
         Post insertedPost = insertPost(submitPostData.getTitle(), submitPostData.getContent(), submitPostData.getBoardID(),
                 submitPostData.getWriterID());
 
         // 2. Postfiles Detail Data Insert
 
-        // 3. Post Master Data, Post File URL 조합 DTO 반환.
 
-        return null;
+        return insertedPost.getID();
     }
 
     public Post insertPost(String title, String content, int boardID, String writerID) {

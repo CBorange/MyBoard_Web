@@ -8,4 +8,6 @@ import lombok.ToString;
 @ToString
 public class UserImageURL {
     private String url;
+    private String uploadedFileID;
+    private String uploadedFileName;
 }
