@@ -1,6 +1,7 @@
 package com.ltj.myboard.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPReply;
 import org.springframework.beans.factory.annotation.Value;
@@ -89,7 +90,7 @@ public class FtpService {
         try {
             String encoded = Base64.getEncoder().encodeToString(fileBytes);
             // 업로드
-            ftpClient.setControlEncoding("GBK");
+            ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
             ftpClient.makeDirectory(directoryPath);
 
             InputStream targetStream = new ByteArrayInputStream(fileBytes);
@@ -100,8 +101,6 @@ public class FtpService {
                 throw new IllegalStateException("FTP 파일 업로드 실패: " + replyCode);
             }
             targetStream.close();
-            ftpClient.setControlEncoding("UTF-8");
-
         } catch (Exception e){
             log.error("FTP 업로드 알 수 없는 오류발생: " + e.getMessage());
             throw new IllegalStateException("FTP 업로드 알 수 없는 오류발생: " + e.getMessage());

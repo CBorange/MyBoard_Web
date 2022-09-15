@@ -1,5 +1,6 @@
 let editorRef;
 let imgAddedCount = 1;
+let imageSources = new Array();
 
 ClassicEditor
     .create( document.querySelector( '#editor' ), {
@@ -56,7 +57,6 @@ function onEditorCreated (newEditor){
 function onSubmitPost() {
     // 이미지 src 얻어냄
     const images = document.querySelectorAll('.post_image');
-    var imageSources = new Array();
     for(let i =0; i < images.length; ++i) {
         var src = images[i].getAttribute('src');
         imageSources[i] = src;
