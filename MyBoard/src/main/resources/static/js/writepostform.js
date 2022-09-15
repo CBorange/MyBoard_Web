@@ -1,5 +1,7 @@
 let editorRef;
 let imgAddedCount = 1;
+let imageFileNames = new Array();
+let imageFileIds = new Array();
 let imageSources = new Array();
 
 ClassicEditor
@@ -58,8 +60,25 @@ function onSubmitPost() {
     // 이미지 src 얻어냄
     const images = document.querySelectorAll('.post_image');
     for(let i =0; i < images.length; ++i) {
+        // 이미지 src 에서 파일이름 추출, 확장자 때고 id로 저장
         var src = images[i].getAttribute('src');
-        imageSources[i] = src;
+        var srcParamIdx = src.lastIndexOf('=');
+        var fileName = src.substring(srcParamIdx + 1);
+
+        var extIdx = fileName.lastIndexOf('.');
+        var fileID = fileName.substring(0, extIdx);
+
+        imageFileNames[i] = fileName;
+        imageFileIds[i] = fileID;
+        imageSources[i] = {
+            // DTO 구조에 맞춰서 데이터 만듦
+            // DTO의 ID는 DB Insert 후 채번된다 이 시점에서는 temp 값 전달
+            id: -1,
+            postID: -1,
+            // FileID
+            fileID: fileID,
+            fileName: fileName
+        };
     }
     const writePostForm = document.querySelector('#writePostForm');
     const sendData = {

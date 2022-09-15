@@ -2,6 +2,7 @@ package com.ltj.myboard.service;
 
 
 import com.ltj.myboard.domain.Post;
+import com.ltj.myboard.domain.PostFile;
 import com.ltj.myboard.dto.board.FilteredPost;
 import com.ltj.myboard.dto.post.SubmitPostData;
 import com.ltj.myboard.repository.FilteredPostRepository;
@@ -74,15 +75,18 @@ public class PostService{
     }
 
     @Transactional
-    public int insertPostProcess(SubmitPostData submitPostData) {
+    public Post insertPostProcess(SubmitPostData submitPostData) {
         // 1. Post Master Data Insert, 신규 ID 채번
         Post insertedPost = insertPost(submitPostData.getTitle(), submitPostData.getContent(), submitPostData.getBoardID(),
                 submitPostData.getWriterID());
 
         // 2. Postfiles Detail Data Insert
+        PostFile[] targetFiles = submitPostData.getImageSource();
+        for(PostFile postFile : targetFiles){
+            insertPostFile(insertedPost.getID(), postFile.getFileID(), postFile.getFileName());
+        }
 
-
-        return insertedPost.getID();
+        return insertedPost;
     }
 
     public Post insertPost(String title, String content, int boardID, String writerID) {

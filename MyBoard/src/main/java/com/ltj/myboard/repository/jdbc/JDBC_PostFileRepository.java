@@ -21,7 +21,7 @@ public class JDBC_PostFileRepository implements PostFileRepository {
 
         String daoName = "JDBC_PostFileRepository";
         findPostFilesByPostID_SQL = MyResourceLoader.loadProductionQuery(daoName, "findPostFilesByPostID.sql");
-        insertPostFile_SQL = MyResourceLoader.loadProductionQuery(daoName, "insertPostFile_SQL.sql");
+        insertPostFile_SQL = MyResourceLoader.loadProductionQuery(daoName, "insertPostFile.sql");
     }
 
     @Override

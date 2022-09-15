@@ -104,8 +104,7 @@ public class PostController extends LayoutControllerBase {
     @PutMapping("/post")
     public ResponseEntity submitPost(@RequestBody SubmitPostData submitPostData){
         try {
-            Post insertedPost = postService.insertPost(submitPostData.getTitle(), submitPostData.getContent(),
-                    submitPostData.getBoardID(), submitPostData.getWriterID());
+            Post insertedPost = postService.insertPostProcess(submitPostData);
             String redirectURL = String.format("/post/%d", insertedPost.getID());
 
             HttpHeaders headers = new HttpHeaders();
