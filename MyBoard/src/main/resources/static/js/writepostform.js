@@ -4,6 +4,7 @@ let imageFileNames = new Array();
 let imageFileIds = new Array();
 let imageSources = new Array();
 
+// ClassicEditor 기본 설정
 ClassicEditor
     .create( document.querySelector( '#editor' ), {
         simpleUpload: {
@@ -17,6 +18,7 @@ ClassicEditor
         console.error( error );
     } );
 
+// ClassicEditor ref 생성 시 이미지 업로드 등 관련옵션 설정
 function onEditorCreated (newEditor){
     editorRef = newEditor;
 
@@ -56,6 +58,7 @@ function onEditorCreated (newEditor){
     })
 }
 
+// 게시글 작성 서버로 post
 function onSubmitPost() {
     // 이미지 src 얻어냄
     const images = document.querySelectorAll('.post_image');
@@ -104,4 +107,12 @@ function onSubmitPost() {
     .catch((error) => {
         console.log('onSubmitPost 실패 : ', error);
     });
+}
+
+// 브라우저 관련 event 처리
+
+// 브라우저 종료 이벤트
+window.onbeforeunload = function(e){
+    console.log('브라우저 종료');
+    return true;
 }
