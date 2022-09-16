@@ -85,8 +85,7 @@ public class FtpService {
         }
     }
 
-    public void uploadFile(String directoryPath, String fileName, byte[] fileBytes)
-    {
+    public void uploadFile(String directoryPath, String fileName, byte[] fileBytes) {
         try {
             String encoded = Base64.getEncoder().encodeToString(fileBytes);
             // 업로드
@@ -104,6 +103,20 @@ public class FtpService {
         } catch (Exception e){
             log.error("FTP 업로드 알 수 없는 오류발생: " + e.getMessage());
             throw new IllegalStateException("FTP 업로드 알 수 없는 오류발생: " + e.getMessage());
+        }
+    }
+
+    public void deleteFile(String directoryPath, String fileName) {
+        try {
+            String fileFullPath = directoryPath + "/" + fileName;
+            if(!ftpClient.deleteFile(fileFullPath)){
+                int replyCode = ftpClient.getReplyCode();
+                log.error("FTP 파일삭제 실패: " + replyCode);
+                throw new IllegalStateException("FTP 파일삭제 실패: " + replyCode);
+            }
+        } catch (Exception e){
+            log.error("FTP 파일삭제 알 수 없는 오류발생: " + e.getMessage());
+            throw new IllegalStateException("FTP 파일삭제 알 수 없는 오류발생: " + e.getMessage());
         }
     }
 }

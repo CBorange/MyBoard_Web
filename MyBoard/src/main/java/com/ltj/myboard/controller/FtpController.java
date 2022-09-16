@@ -65,4 +65,11 @@ public class FtpController {
         userImageURL.setUploadedFileName(uploadFileName);
         return new ResponseEntity<UserImageURL>(userImageURL, HttpStatus.OK);
     }
+
+    @DeleteMapping("/userimage/{fileName}")
+    public ResponseEntity deleteUserImage(@PathVariable("fileName") String fileName){
+        // FTP 파일 제거
+        ftpService.deleteFile("/UserFiles/Image", fileName);
+        return new ResponseEntity(HttpStatus.OK);
+    }
 }

@@ -111,8 +111,8 @@ function onSubmitPost() {
 
 // 브라우저 관련 event 처리
 
-// 브라우저 종료 이벤트
+// 새로고침, 닫기, 뒤로가기 등 Release 이벤트 처리
 window.onbeforeunload = function(e){
-    console.log('브라우저 종료');
-    return true;
+
+    return 0;
 }
