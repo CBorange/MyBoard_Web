@@ -1,7 +1,5 @@
 let editorRef;
 let imgAddedCount = 1;
-let imageFileNames = new Array();
-let imageFileIds = new Array();
 let imageSources = new Array();
 
 // ClassicEditor 기본 설정
@@ -58,8 +56,7 @@ function onEditorCreated (newEditor){
     })
 }
 
-// 게시글 작성 서버로 post
-function onSubmitPost() {
+function getImageSource() {
     // 이미지 src 얻어냄
     const images = document.querySelectorAll('.post_image');
     for(let i =0; i < images.length; ++i) {
@@ -71,8 +68,6 @@ function onSubmitPost() {
         var extIdx = fileName.lastIndexOf('.');
         var fileID = fileName.substring(0, extIdx);
 
-        imageFileNames[i] = fileName;
-        imageFileIds[i] = fileID;
         imageSources[i] = {
             // DTO 구조에 맞춰서 데이터 만듦
             // DTO의 ID는 DB Insert 후 채번된다 이 시점에서는 temp 값 전달
@@ -83,6 +78,11 @@ function onSubmitPost() {
             fileName: fileName
         };
     }
+}
+
+// 게시글 작성 서버로 post
+function onSubmitPost() {
+    getImageSource();
     const writePostForm = document.querySelector('#writePostForm');
     const sendData = {
         title: writePostForm.elements['title'].value,
@@ -111,8 +111,25 @@ function onSubmitPost() {
 
 // 브라우저 관련 event 처리
 
-// 새로고침, 닫기, 뒤로가기 등 Release 이벤트 처리
+// 새로고침, 닫기, 뒤로가기 등 작성중 취소 이벤트 처리(FTP 파일제거)
 window.onbeforeunload = function(e){
+    // getImageSource();
+    // for(var imageSource of imageSources) {
+    //     const url = makeURL('ftp/userimage/' + imageSource.fileName);
+    //     fetch(url, {
+    //         method: 'DELETE',
+    //         keepalive: true
+    //     })
+    //     .then((response) => {
+    //         console.log('unload 성공 : ', response);
+    //     })
+    //     .catch((error) => {
+    //         console.log('unload 실패 : ', error);
+    //     });
+    // }
+    // return 0;
+}
 
-    return 0;
+window.onhashchange = function() {
+    console.log('onhashchnage');
 }
