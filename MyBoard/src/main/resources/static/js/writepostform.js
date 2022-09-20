@@ -112,24 +112,20 @@ function onSubmitPost() {
 // 브라우저 관련 event 처리
 
 // 새로고침, 닫기, 뒤로가기 등 작성중 취소 이벤트 처리(FTP 파일제거)
-window.onbeforeunload = function(e){
-    // getImageSource();
-    // for(var imageSource of imageSources) {
-    //     const url = makeURL('ftp/userimage/' + imageSource.fileName);
-    //     fetch(url, {
-    //         method: 'DELETE',
-    //         keepalive: true
-    //     })
-    //     .then((response) => {
-    //         console.log('unload 성공 : ', response);
-    //     })
-    //     .catch((error) => {
-    //         console.log('unload 실패 : ', error);
-    //     });
-    // }
-    // return 0;
-}
-
-window.onhashchange = function() {
-    console.log('onhashchnage');
-}
+window.addEventListener('beforeunload', function(e){
+    getImageSource();
+    for(var imageSource of imageSources) {
+        const url = makeURL('/ftp/userimage/' + imageSource.fileName);
+        fetch(url, {
+            method: 'DELETE',
+            keepalive: true
+        })
+        .then((response) => {
+            console.log('unload 성공 : ', response);
+        })
+        .catch((error) => {
+            console.log('unload 실패 : ', error);
+        });
+    }
+    return 0;
+});
