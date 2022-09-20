@@ -89,7 +89,7 @@ public class PostService{
         return insertedPost;
     }
 
-    public Post insertPost(String title, String content, int boardID, String writerID) {
+    private Post insertPost(String title, String content, int boardID, String writerID) {
         int generatedRowKey = postRepository.insertPost(title, content, boardID, writerID);
         Optional<Post> newPost = findPostByID(generatedRowKey);
         return newPost.orElseThrow(() -> {
@@ -98,7 +98,21 @@ public class PostService{
         });
     }
 
-    public int insertPostFile(int postID, String fileID, String fileName){
+    private int insertPostFile(int postID, String fileID, String fileName){
         return postFileRepository.insertPostFile(postID, fileID, fileName);
+    }
+
+    @Transactional
+    public int deletePostProcess(int postID){
+        int deleteCount = deletePost(postID);
+        return deleteCount;
+    }
+
+    private int deletePost(int postID) {
+        int deleteCount = postRepository.deletePost(postID);
+        if(deleteCount < 1){
+            throw new IllegalStateException("PostService : deletePost Error, delete count is zero");
+        }
+        return deleteCount;
     }
 }

@@ -113,9 +113,19 @@ public class PostController extends LayoutControllerBase {
         } catch (Exception e) {
             log.error(e.getMessage());
             e.printStackTrace();
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 
-
+    @DeleteMapping("/post/{id}")
+    public ResponseEntity deletePost(@PathVariable("id") int id){
+        try{
+            int deleteCount = postService.deletePostProcess(id);
+            return new ResponseEntity(deleteCount, HttpStatus.OK);
+        } catch (Exception e){
+            log.error(e.getMessage());
+            e.printStackTrace();
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+    }
 }

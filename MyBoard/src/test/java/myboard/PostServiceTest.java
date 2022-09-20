@@ -48,8 +48,5 @@ public class PostServiceTest {
     @Test
     @Transactional
     public void 게시글추가() throws SQLException {
-        Post insertedPost = postService.insertPost("테스트 추가",
-                "<p>테스트 내용</p>", 126, "admin");
-        Assertions.assertNotNull(insertedPost);
     }
 }

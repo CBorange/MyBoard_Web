@@ -28,6 +28,7 @@ public class JDBC_PostRepository implements PostRepository {
     private final String findAllPostByBoardID_SQL;
     private final String findPostByWriterID_SQL;
     private final String insertPost_SQL;
+    private final String deletePost_SQL;
 
     @Autowired
     public JDBC_PostRepository(DataSource dataSource){
@@ -38,6 +39,7 @@ public class JDBC_PostRepository implements PostRepository {
         findAllPostByBoardID_SQL = MyResourceLoader.loadProductionQuery(daoName, "findAllPostByBoardID.sql");
         findPostByWriterID_SQL = MyResourceLoader.loadProductionQuery(daoName, "findPostByWriterID.sql");
         insertPost_SQL = MyResourceLoader.loadProductionQuery(daoName, "insertPost.sql");
+        deletePost_SQL = MyResourceLoader.loadProductionQuery(daoName, "deletePost.sql");
     }
 
     @Override
@@ -90,5 +92,14 @@ public class JDBC_PostRepository implements PostRepository {
         jdbcTemplate.update(insertPost_SQL, namedParameter, idKeyHolder, new String[]{"ID"});
         Number generatedID = idKeyHolder.getKey();
         return generatedID.intValue();
+    }
+
+    public int deletePost(int postID){
+        // 쿼리 실행
+        MapSqlParameterSource namedParameter = new MapSqlParameterSource();
+        namedParameter.addValue("postID", postID);
+
+        int deleteCount = jdbcTemplate.update(deletePost_SQL, namedParameter);
+        return deleteCount;
     }
 }
