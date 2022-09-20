@@ -28,7 +28,7 @@
                                        data-bs-toggle="dropdown" aria-expanded="false">
                                         <span th:text="${rootBoard.BoardName}"></span>
                                     </a>
-                                    <ul class="dropdown-menu" aria-lebelledby="dropdownMenuLink-0">
+                                    <ul class="dropdown-menu" aria-lebelledby="dropdownMenuLink-0" style="min-width: inherit;">
                                         <th:block th:each="childBoard : ${rootBoard.getChildBoardSet()}">
                                             <li><a class="dropdown-item" th:href="'/board/' + ${childBoard.getID()}">
                                                 <span th:text="${childBoard.BoardName}"></span></a>

@@ -5,17 +5,38 @@
             <hr/>
             <div style="height: 30px;"></div>
             <!--게시판 바로가기-->
-            <div class="d-flex flex-row justify-content-between" style="max-width:350px;">
+            <div class="d-flex flex-row" style="max-width:450px;">
                 <th:block th:each="rootBoard : ${rootBoards}">
-                    <a class="board_link" th:href="'/board/' + ${rootBoard.getID()}">
-                        <span th:text="${rootBoard.getBoardName()}"></span>
-                    </a>
+                    <!--자식 게시판이 있는 Root 게시판은 접근할 수 없다.-->
+                    <!--자식 게시판이 없는 Root 게시판의 경우 Dropdown 없이 클릭하면 바로 이동-->
+                    <th:block th:if="${rootBoard.getChildBoardCount().equals(0)}">
+                        <a class="board_link me-3" th:href="'/board/' + ${rootBoard.getID()}">
+                            <span th:text="${rootBoard.getBoardName()}"></span>
+                        </a>
+                    </th:block>
+                    <!--자식 게시판이 있는 경우 Dropdown 메뉴로 표시-->
+                    <th:block th:unless="${rootBoard.getChildBoardCount().equals(0)}">
+                        <div class="dropdown">
+                            <a class="board_link me-3 dropdown-toggle" role="button" id="boardDropdownLink"
+                               data-bs-toggle="dropdown" aria-expanded="false">
+                                <span th:text="${rootBoard.getBoardName()}"></span>
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="boardDropdownLink" style="min-width: inherit;">
+                                <th:block th:each="childBoard : ${rootBoard.getChildBoardSet()}">
+                                    <li>
+                                        <a class="dropdown-item" th:href="'/board/' + ${childBoard.getID()}">
+                                            <span th:text="${childBoard.BoardName}"></span>
+                                        </a>
+                                    </li>
+                                </th:block>
+                            </ul>
+                        </div>
+                    </th:block>
                 </th:block>
             </div>
             <!--사용 Resource 저작권 및 Github 주소, 개발자 연락처 등 페이지 관련정보-->
             <div style="height: 15px;"></div>
             <p class="footer_explain_test">
-                본 웹사이트는 포트폴리오용으로 제작되었습니다.<br>
                 이미지 Resource 출처 : https://www.flaticon.com/kr/authors/dave-gandy<br>
                 <br>
                 Copyrightⓒ. 이태준 All Rights Reserved
