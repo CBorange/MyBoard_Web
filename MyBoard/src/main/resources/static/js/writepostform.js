@@ -54,6 +54,18 @@ function onEditorCreated (newEditor){
         });
         imgAddedCount += 1;
     })
+
+    // 이미지 변경(이미지 업로드 후 undo 또는 삽입 한 이미지 에디터에서 삭제)
+    editorRef.model.document.on('change:data', (e, batch) => {
+        var changedArray = e.source.differ._cachedChanges;
+        for(var changedData of changedArray){
+            if(changedData.name == 'imageBlock' && changedData.type == 'remove'){
+                console.log('imageBlock Remove!');
+                var imageSource = changedData.attributes.get('src');
+            }
+        }
+        console.log('data changed');
+    })
 }
 
 function getImageSource() {
