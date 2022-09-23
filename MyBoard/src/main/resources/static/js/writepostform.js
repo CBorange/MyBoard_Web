@@ -60,12 +60,22 @@ function onEditorCreated (newEditor){
         var changedArray = e.source.differ._cachedChanges;
         for(var changedData of changedArray){
             if(changedData.name == 'imageBlock' && changedData.type == 'remove'){
-                console.log('imageBlock Remove!');
                 var imageSource = changedData.attributes.get('src');
+                if(typeof imageSource != 'undefined'){  // FTP 이미지 업로드 실패 시 imageSource가 undefined일 수 있다. 이런경우는 FTP에 올라간 데이터가 없기 때문에 삭제 X
+                    var imageFileName = getFileNameByImageSource(imageSource);
+                    sendFTPDeleteImage(imageFileName);
+                }
             }
         }
         console.log('data changed');
     })
+}
+
+function getFileNameByImageSource(imageSource){
+    var src = imageSource.getAttribute('src');
+    var srcParamIdx = src.lastIndexOf('=');
+    var fileName = src.substring(srcParamIdx + 1);
+    return fileName;
 }
 
 function getImageSource() {
@@ -73,9 +83,7 @@ function getImageSource() {
     const images = document.querySelectorAll('.post_image');
     for(let i =0; i < images.length; ++i) {
         // 이미지 src 에서 파일이름 추출, 확장자 때고 id로 저장
-        var src = images[i].getAttribute('src');
-        var srcParamIdx = src.lastIndexOf('=');
-        var fileName = src.substring(srcParamIdx + 1);
+        var fileName = getFileNameByImageSource(images[i]);
 
         var extIdx = fileName.lastIndexOf('.');
         var fileID = fileName.substring(0, extIdx);
@@ -121,23 +129,27 @@ function onSubmitPost() {
     });
 }
 
-// 브라우저 관련 event 처리
+// FTP 이미지 삭제 Reqeust 전송
+function sendFTPDeleteImage(targetImageFileName){
+    const url = makeURL('/ftp/userimage/' + targetImageFileName);
+    fetch(url, {
+        method: 'DELETE',
+        keepalive: true
+    })
+    .then((response) => {
+        console.log('unload 성공 : ', response);
+    })
+    .catch((error) => {
+        console.log('unload 실패 : ', error);
+    });
+}
 
+// 브라우저 관련 event 처리
 // 새로고침, 닫기, 뒤로가기 등 작성중 취소 이벤트 처리(FTP 파일제거)
 window.addEventListener('beforeunload', function(e){
     getImageSource();
     for(var imageSource of imageSources) {
-        const url = makeURL('/ftp/userimage/' + imageSource.fileName);
-        fetch(url, {
-            method: 'DELETE',
-            keepalive: true
-        })
-        .then((response) => {
-            console.log('unload 성공 : ', response);
-        })
-        .catch((error) => {
-            console.log('unload 실패 : ', error);
-        });
+        sendFTPDeleteImage(imageSource.fileName);
     }
     return 0;
 });
