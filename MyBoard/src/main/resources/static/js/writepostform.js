@@ -62,7 +62,7 @@ function onEditorCreated (newEditor){
             if(changedData.name == 'imageBlock' && changedData.type == 'remove'){
                 var imageSource = changedData.attributes.get('src');
                 if(typeof imageSource != 'undefined'){  // FTP 이미지 업로드 실패 시 imageSource가 undefined일 수 있다. 이런경우는 FTP에 올라간 데이터가 없기 때문에 삭제 X
-                    var imageFileName = getFileNameByImageSource(imageSource);
+                    var imageFileName = getFileNameByImageSrcURL(imageSource);
                     sendFTPDeleteImage(imageFileName);
                 }
             }
@@ -71,10 +71,9 @@ function onEditorCreated (newEditor){
     })
 }
 
-function getFileNameByImageSource(imageSource){
-    var src = imageSource.getAttribute('src');
-    var srcParamIdx = src.lastIndexOf('=');
-    var fileName = src.substring(srcParamIdx + 1);
+function getFileNameByImageSrcURL(imageSrcURL){
+    var srcParamIdx = imageSrcURL.lastIndexOf('=');
+    var fileName = imageSrcURL.substring(srcParamIdx + 1);
     return fileName;
 }
 
@@ -83,7 +82,8 @@ function getImageSource() {
     const images = document.querySelectorAll('.post_image');
     for(let i =0; i < images.length; ++i) {
         // 이미지 src 에서 파일이름 추출, 확장자 때고 id로 저장
-        var fileName = getFileNameByImageSource(images[i]);
+        var imageSrcURL = images[i].getAttribute('src');
+        var fileName = getFileNameByImageSrcURL(imageSrcURL);
 
         var extIdx = fileName.lastIndexOf('.');
         var fileID = fileName.substring(0, extIdx);
@@ -137,10 +137,10 @@ function sendFTPDeleteImage(targetImageFileName){
         keepalive: true
     })
     .then((response) => {
-        console.log('unload 성공 : ', response);
+        console.log('이미지 삭제 성공 : ', response);
     })
     .catch((error) => {
-        console.log('unload 실패 : ', error);
+        console.log('이미지 삭제 실패 : ', error);
     });
 }
 
