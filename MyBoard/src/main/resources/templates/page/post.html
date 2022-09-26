@@ -45,11 +45,8 @@
                             <!--드랍다운 메뉴-->
                             <ul class="dropdown-menu" style="min-width: inherit;" aria-labelledby="modifyMenubutton">
                                 <li>
-                                    <button class="dropdown-item"
-                                            th:boardID="${boardInfo.getID()}"
-                                            th:postID="${postInfo.getID()}"
-                                            th:onclick="onClickDeletePost(this.getAttribute('boardID'),
-                                                this.getAttribute('postID'))">수정</button>
+                                    <a class="dropdown-item"
+                                            th:href="${'/writepostform/' + postInfo.getID() + '?boardID=' + boardInfo.getID()}">수정</a>
                                     <button class="dropdown-item"
                                             th:boardID="${boardInfo.getID()}"
                                             th:postID="${postInfo.getID()}"

@@ -91,12 +91,6 @@ public class PostController extends LayoutControllerBase {
                                    @RequestParam(required = true) int boardID){
         addLayoutModel_FragmentContent(model, "writepostform.html", "writepostform");
 
-        // id로 수정인지 신규 글쓰기인지 판단, id가 0보다 작은 값이면 신규 글쓰기
-        // id가 0보다 크다면 기존 게시글 수정으로 처리
-        if(id < 0){
-
-        }
-
         // Board 정보 Model에 추가
         Optional<Board> foundBoard = boardService.findBoardByID(boardID);
         foundBoard.ifPresentOrElse((board) -> {
@@ -104,6 +98,23 @@ public class PostController extends LayoutControllerBase {
         }, () -> {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         });
+
+        // id로 수정인지 신규 글쓰기인지 판단, id가 0보다 작은 값이면 신규 글쓰기
+        // id가 0보다 크다면 기존 게시글 수정으로 처리
+        if(id < 0){
+            model.addAttribute("editMode", "write");
+        } else{
+            // 게시글 수정의 경우 게시글 제목 및 내용 model로 전달
+            model.addAttribute("editMode", "modify");
+
+            // post 정보 get
+            Optional<Post> foundPost = postService.findPostByID(id);
+            foundPost.ifPresentOrElse((post) -> {
+                model.addAttribute("postInfo", foundPost.get());
+            }, () -> {
+                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+            });
+        }
 
         return LayoutViewPath;
     }

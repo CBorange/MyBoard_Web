@@ -3,6 +3,7 @@ let imgAddedCount = 1;
 let imageSources = new Array();
 
 let nowSubmitting = false;
+let editMode;
 
 // ClassicEditor 기본 설정
 ClassicEditor
@@ -18,12 +19,13 @@ ClassicEditor
         console.error( error );
     } );
 
-// ClassicEditor ref 생성 시 이미지 업로드 등 관련옵션 설정
-function onEditorCreated (newEditor){
-    editorRef = newEditor;
+// writepostform init
+function init(editMode, content){
+    this.editMode = editMode;
 
     editorRef.model.schema.extend('imageBlock', {allowAttributes: 'imageID'} );
 
+    // 이미지 관련 공통 처리
     // edtior Data getData() 실행하여 downcastDispatcher 실행되는 시점에 img 관련 처리
     editorRef.data.downcastDispatcher.on('attribute:imageID:imageBlock', (evt, data, conversionApi) => {
         // imageBlock model element view element로 전환(imageBlock -> figure)
@@ -58,6 +60,9 @@ function onEditorCreated (newEditor){
     })
 
     // 이미지 변경(이미지 업로드 후 undo 또는 삽입 한 이미지 에디터에서 삭제)
+    // 신규 작성 중에 추가된 이미지인지 기등록된 이미지인지에 따라 다르게 처리
+    // 기등록 이미지일 경우 이 시점에서 제거하지 않고 삭제 대상 array를 만든다.
+    // 최종 수정 완료 시점에 array 전달하여 서버에서 FTP 및 DB 수정하도록 처리
     editorRef.model.document.on('change:data', (e, batch) => {
         var changedArray = e.source.differ._cachedChanges;
         for(var changedData of changedArray){
@@ -65,12 +70,26 @@ function onEditorCreated (newEditor){
                 var imageSource = changedData.attributes.get('src');
                 if(typeof imageSource != 'undefined'){  // FTP 이미지 업로드 실패 시 imageSource가 undefined일 수 있다. 이런경우는 FTP에 올라간 데이터가 없기 때문에 삭제 X
                     var imageFileName = getFileNameByImageSrcURL(imageSource);
+
                     sendFTPDeleteImage(imageFileName);
                 }
             }
         }
         console.log('data changed');
     })
+
+    // 수정 모드일 경우 editor에 기등록된 게시글 content binding
+    initData(content);
+}
+
+// writepostform 수정 일 경우 editor에 binding 할 게시글 내용 전송
+function initData(postContent){
+    editorRef.setData(postContent);
+}
+
+// ClassicEditor ref 생성 시 이미지 업로드 등 관련옵션 설정
+function onEditorCreated (newEditor){
+    editorRef = newEditor;
 }
 
 function getFileNameByImageSrcURL(imageSrcURL){
@@ -130,6 +149,11 @@ function onSubmitPost() {
     .catch((error) => {
         console.log('onSubmitPost 실패 : ', error);
     });
+}
+
+// 게시글 수정 서버로 post
+function onModifyPost(){
+    console.log('수정');
 }
 
 // FTP 이미지 삭제 Reqeust 전송
