@@ -68,6 +68,7 @@ public class JDBC_FilteredPostRepository implements FilteredPostRepository {
         public FilteredPost mapRow(ResultSet rs, int rowNum) throws SQLException {
             FilteredPost resultPost = new FilteredPost();
             resultPost.setOrderedPostNo(rs.getInt("OrderedPostNo"));
+            resultPost.setCommentCount(rs.getInt("CommentCount"));
 
             Post postData = (new BeanPropertyRowMapper<>(Post.class)).mapRow(rs,rowNum);
             resultPost.setPostData(postData);

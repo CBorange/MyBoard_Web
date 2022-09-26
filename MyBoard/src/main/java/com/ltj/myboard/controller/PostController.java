@@ -86,9 +86,16 @@ public class PostController extends LayoutControllerBase {
         return LayoutViewPath;
     }
 
-    @GetMapping("/writepostform")
-    public String getWritePostPage(Model model, @RequestParam(required = true) int boardID){
+    @GetMapping("/writepostform/{id}")
+    public String getWritePostPage(Model model,@PathVariable(value = "id", required = false) int id,
+                                   @RequestParam(required = true) int boardID){
         addLayoutModel_FragmentContent(model, "writepostform.html", "writepostform");
+
+        // id로 수정인지 신규 글쓰기인지 판단, id가 0보다 작은 값이면 신규 글쓰기
+        // id가 0보다 크다면 기존 게시글 수정으로 처리
+        if(id < 0){
+
+        }
 
         // Board 정보 Model에 추가
         Optional<Board> foundBoard = boardService.findBoardByID(boardID);
