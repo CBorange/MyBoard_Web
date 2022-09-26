@@ -1,3 +1,10 @@
+.table_row_title > a {
+    text-decoration: none;
+}
+
+.table_row_title > a > span.title_span{
+    color: black;
+}
 @media (min-width: 550px) {
     .table_column_title{
         width: 70%;

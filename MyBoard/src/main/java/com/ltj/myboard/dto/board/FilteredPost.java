@@ -15,5 +15,6 @@ import lombok.ToString;
 @ToString
 public class FilteredPost {
     private int OrderedPostNo;
+    private int CommentCount;
     private Post PostData;
 }

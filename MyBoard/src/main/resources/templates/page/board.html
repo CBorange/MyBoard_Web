@@ -26,9 +26,10 @@
                     <tbody>
                     <th:block th:each="filteredPost : ${filteredPostList}">
                     <tr>
-                        <td>
+                        <td class="table_row_title">
                             <a th:href="'/post/' + ${filteredPost.getPostData().getID()}">
-                                <span th:text="${filteredPost.getPostData().getTitle()}"></span>
+                                <span class="title_span" th:text="${filteredPost.getPostData().getTitle()}"></span>
+                                <span class="title_commentcount_span"></span>
                             </a>
                         </td>
                         <td><span th:text="${filteredPost.getPostData().getWriterID()}"></span></td>

@@ -2,6 +2,8 @@ let editorRef;
 let imgAddedCount = 1;
 let imageSources = new Array();
 
+let nowSubmitting = false;
+
 // ClassicEditor 기본 설정
 ClassicEditor
     .create( document.querySelector( '#editor' ), {
@@ -121,6 +123,7 @@ function onSubmitPost() {
     })
     .then((response) => {
         console.log('onSubmitPost 성공 : ', response);
+        nowSubmitting = true;
         if(response.redirected)
             window.location.href = response.url;
     })
@@ -147,6 +150,9 @@ function sendFTPDeleteImage(targetImageFileName){
 // 브라우저 관련 event 처리
 // 새로고침, 닫기, 뒤로가기 등 작성중 취소 이벤트 처리(FTP 파일제거)
 window.addEventListener('beforeunload', function(e){
+    if(nowSubmitting)
+        return 0;
+
     getImageSource();
     for(var imageSource of imageSources) {
         sendFTPDeleteImage(imageSource.fileName);
