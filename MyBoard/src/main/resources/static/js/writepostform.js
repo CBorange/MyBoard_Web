@@ -41,6 +41,16 @@ function init(editMode, content){
         conversionApi.writer.addClass('post_image', imageElement);
     });
 
+    // editor Data setData() 실행하여 upcastDispatcher 실행되는 시점에 img 관련 처리
+    editorRef.data.upcastDispatcher.on('element:img', (evt, data, conversionApi) => {
+        const imageID = data.viewItem.getAttribute('id');
+        for(const item of data.modelRange.getItems()){
+            conversionApi.writer.setAttribute('imageID', imageID, item);
+        }
+
+        console.log('upcast'); 
+    });
+
     // 이미지 업로드 시 이벤트
     const imageUploadEditing = editorRef.plugins.get('ImageUploadEditing');
     imageUploadEditing.on('uploadComplete', (evt, { data, imageElement} ) => {
@@ -153,6 +163,7 @@ function onSubmitPost() {
 
 // 게시글 수정 서버로 post
 function onModifyPost(){
+    var content = editorRef.getData();
     console.log('수정');
 }
 
