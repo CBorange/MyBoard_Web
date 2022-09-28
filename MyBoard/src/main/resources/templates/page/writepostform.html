@@ -43,7 +43,9 @@
         <script th:inline="javascript">
             <!--게시글 작성 또는 수정 editMode js로 전달-->
             var editModeParam = [[${editMode}]];
-            var contentParam = [[${postInfo.getContent()}]]
+            var contentParam = '';
+            if(editModeParam == 'modify')
+                contentParam = [[${postInfo.getContent()}]]
             init(editModeParam, contentParam);
         </script>
         <link rel="stylesheet" href="/css/writepostform.css">

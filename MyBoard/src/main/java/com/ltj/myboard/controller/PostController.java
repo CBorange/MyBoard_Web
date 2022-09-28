@@ -103,6 +103,11 @@ public class PostController extends LayoutControllerBase {
         // id가 0보다 크다면 기존 게시글 수정으로 처리
         if(id < 0){
             model.addAttribute("editMode", "write");
+
+            // 신규 작성의 경우 빈 post 데이터 전송
+            // 빈 데이터라 해도 무조건 전송해야함 tyhmeleaf rendering 순서상 js보다 먼저 실행되기 때문에(html 호출되는 시점)
+            // postInfo 데이터가 없으면 오류발생
+            model.addAttribute("postInfo", new Post());
         } else{
             // 게시글 수정의 경우 게시글 제목 및 내용 model로 전달
             model.addAttribute("editMode", "modify");

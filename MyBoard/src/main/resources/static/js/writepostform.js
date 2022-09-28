@@ -89,7 +89,8 @@ function init(editMode, content){
     })
 
     // 수정 모드일 경우 editor에 기등록된 게시글 content binding
-    initData(content);
+    if(editMode == 'modify')
+        initData(content);
 }
 
 // writepostform 수정 일 경우 editor에 binding 할 게시글 내용 전송
