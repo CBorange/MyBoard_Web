@@ -24,22 +24,6 @@ public class FtpService {
     @Value("${ftp.password}")
     private String ftpPassword;
 
-    private FTPClient ftpClient;
-    
-    // Bean 생성자, Configure에서 설정
-    public void init(){
-        System.out.println("FTPService Init");
-        ftpClient = makeClient();
-    }
-
-    // Bean 소멸자, Configure에서 설정
-    public void destroy() throws IOException {
-        System.out.println("FTPService Destroyed");
-        // FTP 연결 종료
-        ftpClient.logout();
-        ftpClient.disconnect();
-    }
-
     private FTPClient makeClient(){
         FTPClient ftpClient = new FTPClient();
         try {
@@ -64,8 +48,12 @@ public class FtpService {
         }
     }
 
-    public byte[] getFile(String directoryPath, String fileName){
+    public byte[] getFile(String directoryPath, String fileName) throws IOException {
+        FTPClient ftpClient = null;
         try {
+            // FTP Client 생성
+            ftpClient = makeClient();
+
             // 파일 읽어오기
             InputStream inputStream = ftpClient.retrieveFileStream(directoryPath + "/" + fileName);
             if(inputStream != null){
@@ -79,16 +67,24 @@ public class FtpService {
                 log.error("FTP 파일을 찾을 수 없습니다.: " + fileName);
                 throw new IllegalStateException("FTP 파일을 찾을 수 없습니다.: " + fileName);
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             log.error("FTP 파일읽기 알 수 없는 오류발생: " + e.getMessage());
             throw new IllegalStateException("FTP 파일읽기 알 수 없는 오류발생: " + e.getMessage());
+        } finally {
+            // FTP Client 해제
+            ftpClient.logout();
+            ftpClient.disconnect();
         }
     }
 
-    public void uploadFile(String directoryPath, String fileName, byte[] fileBytes) {
+    public void uploadFile(String directoryPath, String fileName, byte[] fileBytes) throws IOException {
+        FTPClient ftpClient = null;
         try {
-            String encoded = Base64.getEncoder().encodeToString(fileBytes);
+            // FTP Client 생성
+            ftpClient = makeClient();
+
             // 업로드
+            String encoded = Base64.getEncoder().encodeToString(fileBytes);
             ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
             ftpClient.makeDirectory(directoryPath);
 
@@ -103,11 +99,20 @@ public class FtpService {
         } catch (Exception e){
             log.error("FTP 업로드 알 수 없는 오류발생: " + e.getMessage());
             throw new IllegalStateException("FTP 업로드 알 수 없는 오류발생: " + e.getMessage());
+        } finally {
+            // FTP Client 해제
+            ftpClient.logout();
+            ftpClient.disconnect();
         }
     }
 
-    public void deleteFile(String directoryPath, String fileName) {
+    public void deleteFile(String directoryPath, String fileName) throws IOException {
+        FTPClient ftpClient = null;
         try {
+            // FTP Client 생성
+            ftpClient = makeClient();
+
+            // FTP 파일 삭제
             String fileFullPath = directoryPath + "/" + fileName;
             if(!ftpClient.deleteFile(fileFullPath)){
                 int replyCode = ftpClient.getReplyCode();
@@ -117,6 +122,10 @@ public class FtpService {
         } catch (Exception e){
             log.error("FTP 파일삭제 알 수 없는 오류발생: " + e.getMessage());
             throw new IllegalStateException("FTP 파일삭제 알 수 없는 오류발생: " + e.getMessage());
+        } finally {
+            // FTP Client 해제
+            ftpClient.logout();
+            ftpClient.disconnect();;
         }
     }
 }

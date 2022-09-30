@@ -31,8 +31,13 @@ public class FtpController {
         produces = MediaType.IMAGE_JPEG_VALUE
     )
     public ResponseEntity<byte[]> getUserImage(@RequestParam(value = "filename") String fileName){
-        byte[] data = ftpService.getFile("/UserFiles/Image", fileName);
-        return new ResponseEntity<byte[]>(data, HttpStatus.OK);
+        try{
+            byte[] data = ftpService.getFile("/UserFiles/Image", fileName);
+            return new ResponseEntity<byte[]>(data, HttpStatus.OK);
+        }catch (Exception e){
+            log.error("FtpController getUserImage 오류발생 : " + e.getMessage());
+            return new ResponseEntity<byte[]>(new byte[]{}, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @PostMapping("/userimage")
@@ -55,7 +60,12 @@ public class FtpController {
         String fullFileName = upload.getOriginalFilename();
         String fileExtension = FileUtilExt.getFileExtension(fullFileName);
         String uploadFileName = uuidAsString + "." + fileExtension;
-        ftpService.uploadFile("/UserFiles/Image", uploadFileName, bytes);
+        try{
+            ftpService.uploadFile("/UserFiles/Image", uploadFileName, bytes);
+        } catch (Exception e){
+            log.error("FtpController uploadUserImage 오류발생 : " + e.getMessage());
+            return new ResponseEntity<UserImageURL>(new UserImageURL(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
 
         // 4. 업로드 경로 반환
         UserImageURL userImageURL = new UserImageURL();
@@ -69,7 +79,13 @@ public class FtpController {
     @DeleteMapping("/userimage/{fileName}")
     public ResponseEntity deleteUserImage(@PathVariable("fileName") String fileName){
         // FTP 파일 제거
-        ftpService.deleteFile("/UserFiles/Image", fileName);
+        try{
+            ftpService.deleteFile("/UserFiles/Image", fileName);
+        } catch (Exception e){
+            log.error("FtpController deleteUserImage 오류발생 : " + e.getMessage());
+            return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
         return new ResponseEntity(HttpStatus.OK);
     }
 }

@@ -37,7 +37,7 @@ public class AppConfig {
         return new CommentService(commentRepository());
     }
 
-    @Bean(initMethod = "init", destroyMethod = "destroy")
+    @Bean
     public FtpService ftpService(){
         return new FtpService();
     }
