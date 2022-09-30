@@ -43,11 +43,12 @@ function init(editMode, content){
 
     // editor Data setData() 실행하여 upcastDispatcher 실행되는 시점에 img 관련 처리
     editorRef.data.upcastDispatcher.on('element:img', (evt, data, conversionApi) => {
-        const imageID = data.viewItem.getAttribute('id');
-        for(const item of data.modelRange.getItems()){
-            conversionApi.writer.setAttribute('imageID', imageID, item);
+        if(data.modelCursor.stickiness != 'toNone'){
+            const imageID = data.viewItem.getAttribute('id');
+            for(const item of data.modelRange.getItems()){
+                conversionApi.writer.setAttribute('imageID', imageID, item);
+            }
         }
-
         console.log('upcast'); 
     });
 
