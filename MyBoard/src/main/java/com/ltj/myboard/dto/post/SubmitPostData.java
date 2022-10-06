@@ -10,7 +10,7 @@ import lombok.ToString;
 public class SubmitPostData {
     private String title;
     private String content;
-    private PostFile[] imageSource;
+    private PostFileDelta[] imageSource;
     private int boardID;
     private String writerID;
 }

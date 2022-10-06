@@ -124,7 +124,7 @@ public class PostController extends LayoutControllerBase {
         return LayoutViewPath;
     }
 
-    @PutMapping("/post")
+    @PostMapping("/post")
     public ResponseEntity submitPost(@RequestBody SubmitPostData submitPostData){
         try {
             Post insertedPost = postService.insertPostProcess(submitPostData);

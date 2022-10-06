@@ -4,6 +4,7 @@ package com.ltj.myboard.service;
 import com.ltj.myboard.domain.Post;
 import com.ltj.myboard.domain.PostFile;
 import com.ltj.myboard.dto.board.FilteredPost;
+import com.ltj.myboard.dto.post.PostFileDelta;
 import com.ltj.myboard.dto.post.SubmitPostData;
 import com.ltj.myboard.repository.FilteredPostRepository;
 import com.ltj.myboard.repository.PostFileRepository;
@@ -81,9 +82,9 @@ public class PostService{
                 submitPostData.getWriterID());
 
         // 2. Postfiles Detail Data Insert
-        PostFile[] targetFiles = submitPostData.getImageSource();
-        for(PostFile postFile : targetFiles){
-            insertPostFile(insertedPost.getID(), postFile.getFileID(), postFile.getFileName());
+        PostFileDelta[] targetFiles = submitPostData.getImageSource();
+        for(PostFileDelta delta : targetFiles){
+            insertPostFile(insertedPost.getID(), delta);
         }
 
         return insertedPost;
@@ -98,8 +99,14 @@ public class PostService{
         });
     }
 
-    private int insertPostFile(int postID, String fileID, String fileName){
-        return postFileRepository.insertPostFile(postID, fileID, fileName);
+    private int insertPostFile(int postID, PostFileDelta fileDelta){
+        // Insert로 넘어온 PostFileDelta 데이터는 무조건 Insert State로 간주한다.
+        // 단, 정확성을 위해서 state를 검사한다(예외처리)
+        if(PostFileDelta.checkIsInsertData(fileDelta)) {
+            return postFileRepository.insertPostFile(postID, fileDelta.getFileID(), fileDelta.getFileName());
+        } else{
+            throw new IllegalStateException("PostService.insertPostProcess : Insert Post 함수에 insert 상태가 아닌 PostFileData가 전달됐습니다.");
+        }
     }
 
     @Transactional

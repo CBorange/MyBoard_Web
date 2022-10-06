@@ -1,7 +1,4 @@
 let editorRef;
-let imgAddedCount = 1;
-let imageSources = new Array();
-
 let nowSubmitting = false;
 let editMode;
 
@@ -13,7 +10,7 @@ ClassicEditor
         }
     })
     .then( newEditor => {
-        onEditorCreated(newEditor);
+        editorRef = newEditor;
     } )
     .catch( error => {
         console.error( error );
@@ -23,19 +20,14 @@ ClassicEditor
 function init(editMode, content){
     this.editMode = editMode;
 
-    editorRef.model.schema.extend('imageBlock', {allowAttributes: 'imageID'} );
-
     // 이미지 관련 공통 처리
     // edtior Data getData() 실행하여 downcastDispatcher 실행되는 시점에 img 관련 처리
-    editorRef.data.downcastDispatcher.on('attribute:imageID:imageBlock', (evt, data, conversionApi) => {
+    editorRef.data.downcastDispatcher.on('insert:imageBlock', (evt, data, conversionApi) => {
         // imageBlock model element view element로 전환(imageBlock -> figure)
         const figureElement = conversionApi.mapper.toViewElement(data.item);
 
         // figure의 자식 img 태그 탐색
         const imageElement = figureElement.getChild(0);
-
-        // img에 attribute 추가
-        conversionApi.writer.setAttribute('id', data.attributeNewValue, imageElement);
 
         // img에 class 추가
         conversionApi.writer.addClass('post_image', imageElement);
@@ -44,10 +36,7 @@ function init(editMode, content){
     // editor Data setData() 실행하여 upcastDispatcher 실행되는 시점에 img 관련 처리
     editorRef.data.upcastDispatcher.on('element:img', (evt, data, conversionApi) => {
         if(data.modelCursor.stickiness != 'toNone'){
-            const imageID = data.viewItem.getAttribute('id');
-            for(const item of data.modelRange.getItems()){
-                conversionApi.writer.setAttribute('imageID', imageID, item);
-            }
+            // Do Something
         }
         console.log('upcast'); 
     });
@@ -55,19 +44,18 @@ function init(editMode, content){
     // 이미지 업로드 시 이벤트
     const imageUploadEditing = editorRef.plugins.get('ImageUploadEditing');
     imageUploadEditing.on('uploadComplete', (evt, { data, imageElement} ) => {
-        // 이미지 업로드 시 EditView에 attribute, class 추가
+        // 이미지 업로드 시 EditView에 class 추가
         editorRef.editing.view.change( writer => {
             //
             const viewImage = editorRef.editing.mapper.toViewElement(imageElement).getChild(0);
-            writer.setAttribute( 'imageID', imgAddedCount, viewImage );
             writer.addClass('post_image', viewImage);
         } );
 
         // 이미지 업로드 시 Model에 attribute 추가
-        editorRef.model.change( writer => {
+        /*editorRef.model.change( writer => {
             writer.setAttribute('imageID', imgAddedCount, imageElement);
         });
-        imgAddedCount += 1;
+        imgAddedCount += 1;*/
     })
 
     // 이미지 변경(이미지 업로드 후 undo 또는 삽입 한 이미지 에디터에서 삭제)
@@ -99,11 +87,6 @@ function initData(postContent){
     editorRef.setData(postContent);
 }
 
-// ClassicEditor ref 생성 시 이미지 업로드 등 관련옵션 설정
-function onEditorCreated (newEditor){
-    editorRef = newEditor;
-}
-
 function getFileNameByImageSrcURL(imageSrcURL){
     var srcParamIdx = imageSrcURL.lastIndexOf('=');
     var fileName = imageSrcURL.substring(srcParamIdx + 1);
@@ -112,6 +95,8 @@ function getFileNameByImageSrcURL(imageSrcURL){
 
 function getImageSource() {
     // 이미지 src 얻어냄
+    var result = new Array();
+
     const images = document.querySelectorAll('.post_image');
     for(let i =0; i < images.length; ++i) {
         // 이미지 src 에서 파일이름 추출, 확장자 때고 id로 저장
@@ -120,22 +105,20 @@ function getImageSource() {
 
         var extIdx = fileName.lastIndexOf('.');
         var fileID = fileName.substring(0, extIdx);
-
-        imageSources[i] = {
-            // DTO 구조에 맞춰서 데이터 만듦
-            // DTO의 ID는 DB Insert 후 채번된다 이 시점에서는 temp 값 전달
-            id: -1,
-            postID: -1,
+        var fileState = ''; // Insert Or Delete
+        result[i] = {
             // FileID
             fileID: fileID,
-            fileName: fileName
+            fileName: fileName,
+            state: fileState
         };
     }
+    return result;
 }
 
 // 게시글 작성 서버로 post
 function onSubmitPost() {
-    getImageSource();
+    var imageSources = getImageSource();
     const writePostForm = document.querySelector('#writePostForm');
     const sendData = {
         title: writePostForm.elements['title'].value,
@@ -146,7 +129,7 @@ function onSubmitPost() {
     };
     const url = makeURL('/post');
     fetch(url, {
-        method: 'PUT',
+        method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
@@ -190,7 +173,7 @@ window.addEventListener('beforeunload', function(e){
     if(nowSubmitting)
         return 0;
 
-    getImageSource();
+    var imageSources = getImageSource();
     for(var imageSource of imageSources) {
         sendFTPDeleteImage(imageSource.fileName);
     }
