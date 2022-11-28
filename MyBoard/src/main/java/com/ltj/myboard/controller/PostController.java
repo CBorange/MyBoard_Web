@@ -82,7 +82,7 @@ public class PostController extends LayoutControllerBase {
     }
 
     @PostMapping("/post")
-    public ResponseEntity submitPost(@RequestBody SubmitPostData submitPostData){
+    public ResponseEntity submitPost(@RequestBody SubmitPostData submitPostData) {
         try {
             Post insertedPost = postService.submitPostProcess(submitPostData);
             String redirectURL = String.format("/post/%d", insertedPost.getID());

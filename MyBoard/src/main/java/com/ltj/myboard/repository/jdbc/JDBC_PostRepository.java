@@ -105,7 +105,7 @@ public class JDBC_PostRepository implements PostRepository {
         namedParameter.addValue("writerID", writerID);
         namedParameter.addValue("postID", postID);
 
-        int updateCount = jdbcTemplate.update(insertPost_SQL, namedParameter);
+        int updateCount = jdbcTemplate.update(updatePost_SQL, namedParameter);
         return updateCount;
     }
     @Override

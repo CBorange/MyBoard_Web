@@ -1,6 +1,7 @@
 let editorRef;
 let nowSubmitting = false;
 let editMode;
+let deleteImgCached = new Array();
 
 // ClassicEditor 기본 설정
 ClassicEditor
@@ -46,7 +47,6 @@ function init(editMode, content){
     imageUploadEditing.on('uploadComplete', (evt, { data, imageElement} ) => {
         // 이미지 업로드 시 EditView에 class 추가
         editorRef.editing.view.change( writer => {
-            //
             const viewImage = editorRef.editing.mapper.toViewElement(imageElement).getChild(0);
             writer.addClass('post_image', viewImage);
         } );
@@ -59,18 +59,31 @@ function init(editMode, content){
     })
 
     // 이미지 변경(이미지 업로드 후 undo 또는 삽입 한 이미지 에디터에서 삭제)
-    // 신규 작성 중에 추가된 이미지인지 기등록된 이미지인지에 따라 다르게 처리
-    // 기등록 이미지일 경우 이 시점에서 제거하지 않고 삭제 대상 array를 만든다.
-    // 최종 수정 완료 시점에 array 전달하여 서버에서 FTP 및 DB 수정하도록 처리
+    // 이 시점에서는 삭제 editor 기준에서 event 발생한 img element가 기등록된 img인지
+    // 신규로 삽입한 img인지 구별할 방법이 없으므로(src Attribute만 들어옴)
+    // delete할 img list를 caching하여 모두 DB로 전달한다.
+    // DB에서 PostFile delete 시에 유효한 데이터(기등록된 파일)라면 제거할것이고 아니면 제거 안될것임
+    // 프론트에서는 구분없이 전부 전달
     editorRef.model.document.on('change:data', (e, batch) => {
         var changedArray = e.source.differ._cachedChanges;
         for(var changedData of changedArray){
             if(changedData.name == 'imageBlock' && changedData.type == 'remove'){
                 var imageSource = changedData.attributes.get('src');
                 if(typeof imageSource != 'undefined'){  // FTP 이미지 업로드 실패 시 imageSource가 undefined일 수 있다. 이런경우는 FTP에 올라간 데이터가 없기 때문에 삭제 X
-                    var imageFileName = getFileNameByImageSrcURL(imageSource);
 
-                    sendFTPDeleteImage(imageFileName);
+                    // 
+                    var fileName = getFileNameByImageSrcURL(imageSource);
+                    var extIdx = fileName.lastIndexOf('.');
+                    var fileID = fileName.substring(0, extIdx);
+                    
+                    var deleteImgData = {
+                        fileID: fileID,
+                        fileName: fileName,
+                        state: 'delete'
+                    };
+
+                    deleteImgCached.push(deleteImgData);
+                    sendFTPDeleteImage(fileName);
                 }
             }
         }
@@ -99,7 +112,7 @@ function getUnsubmittedImages() {
     var result = new Array();
 
     // '수정' 단계 즉, 게시글 수정 시점한정으로 DB에서 content 읽어와서 이 JS가 호출된 시점에는 img태그에 post_image CSS Class가 입력되어 있지 않음
-    // 신규 이미지 삽입, 저장된 데이터 에만 post_image CSS Class가 입력되어 있으므로 해당 Class 존재하는지 여부로 신규 이미지 인지 구분
+    // 신규 이미지 삽입, 저장된 데이터 에만 post_image CSS Class가 입력되어 있으므로 현재시점에서 해당 Class 존재하는지 여부로 신규 이미지 인지 구분
     const images = document.querySelectorAll('.post_image');
     for(let i =0; i < images.length; ++i) {
         // 이미지 src 에서 파일이름 추출, 확장자 때고 id로 저장
@@ -108,7 +121,7 @@ function getUnsubmittedImages() {
 
         var extIdx = fileName.lastIndexOf('.');
         var fileID = fileName.substring(0, extIdx);
-        var fileState = 'insert'; // Insert Or Delete
+        var fileState = 'insert'; // post_image class 가 등록된 image는 DB에 저장되지 않은 이미지 이므로 insert다
         result[i] = {
             // FileID
             fileID: fileID,
@@ -122,19 +135,26 @@ function getUnsubmittedImages() {
 // 게시글 생성 또는 수정 POST API 호출
 // curPostID는 '수정'으로 접근할때만 들어온다. 신규 게시글 '생성'의 경우에는 빈값으로 전달된다.
 function onSubmitPost(curPostID) {
-    
-    // TODO
+
     // submitPost 호출할 때 서버에 넘기는 Image Delta 데이터는 일차적으로
-    // image가 삽입, 삭제되는 시점에 caching 한 데이터를 사용한다.
-    // 그리고 getUnSubmittedImages()를 호출하여 insert의 경우 unsubmittedImage 리스트에 존재해야 하고
-    // delete의 경우 unsubmittedImage 리스트에 존재하지 않아야 한다는 조건으로 검증하고 최종적으로 DeltaFileData를 결정한다.
-    // 이 부분 수정필요
-    var imageSources = getUnsubmittedImages();
+    // insert 데이터와 delete 데이터로 분리하여 전달한다.
+    // post_image class가 등록된 이미지(unsubmittedImage)는 insert로(수정 또는 생성 시 신규로 삽입된 이미지임)
+    // editor에서 remove event 발생 시 caching한 데이터는 delete로(기등록된 데이터, 신규데이터 구분 없음 전부 전달하고
+    // DB에서 구분 없이 전부 삭제 쿼리 실행함, 유효하면 삭제되고 아니면 무시될것임)
+    var unsubmittedImages = getUnsubmittedImages();
+    var finalImageSources = new Array();
+    for(let i = 0; i < unsubmittedImages.length; ++i){
+        finalImageSources.push(unsubmittedImages[i]);
+    }
+    for(let i = 0; i < deleteImgCached.length; ++i){
+        finalImageSources.push(deleteImgCached[i]);
+    }
+
     const writePostForm = document.querySelector('#writePostForm');
     const sendData = {
         title: writePostForm.elements['title'].value,
         content: editorRef.getData(),
-        imageSource: imageSources,
+        imageSource: finalImageSources,
         postID: writePostForm.elements['postID'].value,
         boardID: writePostForm.elements['boardID'].value,
         writerID: writePostForm.elements['writerID'].value,
