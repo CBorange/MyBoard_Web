@@ -4,7 +4,7 @@ Spring 커뮤니티 게시판 프로젝트
   
 사용기술은 다음과 같습니다.  
 SpringBoot + MySQL(Backend)  
-Bootstrap + HTML + JS + Thymeleaf(Frontend)  
+Bootstrap + Thymeleaf(Frontend)  
 AWS + Docker + Jenkins(Devops)  
   
 다음은 진행내역 입니다. 저장소 소유자 개인 진행상태 확인용입니다. 수시로 변경될 수 있습니다.  
