@@ -8,6 +8,9 @@ import java.time.LocalDateTime;
 @Setter
 @ToString
 public class Post {
+    public Post(){
+        ID = -1;    // ID의 기본값은 음수이다. 음수인 경우 신규 게시글로 취급한다.
+    }
     private int ID;
 
     private int BoardID;

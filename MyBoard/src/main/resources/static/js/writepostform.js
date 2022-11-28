@@ -93,10 +93,13 @@ function getFileNameByImageSrcURL(imageSrcURL){
     return fileName;
 }
 
-function getImageSource() {
-    // 이미지 src 얻어냄
+// 아직 DB에 저장되지 않은(작성중인) 이미지 src 얻어냄
+function getUnsubmittedImages() {
+    
     var result = new Array();
 
+    // '수정' 단계 즉, 게시글 수정 시점한정으로 DB에서 content 읽어와서 이 JS가 호출된 시점에는 img태그에 post_image CSS Class가 입력되어 있지 않음
+    // 신규 이미지 삽입, 저장된 데이터 에만 post_image CSS Class가 입력되어 있으므로 해당 Class 존재하는지 여부로 신규 이미지 인지 구분
     const images = document.querySelectorAll('.post_image');
     for(let i =0; i < images.length; ++i) {
         // 이미지 src 에서 파일이름 추출, 확장자 때고 id로 저장
@@ -105,7 +108,7 @@ function getImageSource() {
 
         var extIdx = fileName.lastIndexOf('.');
         var fileID = fileName.substring(0, extIdx);
-        var fileState = ''; // Insert Or Delete
+        var fileState = 'insert'; // Insert Or Delete
         result[i] = {
             // FileID
             fileID: fileID,
@@ -116,14 +119,23 @@ function getImageSource() {
     return result;
 }
 
-// 게시글 작성 서버로 post
-function onSubmitPost() {
-    var imageSources = getImageSource();
+// 게시글 생성 또는 수정 POST API 호출
+// curPostID는 '수정'으로 접근할때만 들어온다. 신규 게시글 '생성'의 경우에는 빈값으로 전달된다.
+function onSubmitPost(curPostID) {
+    
+    // TODO
+    // submitPost 호출할 때 서버에 넘기는 Image Delta 데이터는 일차적으로
+    // image가 삽입, 삭제되는 시점에 caching 한 데이터를 사용한다.
+    // 그리고 getUnSubmittedImages()를 호출하여 insert의 경우 unsubmittedImage 리스트에 존재해야 하고
+    // delete의 경우 unsubmittedImage 리스트에 존재하지 않아야 한다는 조건으로 검증하고 최종적으로 DeltaFileData를 결정한다.
+    // 이 부분 수정필요
+    var imageSources = getUnsubmittedImages();
     const writePostForm = document.querySelector('#writePostForm');
     const sendData = {
         title: writePostForm.elements['title'].value,
         content: editorRef.getData(),
         imageSource: imageSources,
+        postID: writePostForm.elements['postID'].value,
         boardID: writePostForm.elements['boardID'].value,
         writerID: writePostForm.elements['writerID'].value,
     };
@@ -136,7 +148,7 @@ function onSubmitPost() {
         body: JSON.stringify(sendData)
     })
     .then((response) => {
-        console.log('onSubmitPost 성공 : ', response);
+        console.log('onSubmitPost POST API 전송결과 : ', response);
         nowSubmitting = true;
         if(response.redirected)
             window.location.href = response.url;
@@ -144,12 +156,6 @@ function onSubmitPost() {
     .catch((error) => {
         console.log('onSubmitPost 실패 : ', error);
     });
-}
-
-// 게시글 수정 서버로 post
-function onModifyPost(){
-    var content = editorRef.getData();
-    console.log('수정');
 }
 
 // FTP 이미지 삭제 Reqeust 전송
@@ -173,7 +179,7 @@ window.addEventListener('beforeunload', function(e){
     if(nowSubmitting)
         return 0;
 
-    var imageSources = getImageSource();
+    var imageSources = getUnsubmittedImages();
     for(var imageSource of imageSources) {
         sendFTPDeleteImage(imageSource.fileName);
     }

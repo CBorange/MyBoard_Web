@@ -15,6 +15,7 @@ public class JDBC_PostFileRepository implements PostFileRepository {
     private final NamedParameterJdbcTemplate jdbcTemplate;
     private final String findPostFilesByPostID_SQL;
     private final String insertPostFile_SQL;
+    private final String deletePostFile_SQL;
 
     public JDBC_PostFileRepository(DataSource dataSource){
         jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
@@ -22,6 +23,7 @@ public class JDBC_PostFileRepository implements PostFileRepository {
         String daoName = "JDBC_PostFileRepository";
         findPostFilesByPostID_SQL = MyResourceLoader.loadProductionQuery(daoName, "findPostFilesByPostID.sql");
         insertPostFile_SQL = MyResourceLoader.loadProductionQuery(daoName, "insertPostFile.sql");
+        deletePostFile_SQL = MyResourceLoader.loadProductionQuery(daoName, "deletePostFile.sql");
     }
 
     @Override
@@ -37,6 +39,17 @@ public class JDBC_PostFileRepository implements PostFileRepository {
         jdbcTemplate.update(insertPostFile_SQL, namedParameter, idKeyHolder, new String[]{"ID"});
         Number generatedID = idKeyHolder.getKey();
         return generatedID.intValue();
+    }
+
+    @Override
+    public int deletePostFile(int postID, String fileID) {
+        // 쿼리실행
+        MapSqlParameterSource namedParameter = new MapSqlParameterSource();
+        namedParameter.addValue("postID", postID);
+        namedParameter.addValue("fileID", fileID);
+
+        int deleteCount = jdbcTemplate.update(deletePostFile_SQL, namedParameter);
+        return deleteCount;
     }
 
     @Override

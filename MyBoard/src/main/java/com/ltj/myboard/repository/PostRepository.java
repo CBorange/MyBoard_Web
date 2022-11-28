@@ -11,5 +11,6 @@ public interface PostRepository {
     List<Post> findAllPostByBoardID(int boardID);
     List<Post> findPostByWriterID(String writerID);
     int insertPost(String title, String content, int boardID, String writerID);
+    int updatePost(String title, String content, int postID, String writerID);
     int deletePost(int postID);
 }

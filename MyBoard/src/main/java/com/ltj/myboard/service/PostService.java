@@ -2,7 +2,6 @@ package com.ltj.myboard.service;
 
 
 import com.ltj.myboard.domain.Post;
-import com.ltj.myboard.domain.PostFile;
 import com.ltj.myboard.dto.board.FilteredPost;
 import com.ltj.myboard.dto.post.PostFileDelta;
 import com.ltj.myboard.dto.post.SubmitPostData;
@@ -75,19 +74,33 @@ public class PostService{
         return filteredPostList;
     }
 
+    //region SubmitPost(Insert, Update)
     @Transactional
-    public Post insertPostProcess(SubmitPostData submitPostData) {
-        // 1. Post Master Data Insert, 신규 ID 채번
-        Post insertedPost = insertPost(submitPostData.getTitle(), submitPostData.getContent(), submitPostData.getBoardID(),
-                submitPostData.getWriterID());
+    public Post submitPostProcess(SubmitPostData submitPostData) {
+        // SubmitPostData 의 State에 따라 게시글을 생성할지, 수정할지 결정한다.
+        // * 게시글 삭제는 별도의 API로 접근한다 이 함수로 들어오지 않는다.
 
-        // 2. Postfiles Detail Data Insert
-        PostFileDelta[] targetFiles = submitPostData.getImageSource();
-        for(PostFileDelta delta : targetFiles){
-            insertPostFile(insertedPost.getID(), delta);
+        // 1. 현재 submit 데이터가 게시글 '생성' 인지, '수정'인지 검사한다.
+        // postID가 음수라면 '생성' 그 외에는 '수정' 이다.
+        Post submittedPost = null;
+        if(submitPostData.getPostID() < 0){
+            // 1-1. 게시글 생성, 신규 Post ID 채번
+            submittedPost = insertPost(submitPostData.getTitle(), submitPostData.getContent(), submitPostData.getBoardID(),
+                    submitPostData.getWriterID());
+        } else {
+            // 1-2. 게시글 내용 수정
+            submittedPost = updatePost(submitPostData.getTitle(), submitPostData.getContent(), submitPostData.getPostID(),
+                    submitPostData.getWriterID());
         }
 
-        return insertedPost;
+        // 2. 게시글에 등록된 파일 state에 따라 적절한 처리 실행
+        // * 게시글 '생성'의 경우 insert State만 들어올 것이고, '수정'의 경우 복합적으로 State가 들어올 것임
+        PostFileDelta[] targetFiles = submitPostData.getImageSource();
+        for(PostFileDelta delta : targetFiles){
+            submitPostFile(submittedPost.getID(), delta);
+        }
+        
+        return submittedPost;
     }
 
     private Post insertPost(String title, String content, int boardID, String writerID) {
@@ -99,16 +112,36 @@ public class PostService{
         });
     }
 
-    private int insertPostFile(int postID, PostFileDelta fileDelta){
-        // Insert로 넘어온 PostFileDelta 데이터는 무조건 Insert State로 간주한다.
-        // 단, 정확성을 위해서 state를 검사한다(예외처리)
-        if(PostFileDelta.checkIsInsertData(fileDelta)) {
-            return postFileRepository.insertPostFile(postID, fileDelta.getFileID(), fileDelta.getFileName());
-        } else{
-            throw new IllegalStateException("PostService.insertPostProcess : Insert Post 함수에 insert 상태가 아닌 PostFileData가 전달됐습니다.");
+    private Post updatePost(String title, String content, int postID, String writerID){
+        int updateCount = postRepository.updatePost(title, content, postID, writerID);
+        if(updateCount < 1){
+            throw new IllegalStateException("PostService : updatePost Error, updatePost count is zero");
         }
+
+        Optional<Post> updatedPost = findPostByID(postID);
+        return updatedPost.orElseThrow(() -> {
+            log.error("PostService : updatePost Error, update count is greater than zero, but can't not found Post Data from updatedPostID = " + postID);
+            throw new IllegalStateException("PostService : updatePost Error, update count is greater than zero, but can't not found Post Data from updatedPostID = " + postID);
+        });
     }
 
+    private int submitPostFile(int postID, PostFileDelta fileDelta){
+        // PostFileDelta의 State에 따라서 적절한 처리를 실행한다.
+        // PostFileDelta의 State는 항상 Insert 또는 Delete 둘 중 하나이다.
+        // * 사용자가 기등록한 게시글의 이미지를 수정할 수 있는 경로는 이미지를 제거 후 재등록 하는 경우 밖에 없으므로
+        // 이 와 같은 경우 Delete, Insert로 총 2번 이 함수가 호출될 것이다.
+        if(PostFileDelta.checkIsInsertData(fileDelta)) {
+            return postFileRepository.insertPostFile(postID, fileDelta.getFileID(), fileDelta.getFileName());
+        } else if (PostFileDelta.checkIsDeleteData(fileDelta)){
+            return postFileRepository.deletePostFile(postID, fileDelta.getFileID());
+        } else{
+            throw new IllegalStateException("PostService : submitPostFile Error, PostFileDelta의 State가 Insert 또는 Delete 가 아닙니다. 현재 State: " +
+                    fileDelta.getState());
+        }
+    }
+    //endregion
+
+    //region DeletePost
     @Transactional
     public int deletePostProcess(int postID){
         int deleteCount = deletePost(postID);
@@ -122,4 +155,5 @@ public class PostService{
         }
         return deleteCount;
     }
+    //endregion
 }

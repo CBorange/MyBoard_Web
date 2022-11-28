@@ -48,5 +48,16 @@ public class PostServiceTest {
     @Test
     @Transactional
     public void 게시글추가() throws SQLException {
+
+    }
+
+    @Test
+    public void 게시글수정(){
+        // 게시글 생성
+        
+
+        // 생성된 게시글 수정
+        
+        // 검증
     }
 }

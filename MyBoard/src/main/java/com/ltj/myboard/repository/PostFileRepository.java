@@ -4,5 +4,6 @@ import java.util.List;
 
 public interface PostFileRepository {
     int insertPostFile(int postID, String fileID, String fileName);
+    int deletePostFile(int postID, String fileID);
     List<PostFile> findPostFilesByPostID(int postID);
 }

@@ -28,17 +28,20 @@ public class JDBC_PostRepository implements PostRepository {
     private final String findAllPostByBoardID_SQL;
     private final String findPostByWriterID_SQL;
     private final String insertPost_SQL;
+    private final String updatePost_SQL;
     private final String deletePost_SQL;
 
     @Autowired
     public JDBC_PostRepository(DataSource dataSource){
         jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 
+        // 쿼리 파일 Load
         String daoName = "JDBC_PostRepository";
         findPostByID_SQL = MyResourceLoader.loadProductionQuery(daoName, "findPostByID.sql");
         findAllPostByBoardID_SQL = MyResourceLoader.loadProductionQuery(daoName, "findAllPostByBoardID.sql");
         findPostByWriterID_SQL = MyResourceLoader.loadProductionQuery(daoName, "findPostByWriterID.sql");
         insertPost_SQL = MyResourceLoader.loadProductionQuery(daoName, "insertPost.sql");
+        updatePost_SQL = MyResourceLoader.loadProductionQuery(daoName, "updatePost.sql");
         deletePost_SQL = MyResourceLoader.loadProductionQuery(daoName, "deletePost.sql");
     }
 
@@ -78,7 +81,7 @@ public class JDBC_PostRepository implements PostRepository {
         );
         return postList;
     }
-
+    @Override
     public int insertPost(String title, String content, int boardID, String writerID) {
         // 쿼리 실행
         MapSqlParameterSource namedParameter = new MapSqlParameterSource();
@@ -93,7 +96,19 @@ public class JDBC_PostRepository implements PostRepository {
         Number generatedID = idKeyHolder.getKey();
         return generatedID.intValue();
     }
+    @Override
+    public int updatePost(String title, String content, int postID, String writerID){
+        // 쿼리 실행
+        MapSqlParameterSource namedParameter = new MapSqlParameterSource();
+        namedParameter.addValue("title", title);
+        namedParameter.addValue("content", content);
+        namedParameter.addValue("writerID", writerID);
+        namedParameter.addValue("postID", postID);
 
+        int updateCount = jdbcTemplate.update(insertPost_SQL, namedParameter);
+        return updateCount;
+    }
+    @Override
     public int deletePost(int postID){
         // 쿼리 실행
         MapSqlParameterSource namedParameter = new MapSqlParameterSource();

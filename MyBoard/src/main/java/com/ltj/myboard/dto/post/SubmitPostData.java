@@ -11,6 +11,10 @@ public class SubmitPostData {
     private String title;
     private String content;
     private PostFileDelta[] imageSource;
+
+    //submit 하는 post의 ID, 신규 게시글 생성의 경우 ID가 들어오지 않음, '수정'일 경우에만 들어옴
+    private int postID;
+
     private int boardID;
     private String writerID;
 }

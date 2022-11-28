@@ -10,8 +10,6 @@ import com.ltj.myboard.service.PostService;
 import com.ltj.myboard.util.Paginator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,10 +17,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.view.RedirectView;
 
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -86,6 +81,34 @@ public class PostController extends LayoutControllerBase {
         return LayoutViewPath;
     }
 
+    @PostMapping("/post")
+    public ResponseEntity submitPost(@RequestBody SubmitPostData submitPostData){
+        try {
+            Post insertedPost = postService.submitPostProcess(submitPostData);
+            String redirectURL = String.format("/post/%d", insertedPost.getID());
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Location", redirectURL);
+            return new ResponseEntity<String>(headers, HttpStatus.SEE_OTHER);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            e.printStackTrace();
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/post/{id}")
+    public ResponseEntity deletePost(@PathVariable("id") int id){
+        try{
+            int deleteCount = postService.deletePostProcess(id);
+            return new ResponseEntity(deleteCount, HttpStatus.OK);
+        } catch (Exception e){
+            log.error(e.getMessage());
+            e.printStackTrace();
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+    }
+
     @GetMapping("/writepostform/{id}")
     public String getWritePostPage(Model model,@PathVariable(value = "id", required = false) int id,
                                    @RequestParam(required = true) int boardID){
@@ -122,33 +145,5 @@ public class PostController extends LayoutControllerBase {
         }
 
         return LayoutViewPath;
-    }
-
-    @PostMapping("/post")
-    public ResponseEntity submitPost(@RequestBody SubmitPostData submitPostData){
-        try {
-            Post insertedPost = postService.insertPostProcess(submitPostData);
-            String redirectURL = String.format("/post/%d", insertedPost.getID());
-
-            HttpHeaders headers = new HttpHeaders();
-            headers.add("Location", redirectURL);
-            return new ResponseEntity<String>(headers, HttpStatus.SEE_OTHER);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            e.printStackTrace();
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
-        }
-    }
-
-    @DeleteMapping("/post/{id}")
-    public ResponseEntity deletePost(@PathVariable("id") int id){
-        try{
-            int deleteCount = postService.deletePostProcess(id);
-            return new ResponseEntity(deleteCount, HttpStatus.OK);
-        } catch (Exception e){
-            log.error(e.getMessage());
-            e.printStackTrace();
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
-        }
     }
 }
