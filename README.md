@@ -24,13 +24,14 @@ insertPost(Repository 호출, Transaction 결과 유효성 검사) 총 두가지
 -> post_image CSS Class로 인해서 항성 좌측정렬됨, 현재는 의도된 결과물임 추후 개선방안 연구
   
 **일감(구현)**  
-1. 게시글 수정 기능구현 **완료**  
-2. 메인화면(home HTML) 전체 게시판 표시 및 베스트 게시물 표시  
-3. 기본 로그인(유저관리, SpringSecurity, JWT로 구현) 기능 구현  
-4. Google, Naver, Kakao 등 연동 로그인 기능 구현(OAuth)  
+- 스크랩 기능  
+- 추천/비추천 기능
+- 메인화면(home HTML) 전체 게시판 표시 및 베스트 게시물 표시  
+- 기본 로그인(유저관리, SpringSecurity, JWT로 구현) 기능 구현  
+- Google, Naver, Kakao 등 연동 로그인 기능 구현(OAuth)  
     
 **일감(구현됨)**  
-1. 게시글 작성 기능  
-2. 게시글 수정 기능  
-3. 댓글 작성 기능  
-2-1. 대댓글 작성 기능  
+- 게시글 작성 기능  
+- 게시글 수정 기능  
+- 댓글 작성 기능  
+- 대댓글 작성 기능  
