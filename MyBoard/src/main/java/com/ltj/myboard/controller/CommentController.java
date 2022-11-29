@@ -23,7 +23,7 @@ import java.sql.SQLException;
 public class CommentController {
     private final CommentService commentService;
 
-    @PutMapping("/comment")
+    @PostMapping("/comment")
     public ResponseEntity submitComment(@RequestBody SubmitCommentData submitCommentData){
         try {
             Comment insertedComment = commentService.insertComment(submitCommentData.getPostID(),
@@ -33,9 +33,7 @@ public class CommentController {
 
             String redirectURI = String.format("/post/%d", submitCommentData.getPostID());
 
-            HttpHeaders headers = new HttpHeaders();
-            headers.add("Location", redirectURI);
-            return new ResponseEntity<String>(headers, HttpStatus.SEE_OTHER);
+            return new ResponseEntity<String>(HttpStatus.OK);
         } catch (SQLException e) {
             log.error(e.getMessage());
             e.printStackTrace();

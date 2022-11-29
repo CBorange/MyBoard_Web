@@ -4,6 +4,16 @@ window.onload = function(){
     var curURL = window.location.toString();
     linkElement.href = curURL;
     linkElement.innerText = curURL;
+
+    // 댓글 작성 후 새로고침된 경우
+    var commentSubmitted = sessionStorage.getItem("commentSubmitted");
+    if(commentSubmitted){
+        sessionStorage.removeItem("commentSubmitted");
+
+        // 댓글 영역 상단으로 스크롤
+        //var location = document.querySelector("#commentTitleDiv").offsetTop;
+        //window.scrollTo({top:location, behavior: 'auto'});
+    }
 }
 
 // 대댓글 작성 form toggle
@@ -30,7 +40,7 @@ function onSubmitComment(rootCommentID, isSubComment) {
     };
     const url = makeURL('/comment');
     fetch(url, {
-        method: 'PUT',
+        method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
@@ -38,8 +48,8 @@ function onSubmitComment(rootCommentID, isSubComment) {
     })
     .then((response) => {
         console.log('onSubmitComment 성공 : ', response);
-        if(response.redirected)
-            window.location.href = response.url;
+        sessionStorage.setItem("commentSubmitted", "true");
+        window.location.reload();
     })
     .catch((error) => {
         console.log('onSubmitComment 실패 : ', error);
