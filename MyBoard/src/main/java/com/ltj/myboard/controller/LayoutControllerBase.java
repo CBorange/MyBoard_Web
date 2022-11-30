@@ -16,7 +16,6 @@ public class LayoutControllerBase {
     @Autowired
     private BoardService boardService;
 
-
     @ModelAttribute("rootBoards")
     public List<Board> rootBoards(){
         List<Board> rootBoards = boardService.getAllRootBoards();

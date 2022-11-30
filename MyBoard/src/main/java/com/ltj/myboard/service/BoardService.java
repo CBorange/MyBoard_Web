@@ -23,4 +23,8 @@ public class BoardService{
     public List<Board> getAllRootBoards() {
         return boardRepository.getAllRootBoards();
     }
+
+    public List<Board> getAllLeafBoards(){
+        return boardRepository.getAllLeafBoards();
+    }
 }

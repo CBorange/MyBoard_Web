@@ -88,6 +88,17 @@ public class JDBC_BoardRepository implements BoardRepository {
         return rootBoards;
     }
 
+    @Override
+    public List<Board> getAllLeafBoards(){
+        List<Board> allBoards = getAllBoards();
+        List<Board> leafBoards = allBoards.stream().filter(board -> {
+            if(board.getChildBoardCount() == 0)
+                return true;
+            return false;
+        }).collect(Collectors.toList());
+        return leafBoards;
+    }
+
     public class BoardRowMapper implements RowMapper<Board>{
         @Override
         public Board mapRow(ResultSet rs, int rowNum) throws SQLException {
