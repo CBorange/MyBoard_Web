@@ -9,13 +9,12 @@
                     <div class="row">
                         <th:block th:each="leafBoard : ${curBundle}">
                             <div class="col">
-                                <span th:text="${leafBoard.getBoardName()}"></span>
+                                <span class="board-title" th:text="${leafBoard.getBoardName()}"></span>
                             </div>
                         </th:block>
                     </div>
                 </th:block>
             </div>
-            <div>Hello! this is content!</div>
         </div>
 
     </th:block>
