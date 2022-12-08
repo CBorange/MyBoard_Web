@@ -10,6 +10,7 @@ public interface PostRepository {
     Optional<Post> findPostByID(int postID);
     List<Post> findAllPostByBoardID(int boardID);
     List<Post> findPostByWriterID(String writerID);
+    List<Post> getLastestPost(int boardID, int resultLimit);
     int insertPost(String title, String content, int boardID, String writerID);
     int updatePost(String title, String content, int postID, String writerID);
     int deletePost(int postID);

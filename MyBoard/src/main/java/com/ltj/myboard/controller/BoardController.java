@@ -1,11 +1,10 @@
 package com.ltj.myboard.controller;
 import com.ltj.myboard.domain.Board;
-import com.ltj.myboard.dto.board.FilteredPost;
+import com.ltj.myboard.dto.post.FilteredPost;
 import com.ltj.myboard.service.BoardService;
 import com.ltj.myboard.service.PostService;
 import com.ltj.myboard.util.Paginator;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;

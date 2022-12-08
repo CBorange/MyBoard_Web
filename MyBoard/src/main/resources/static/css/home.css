@@ -1,3 +1,7 @@
 .board-title{
-    font-size: 40px;
+    font-size: x-large;
+}
+
+.board-row{
+    min-height: 400px;
 }

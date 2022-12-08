@@ -1,7 +1,6 @@
 package com.ltj.myboard.service;
 
 import com.ltj.myboard.domain.Comment;
-import com.ltj.myboard.dto.board.FilteredPost;
 import com.ltj.myboard.dto.post.OrderedComment;
 import com.ltj.myboard.repository.CommentRepository;
 import lombok.RequiredArgsConstructor;

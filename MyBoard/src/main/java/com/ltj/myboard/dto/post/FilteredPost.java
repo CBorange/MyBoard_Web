@@ -1,4 +1,4 @@
-package com.ltj.myboard.dto.board;
+package com.ltj.myboard.dto.post;
 
 import com.ltj.myboard.domain.Post;
 import lombok.Getter;

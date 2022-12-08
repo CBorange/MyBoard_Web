@@ -1,15 +1,31 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
     <th:block th:fragment="home">
+        <link rel="stylesheet" href="/css/home.css">
         <div class="mx-auto container-lg">
             <!-- 게시판 표기 -->
             <div class="container">
                 <!-- 각 LeafBoard 번들에 LeafBoard 가 2개씩 들어온다(한줄에 게시판 2개씩 표시) -->
                 <th:block th:each="curBundle : ${leafBoardBundle}">
-                    <div class="row">
+                    <div class="row board-row">
                         <th:block th:each="leafBoard : ${curBundle}">
                             <div class="col">
+                                <!--게시판 명-->
                                 <span class="board-title" th:text="${leafBoard.getBoardName()}"></span>
+                                <hr/>
+                                <!--게시글 목록-->
+                                <div class="d-flex flex-column">
+                                    <th:block th:with="posts=${postMap[leafBoard.getID()]}">
+                                        <th:block th:each="post : ${posts}">
+                                            <a th:href="'/post/' + ${post.getID()}">
+                                                <span th:text="${post.getTitle()}"></span>
+<!--                                                <th:block th:if="${post.getCommentCount() > 0}">
+                                                    <span class="title_commentcount_span ms-1" th:text="${filteredPost.getCommentCount()}"></span>
+                                                </th:block>-->
+                                            </a>
+                                        </th:block>
+                                    </th:block>
+                                </div>
                             </div>
                         </th:block>
                     </div>

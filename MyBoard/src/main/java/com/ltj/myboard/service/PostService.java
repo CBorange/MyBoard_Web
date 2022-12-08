@@ -2,7 +2,7 @@ package com.ltj.myboard.service;
 
 
 import com.ltj.myboard.domain.Post;
-import com.ltj.myboard.dto.board.FilteredPost;
+import com.ltj.myboard.dto.post.FilteredPost;
 import com.ltj.myboard.dto.post.PostFileDelta;
 import com.ltj.myboard.dto.post.SubmitPostData;
 import com.ltj.myboard.repository.FilteredPostRepository;
@@ -35,6 +35,10 @@ public class PostService{
 
     public List<Post> findPostByWriterID(String writerID) {
         return postRepository.findPostByWriterID(writerID);
+    }
+
+    public List<Post> getLastestPost(int boardID, int resultLimit){
+        return postRepository.getLastestPost(boardID, resultLimit);
     }
 
     public List<FilteredPost> findPost_UserParam(int boardID, String searchMethod, String searchCondition, String sortOrderTarget,

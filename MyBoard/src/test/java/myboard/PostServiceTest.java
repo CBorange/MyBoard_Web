@@ -2,7 +2,7 @@ package myboard;
 
 import com.ltj.myboard.MyBoardApplication;
 import com.ltj.myboard.domain.Post;
-import com.ltj.myboard.dto.board.FilteredPost;
+import com.ltj.myboard.dto.post.FilteredPost;
 import com.ltj.myboard.service.PostService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Optional;
 
 @SpringBootTest(classes = MyBoardApplication.class)
 public class PostServiceTest {
@@ -23,6 +22,15 @@ public class PostServiceTest {
     public void 제목검색조건으로_게시글조회(){
         List<FilteredPost> findResult = postService.findPost_UserParam(115,"Title", "21","ModifyDay","ASC");
         Assertions.assertTrue(findResult.stream().count() > 0);
+    }
+
+    @Test
+    public void 최신게시글조회(){
+        int boardID = 126;
+        int limit = 10;
+        List<Post> result = postService.getLastestPost(boardID, limit);
+
+        Assertions.assertTrue(result.stream().count() > 0);
     }
 
     @Test
