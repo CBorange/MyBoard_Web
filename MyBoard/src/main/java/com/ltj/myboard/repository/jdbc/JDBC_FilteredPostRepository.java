@@ -20,12 +20,16 @@ public class JDBC_FilteredPostRepository implements FilteredPostRepository {
 
     private final String findPost_UseSearch_Title_SQL;
 
+    private final String getLastestPost_SQL;
+
     @Autowired
     public JDBC_FilteredPostRepository(DataSource dataSource){
         jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 
         String daoName = "JDBC_FilteredPostRepository";
         findPost_UseSearch_Title_SQL = MyResourceLoader.loadProductionQuery(daoName, "findPost_UseSearch_Title.sql");
+
+        getLastestPost_SQL = MyResourceLoader.loadProductionQuery(daoName, "getLastestPost.sql");
     }
 
     @Override
@@ -37,9 +41,9 @@ public class JDBC_FilteredPostRepository implements FilteredPostRepository {
         namedParameter.addValue("condition", "%" + condition_title + "%");
 
         List<FilteredPost> filteredPostList = jdbcTemplate.query(
-          findPost_UseSearch_Title_SQL,
-          namedParameter,
-          new FilteredObjectRowMapper()
+            getLastestPost_SQL,
+            namedParameter,
+            new FilteredObjectRowMapper()
         );
 
         return filteredPostList;
@@ -60,6 +64,20 @@ public class JDBC_FilteredPostRepository implements FilteredPostRepository {
     @Override
     public List<FilteredPost> findPost_UseSearch_Nickname(int boardID, String condition_nickname, String sortTargetColumn, String orderByMethod) {
         return null;
+    }
+
+    @Override
+    public List<FilteredPost> getLastestPost(int boardID, int resultLimit) {
+        MapSqlParameterSource namedParameter = new MapSqlParameterSource();
+        namedParameter.addValue("boardID", boardID);
+        namedParameter.addValue("limit", resultLimit);
+
+        List<FilteredPost> postList = jdbcTemplate.query(
+                getLastestPost_SQL,
+                namedParameter,
+                new FilteredObjectRowMapper()
+        );
+        return postList;
     }
 
     public class FilteredObjectRowMapper implements RowMapper<FilteredPost>{

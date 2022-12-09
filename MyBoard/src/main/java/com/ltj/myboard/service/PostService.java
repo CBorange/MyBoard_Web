@@ -37,8 +37,8 @@ public class PostService{
         return postRepository.findPostByWriterID(writerID);
     }
 
-    public List<Post> getLastestPost(int boardID, int resultLimit){
-        return postRepository.getLastestPost(boardID, resultLimit);
+    public List<FilteredPost> getLastestPost(int boardID, int resultLimit){
+        return filteredPostRepository.getLastestPost(boardID, resultLimit);
     }
 
     public List<FilteredPost> findPost_UserParam(int boardID, String searchMethod, String searchCondition, String sortOrderTarget,
