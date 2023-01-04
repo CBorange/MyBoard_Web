@@ -1,3 +1,8 @@
+.sidemenu-btn{
+    background-color: transparent;
+    border:none;
+}
+
 .navlinkitem{
     text-decoration: none;
     color: white;

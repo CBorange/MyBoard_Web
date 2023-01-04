@@ -1,6 +1,7 @@
 package com.ltj.myboard.controller;
 import com.ltj.myboard.domain.Board;
 import com.ltj.myboard.domain.Post;
+import com.ltj.myboard.dto.post.FilteredPost;
 import com.ltj.myboard.service.BoardService;
 import com.ltj.myboard.service.PostService;
 import lombok.RequiredArgsConstructor;
@@ -52,10 +53,10 @@ public class HomeController extends LayoutControllerBase {
         model.addAttribute("leafBoardBundle", leafBoardBundle);
 
         // Leaf 게시판 별로 Post 데이터 조회하여 Map(boardID is key)으로 반환
-        Map<Integer, List<Post>> postMap = new HashMap<Integer, List<Post>>();
+        Map<Integer, List<FilteredPost>> postMap = new HashMap<Integer, List<FilteredPost>>();
         for(List<Board> leafPair : leafBoardBundle){
             for(Board leaf : leafPair){
-                List<Post> result = postService.getLastestPost(leaf.getID(), 10);
+                List<FilteredPost> result = postService.getLastestPost(leaf.getID(), 10);
                 postMap.put(leaf.getID(), result);
             }
         }

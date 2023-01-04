@@ -19,6 +19,7 @@ public class JDBC_FilteredPostRepository implements FilteredPostRepository {
     private final NamedParameterJdbcTemplate jdbcTemplate;
 
     private final String findPost_UseSearch_Title_SQL;
+    private final String findPost_Lastest_SQL;
 
     @Autowired
     public JDBC_FilteredPostRepository(DataSource dataSource){
@@ -26,6 +27,22 @@ public class JDBC_FilteredPostRepository implements FilteredPostRepository {
 
         String daoName = "JDBC_FilteredPostRepository";
         findPost_UseSearch_Title_SQL = MyResourceLoader.loadProductionQuery(daoName, "findPost_UseSearch_Title.sql");
+        findPost_Lastest_SQL = MyResourceLoader.loadProductionQuery(daoName, "findPost_Lastest.sql");
+    }
+
+    @Override
+    public List<FilteredPost> findPost_Lastest(int boardID, int searchCntLimit) {
+        MapSqlParameterSource namedParameter = new MapSqlParameterSource();
+        namedParameter.addValue("boardID", boardID);
+        namedParameter.addValue("searchCntLimit", searchCntLimit);
+
+        List<FilteredPost> filteredPostList = jdbcTemplate.query(
+                findPost_Lastest_SQL,
+                namedParameter,
+                new FilteredObjectRowMapper()
+        );
+
+        return filteredPostList;
     }
 
     @Override

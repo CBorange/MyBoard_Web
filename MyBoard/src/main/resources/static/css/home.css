@@ -1,7 +1,13 @@
 .board-title{
-    font-size: x-large;
+    font-size: 30px;
 }
 
 .board-row{
     min-height: 400px;
+}
+
+.post-title{
+    font-size: 20px;
+    text-decoration: none;
+    color: black;
 }

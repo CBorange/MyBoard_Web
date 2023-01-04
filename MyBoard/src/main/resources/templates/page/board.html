@@ -30,7 +30,7 @@
                             <a th:href="'/post/' + ${filteredPost.getPostData().getID()}">
                                 <span class="title_span" th:text="${filteredPost.getPostData().getTitle()}"></span>
                                 <th:block th:if="${filteredPost.getCommentCount() > 0}">
-                                    <span class="title_commentcount_span ms-1" th:text="${filteredPost.getCommentCount()}"></span>
+                                    <span class="ms-1" th:text="${filteredPost.getCommentCount()}"></span>
                                 </th:block>
                             </a>
                         </td>
