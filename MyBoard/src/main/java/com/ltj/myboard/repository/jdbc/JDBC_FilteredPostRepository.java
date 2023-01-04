@@ -54,9 +54,9 @@ public class JDBC_FilteredPostRepository implements FilteredPostRepository {
         namedParameter.addValue("condition", "%" + condition_title + "%");
 
         List<FilteredPost> filteredPostList = jdbcTemplate.query(
-          findPost_UseSearch_Title_SQL,
-          namedParameter,
-          new FilteredObjectRowMapper()
+                findPost_UseSearch_Title_SQL,
+            namedParameter,
+            new FilteredObjectRowMapper()
         );
 
         return filteredPostList;

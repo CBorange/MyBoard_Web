@@ -27,7 +27,6 @@ public class JDBC_PostRepository implements PostRepository {
     private final String findPostByID_SQL;
     private final String findAllPostByBoardID_SQL;
     private final String findPostByWriterID_SQL;
-    private final String getLastestPost_SQL;
     private final String insertPost_SQL;
     private final String updatePost_SQL;
     private final String deletePost_SQL;
@@ -41,7 +40,6 @@ public class JDBC_PostRepository implements PostRepository {
         findPostByID_SQL = MyResourceLoader.loadProductionQuery(daoName, "findPostByID.sql");
         findAllPostByBoardID_SQL = MyResourceLoader.loadProductionQuery(daoName, "findAllPostByBoardID.sql");
         findPostByWriterID_SQL = MyResourceLoader.loadProductionQuery(daoName, "findPostByWriterID.sql");
-        getLastestPost_SQL = MyResourceLoader.loadProductionQuery(daoName, "getLastestPost.sql");
         insertPost_SQL = MyResourceLoader.loadProductionQuery(daoName, "insertPost.sql");
         updatePost_SQL = MyResourceLoader.loadProductionQuery(daoName, "updatePost.sql");
         deletePost_SQL = MyResourceLoader.loadProductionQuery(daoName, "deletePost.sql");
@@ -82,19 +80,7 @@ public class JDBC_PostRepository implements PostRepository {
         return postList;
     }
 
-    @Override
-    public List<Post> getLastestPost(int boardID, int resultLimit) {
-        MapSqlParameterSource namedParameter = new MapSqlParameterSource();
-        namedParameter.addValue("boardID", boardID);
-        namedParameter.addValue("limit", resultLimit);
 
-        List<Post> postList = jdbcTemplate.query(
-                getLastestPost_SQL,
-                namedParameter,
-                BeanPropertyRowMapper.newInstance(Post.class)
-        );
-        return postList;
-    }
 
     @Override
     public int insertPost(String title, String content, int boardID, String writerID) {
