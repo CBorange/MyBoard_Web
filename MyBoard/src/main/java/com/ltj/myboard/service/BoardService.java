@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
+@Service
 public class BoardService{
 
     private final BoardRepository boardRepository;

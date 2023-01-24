@@ -5,6 +5,7 @@ import com.ltj.myboard.service.BoardService;
 import com.ltj.myboard.service.PostService;
 import com.ltj.myboard.util.Paginator;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +17,7 @@ import java.util.Optional;
 
 @Controller
 @RequiredArgsConstructor
+@Slf4j
 public class BoardController extends LayoutControllerBase {
     private final BoardService boardService;
     private final PostService postService;
@@ -30,6 +32,9 @@ public class BoardController extends LayoutControllerBase {
                                              @RequestParam(required = false, defaultValue = "ModifyDay") String sortOrderTarget,
                                              @RequestParam(required = false, defaultValue = "DESC") String sortMethod){
         addLayoutModel_FragmentContent(model,"board.html","board");
+
+        // log test
+        log.info("board request");
 
         // Board 정보 Model에 추가
         Optional<Board> foundBoard = boardService.findBoardByID(id);

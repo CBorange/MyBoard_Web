@@ -22,6 +22,12 @@ public class LayoutControllerBase {
         return rootBoards;
     }
 
+    /**
+     * View 호출시에 Layout에 등록할 Page Fragment를 지정한다.
+     * @param model MVC model 객체
+     * @param pageFile 페이지 파일 경로
+     * @param contentFragmentID fragment html파일에서 지정한 fragment 식별자
+     */
     protected void addLayoutModel_FragmentContent(Model model, String pageFile, String contentFragmentID){
         model.addAttribute("layoutContent_Page", pageFile);
         model.addAttribute("layoutContent_Fragment", contentFragmentID);

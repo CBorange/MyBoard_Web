@@ -4,6 +4,7 @@ import com.ltj.myboard.domain.Comment;
 import com.ltj.myboard.dto.post.OrderedComment;
 import com.ltj.myboard.repository.CommentRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
+@Service
 public class CommentService {
     private final CommentRepository commentRepository;
 

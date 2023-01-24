@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Repository
 public class JDBC_BoardRepository implements BoardRepository {
     private final NamedParameterJdbcTemplate jdbcTemplate;
 

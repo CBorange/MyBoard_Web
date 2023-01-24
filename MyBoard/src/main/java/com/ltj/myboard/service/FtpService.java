@@ -16,6 +16,7 @@ import java.io.InputStream;
 import java.util.Base64;
 
 @Slf4j
+@Service
 public class FtpService {
     @Value("${ftp.host}")
     private String ftpHost;

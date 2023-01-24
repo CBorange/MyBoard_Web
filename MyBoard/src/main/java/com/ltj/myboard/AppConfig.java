@@ -22,26 +22,6 @@ public class AppConfig {
         return DataSourceBuilder.create().build();
     }
 
-    @Bean
-    public BoardService boardService(){
-        return new BoardService(boardRepository());
-    }
-
-    @Bean
-    public PostService postService(){
-        return new PostService(postRepository(), filteredPostRepository(), postFileRepository());
-    }
-
-    @Bean
-    public CommentService commentService(){
-        return new CommentService(commentRepository());
-    }
-
-    @Bean
-    public FtpService ftpService(){
-        return new FtpService();
-    }
-
     // Repository, 추후 JPA 사용할 수 있으므로 Configure에서 Bean 등록
     
     @Bean
@@ -59,6 +39,7 @@ public class AppConfig {
         return new JDBC_FilteredPostRepository(dataSource());
     }
 
+    @Bean
     public PostFileRepository postFileRepository(){
         return new JDBC_PostFileRepository((dataSource()));
     }
