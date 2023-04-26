@@ -48,4 +48,10 @@ public class AppConfig {
     public CommentRepository commentRepository(){
         return new JDBC_CommentRepository(dataSource());
     }
+
+    @Bean
+    public UserRepository userRepository()
+    {
+        return new JDBC_UserRepository((dataSource()));
+    }
 }

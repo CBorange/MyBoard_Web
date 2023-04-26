@@ -2,7 +2,7 @@ package com.ltj.myboard.util;
 
 import java.util.List;
 
-// 페이지 및 페이지 세션 계산 유틸
+// 페이지 및 페이지 세션(그룹) 계산 유틸
 public class Paginator {
     public static int getPageCount(long sourceCount, int maxVisibleCountInSinglePage){
         int pageCount = (int)(sourceCount / maxVisibleCountInSinglePage);
