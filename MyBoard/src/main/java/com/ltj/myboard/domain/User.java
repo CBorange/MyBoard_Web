@@ -18,4 +18,6 @@ public class User {
 
     @Column(name = "UserGrade")
     private int UserGrade;
+
+    private String UserGradeName;
 }

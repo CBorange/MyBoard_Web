@@ -1,6 +1,8 @@
 package com.ltj.myboard;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -14,14 +16,14 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
         http.authorizeRequests()
-                .antMatchers("/").permitAll()
                 .antMatchers("/writepostform").hasAnyRole() // 글쓰기, 편집은 권한이 있어야만 가능
-                .and()
-                // 토큰기반 인증이므로 Session 사용하지 않음
-                .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-                // TODO Filter 설정
+                .anyRequest().permitAll();
+                // TODO Filter 설정 for JWT
         return http.build();
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception{
+        return authenticationConfiguration.getAuthenticationManager();
     }
 }
