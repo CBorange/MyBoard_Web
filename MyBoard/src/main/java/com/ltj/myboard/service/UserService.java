@@ -1,5 +1,6 @@
 package com.ltj.myboard.service;
 import com.ltj.myboard.domain.User;
+import com.ltj.myboard.model.UserDetailsImpl;
 import com.ltj.myboard.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,19 +20,19 @@ public class UserService implements UserDetailsService {
 
     public Optional<User> findUserByID(String ID)
     {
-        return userRepository.findUserByID(ID);
+        return userRepository.findById(ID);
     }
 
     public List<User> findUserByGrade(int grade)
     {
-        return userRepository.findUserByGrade(grade);
+        return null;
+        //return userRepository.findByGradeId(grade);
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<User> found = userRepository.findUserByID(username);
-        if(found.isEmpty())
-            throw new UsernameNotFoundException("등록되지 않은 사용자 입니다.");
-        return found.get();
+        User found = userRepository.findById(username)
+                .orElseThrow(() -> new UsernameNotFoundException("등록되지 않은 사용자 입니다."));
+        return new UserDetailsImpl(found);
     }
 }

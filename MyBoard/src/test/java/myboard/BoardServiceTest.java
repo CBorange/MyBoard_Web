@@ -23,7 +23,7 @@ public class BoardServiceTest {
 
         // then
         for (Board rootBoard : rootBoards){
-            Assertions.assertEquals(0, rootBoard.getParentBoardID());
+            Assertions.assertEquals(0, rootBoard.getParent_board_id());
         }
     }
 
@@ -32,7 +32,7 @@ public class BoardServiceTest {
         // when
         List<Board> boards = boardService.getAllBoards();
         for (Board item : boards){
-            if(item.getParentBoardID() == 0){
+            if(item.getParent_board_id() == 0){
                 HashSet<Board> boardSet = item.getChildBoardSet();
                 for(Board childBoard : boardSet){
                     System.out.println(childBoard.toString());

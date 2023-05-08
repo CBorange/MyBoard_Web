@@ -18,7 +18,7 @@ public class UserServiceTest {
 
     @Test
     public void 유저획득_ByID(){
-        Optional<User> findUser = userService.findUserByID("aaa");
+        Optional<User> findUser = userService.findUserByID("admin");
         Assertions.assertTrue(findUser.isPresent());
     }
 

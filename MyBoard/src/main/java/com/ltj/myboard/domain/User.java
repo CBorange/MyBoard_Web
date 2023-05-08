@@ -2,22 +2,19 @@ package com.ltj.myboard.domain;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity(name = "user")
 @Getter
 @Setter
 public class User {
     @Id
-    private String ID;
+    private String id;
 
-    private String Nickname;
-    private String Password;
+    private String nickname;
+    private String password;
 
-    @Column(name = "UserGrade")
-    private int UserGrade;
-
-    private String UserGradeName;
+    @ManyToOne()
+    @JoinColumn(name="grade_id", nullable = false)
+    private UserGrade userGrade;
 }

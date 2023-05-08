@@ -4,12 +4,10 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -20,21 +18,21 @@ public class Board {
         childBoardSet = new HashSet<Board>();
     }
 
-    private int ID;
+    private int id;
 
-    private String BoardName;
+    private String board_name;
 
-    private String BoardOwnerID;
+    private String board_owner_id;
 
-    private int ParentBoardID;
+    private int parent_board_id;
 
-    private String BoardIcon;
+    private String board_icon;
 
-    private LocalDateTime CreatedDay;
+    private LocalDateTime created_day;
 
-    private LocalDateTime ModifyDay;
+    private LocalDateTime modify_day;
 
-    private LocalDateTime DeleteDay;
+    private LocalDateTime delete_day;
 
     // 여기부터 비즈니스 로직 관련 변수
     private HashSet<Board> childBoardSet;
@@ -57,7 +55,7 @@ public class Board {
 
     public boolean removeChildBoardByID(int removeBoardID){
         Optional<Board> boardOptional = childBoardSet.stream().filter(board -> {
-            if(board.ID == removeBoardID)
+            if(board.id == removeBoardID)
                 return true;
             return false;
         }).findAny();
@@ -72,7 +70,7 @@ public class Board {
     @Override
     public int hashCode(){
         // ID가 유일한 PK다. ID가 같으면 같은 Board다.
-        return this.ID;
+        return this.id;
     }
 
     @Override
@@ -86,7 +84,7 @@ public class Board {
         Board board = (Board)object;
 
         // ID가 같으면 같은 Board다 ID가 유일한 PK다.
-        if(board.getID() == this.ID)
+        if(board.getId() == this.id)
             return true;
         return false;
     }

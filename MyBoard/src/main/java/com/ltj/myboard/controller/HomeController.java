@@ -1,6 +1,5 @@
 package com.ltj.myboard.controller;
 import com.ltj.myboard.domain.Board;
-import com.ltj.myboard.domain.Post;
 import com.ltj.myboard.dto.post.FilteredPost;
 import com.ltj.myboard.service.BoardService;
 import com.ltj.myboard.service.PostService;
@@ -56,8 +55,8 @@ public class HomeController extends LayoutControllerBase {
         Map<Integer, List<FilteredPost>> postMap = new HashMap<Integer, List<FilteredPost>>();
         for(List<Board> leafPair : leafBoardBundle){
             for(Board leaf : leafPair){
-                List<FilteredPost> result = postService.getLastestPost(leaf.getID(), 10);
-                postMap.put(leaf.getID(), result);
+                List<FilteredPost> result = postService.getLastestPost(leaf.getId(), 10);
+                postMap.put(leaf.getId(), result);
             }
         }
         model.addAttribute("postMap", postMap);

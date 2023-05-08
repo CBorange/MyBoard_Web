@@ -1,3 +1,3 @@
 #게시글 수정
-UPDATE post SET Title = :title, Content = :content, WriterID = :writerID
-WHERE ID = :postID
+UPDATE post SET title = :title, content = :content, writer_id = :writerID
+WHERE id = :postID

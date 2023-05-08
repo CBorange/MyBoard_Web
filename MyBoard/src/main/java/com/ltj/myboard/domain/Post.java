@@ -9,27 +9,27 @@ import java.time.LocalDateTime;
 @ToString
 public class Post {
     public Post(){
-        ID = -1;    // ID의 기본값은 음수이다. 음수인 경우 신규 게시글로 취급한다.
+        id = -1;    // ID의 기본값은 음수이다. 음수인 경우 신규 게시글로 취급한다.
     }
-    private int ID;
+    private int id;
 
-    private int BoardID;
+    private int board_id;
 
-    private String WriterID;
+    private String writer_id;
 
-    private String Title;
+    private String title;
 
-    private String Content;
+    private String content;
 
-    private int ViewCount;
+    private int view_count;
 
-    private int GoodCount;
+    private int good_count;
 
-    private int BadCount;
+    private int bad_count;
 
-    private LocalDateTime CreatedDay;
+    private LocalDateTime created_day;
 
-    private LocalDateTime ModifyDay;
+    private LocalDateTime modify_day;
 
-    private LocalDateTime DeleteDay;
+    private LocalDateTime delete_day;
 }

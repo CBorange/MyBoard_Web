@@ -16,25 +16,25 @@ public class Comment {
         childCommentSet = new HashSet<Comment>();
     }
 
-    private int ID;
+    private int id;
 
-    private int PostID;
+    private int post_id;
 
-    private Integer ParentCommentID;
+    private Integer parent_comment_id;
 
-    private String WriterID;
+    private String writer_id;
 
-    private String Content;
+    private String content;
 
-    private int GoodCount;
+    private int good_count;
 
-    private int BadCount;
+    private int bad_count;
 
-    private LocalDateTime CreatedDay;
+    private LocalDateTime created_day;
 
-    private LocalDateTime ModifyDay;
+    private LocalDateTime modify_day;
 
-    private LocalDateTime DeleteDay;
+    private LocalDateTime delete_day;
 
     // 여기부터 비즈니스 로직 관련 변수
     private HashSet<Comment> childCommentSet;
@@ -53,7 +53,7 @@ public class Comment {
 
     public boolean removeChildCommentByID(int commentID){
         Optional<Comment> commentOptional = childCommentSet.stream().filter(comment -> {
-            if(comment.ID == commentID)
+            if(comment.id == commentID)
                 return true;
             return false;
         }).findAny();
@@ -68,7 +68,7 @@ public class Comment {
 
     @Override
     public int hashCode() {
-        return this.ID;
+        return this.id;
     }
 
     @Override
@@ -82,7 +82,7 @@ public class Comment {
         Comment comment = (Comment)o;
 
         // ID가 같으면 같은 Comment.
-        if(comment.getID() == this.ID)
+        if(comment.getId() == this.id)
             return true;
         return false;
     }

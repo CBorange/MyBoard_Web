@@ -10,7 +10,6 @@ import com.ltj.myboard.repository.PostFileRepository;
 import com.ltj.myboard.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -104,7 +103,7 @@ public class PostService{
         // * 게시글 '생성'의 경우 insert State만 들어올 것이고, '수정'의 경우 복합적으로 State가 들어올 것임
         PostFileDelta[] targetFiles = submitPostData.getImageSource();
         for(PostFileDelta delta : targetFiles){
-            submitPostFile(submittedPost.getID(), delta);
+            submitPostFile(submittedPost.getId(), delta);
         }
         
         return submittedPost;

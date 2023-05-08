@@ -29,7 +29,7 @@ public class JDBC_UserRepository implements UserRepository {
     }
 
     @Override
-    public Optional<User> findUserByID(String ID) {
+    public Optional<User> findById(String ID) {
         MapSqlParameterSource namedParameter = new MapSqlParameterSource();
         namedParameter.addValue("id", ID);
 
@@ -38,8 +38,7 @@ public class JDBC_UserRepository implements UserRepository {
         return ret;
     }
 
-    @Override
-    public List<User> findUserByGrade(int grade) {
+    public List<User> findByGradeId(int grade) {
         MapSqlParameterSource namedParameter = new MapSqlParameterSource();
         namedParameter.addValue("grade", grade);
 

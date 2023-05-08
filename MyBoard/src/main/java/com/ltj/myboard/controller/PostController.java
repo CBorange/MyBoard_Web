@@ -46,7 +46,7 @@ public class PostController extends LayoutControllerBase {
         });
 
         // Board 정보 Model에 추가
-        Optional<Board> foundBoard = boardService.findBoardByID(foundPost.get().getBoardID());
+        Optional<Board> foundBoard = boardService.findBoardByID(foundPost.get().getBoard_id());
         foundBoard.ifPresentOrElse((board) -> {
             model.addAttribute("boardInfo", foundBoard.get());
         }, () -> {
@@ -54,7 +54,7 @@ public class PostController extends LayoutControllerBase {
         });
 
         // Comment 정보 얻어냄
-        List<OrderedComment> comments = commentService.findRootCommentInPost(foundPost.get().getID());
+        List<OrderedComment> comments = commentService.findRootCommentInPost(foundPost.get().getId());
 
         // 페이지 개수 구하기
         long commentCount = comments.stream().count();
@@ -85,7 +85,7 @@ public class PostController extends LayoutControllerBase {
     public ResponseEntity submitPost(@RequestBody SubmitPostData submitPostData) {
         try {
             Post insertedPost = postService.submitPostProcess(submitPostData);
-            String redirectURL = String.format("/post/%d", insertedPost.getID());
+            String redirectURL = String.format("/post/%d", insertedPost.getId());
 
             HttpHeaders headers = new HttpHeaders();
             headers.add("Location", redirectURL);

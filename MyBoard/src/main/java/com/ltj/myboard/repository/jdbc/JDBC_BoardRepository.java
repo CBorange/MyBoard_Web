@@ -4,20 +4,15 @@ import com.ltj.myboard.domain.Board;
 import com.ltj.myboard.repository.BoardRepository;
 import com.ltj.myboard.util.MyResourceLoader;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.ResourceLoader;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -62,9 +57,9 @@ public class JDBC_BoardRepository implements BoardRepository {
 
         // 자식 Board 객체 맵핑
         for(Board board : allBoards) {
-            if(board.getParentBoardID() == 0){  // 루트 Board만 해당
+            if(board.getParent_board_id() == 0){  // 루트 Board만 해당
                 List<Board> childBoards = allBoards.stream().filter(item -> {
-                    if(item.getParentBoardID() == board.getID())
+                    if(item.getParent_board_id() == board.getId())
                         return true;
                     return false;
                 }).collect(Collectors.toList());
@@ -80,7 +75,7 @@ public class JDBC_BoardRepository implements BoardRepository {
     public List<Board> getAllRootBoards() {
         List<Board> allBoards = getAllBoards();
         List<Board> rootBoards = allBoards.stream().filter(board -> {
-            if(board.getParentBoardID() == 0)
+            if(board.getParent_board_id() == 0)
                 return true;
             return false;
         }).collect(Collectors.toList());
@@ -102,16 +97,16 @@ public class JDBC_BoardRepository implements BoardRepository {
         @Override
         public Board mapRow(ResultSet rs, int rowNum) throws SQLException {
             Board result = new Board();
-            result.setID(rs.getInt("ID"));
-            result.setBoardName(rs.getString("BoardName"));
-            result.setBoardOwnerID(rs.getString("BoardOwnerID"));
-            result.setParentBoardID(rs.getInt("ParentBoardID"));
-            result.setBoardIcon(rs.getString("BoardIcon"));
-            result.setCreatedDay(rs.getTimestamp("CreatedDay").toLocalDateTime());
-            result.setModifyDay(rs.getTimestamp("ModifyDay").toLocalDateTime());
-            Timestamp deleteDayTS = rs.getTimestamp("DeleteDay");
+            result.setId(rs.getInt("id"));
+            result.setBoard_name(rs.getString("board_name"));
+            result.setBoard_owner_id(rs.getString("board_owner_id"));
+            result.setParent_board_id(rs.getInt("parent_board_id"));
+            result.setBoard_icon(rs.getString("board_icon"));
+            result.setCreated_day(rs.getTimestamp("created_day").toLocalDateTime());
+            result.setModify_day(rs.getTimestamp("modify_day").toLocalDateTime());
+            Timestamp deleteDayTS = rs.getTimestamp("delete_day");
             if(deleteDayTS != null)
-                result.setDeleteDay(deleteDayTS.toLocalDateTime());
+                result.setDelete_day(deleteDayTS.toLocalDateTime());
             return result;
         }
     }

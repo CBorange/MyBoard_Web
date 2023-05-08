@@ -1,5 +1,5 @@
 select *
 from post
-where BoardID = :boardID
-order by ModifyDay desc
+where board_id = :boardID
+order by modify_day desc
 limit :limit;

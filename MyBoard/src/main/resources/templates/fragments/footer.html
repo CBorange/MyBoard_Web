@@ -11,8 +11,8 @@
                     <!--자식 게시판이 있는 Root 게시판은 접근할 수 없다.-->
                     <!--자식 게시판이 없는 Root 게시판의 경우 Dropdown 없이 클릭하면 바로 이동-->
                     <th:block th:if="${rootBoard.getChildBoardCount().equals(0)}">
-                        <a class="board_link me-3" th:href="'/board/' + ${rootBoard.getID()}">
-                            <span th:text="${rootBoard.getBoardName()}"></span>
+                        <a class="board_link me-3" th:href="'/board/' + ${rootBoard.getId()}">
+                            <span th:text="${rootBoard.getBoard_name()()}"></span>
                         </a>
                     </th:block>
                     <!--자식 게시판이 있는 경우 Dropdown 메뉴로 표시-->
@@ -20,12 +20,12 @@
                         <div class="dropdown">
                             <a class="board_link me-3 dropdown-toggle" role="button" id="boardDropdownLink"
                                data-bs-toggle="dropdown" aria-expanded="false">
-                                <span th:text="${rootBoard.getBoardName()}"></span>
+                                <span th:text="${rootBoard.getBoard_name()}"></span>
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="boardDropdownLink" style="min-width: inherit;">
                                 <th:block th:each="childBoard : ${rootBoard.getChildBoardSet()}">
                                     <li>
-                                        <a class="dropdown-item" th:href="'/board/' + ${childBoard.getID()}">
+                                        <a class="dropdown-item" th:href="'/board/' + ${childBoard.getId()}">
                                             <span th:text="${childBoard.BoardName}"></span>
                                         </a>
                                     </li>

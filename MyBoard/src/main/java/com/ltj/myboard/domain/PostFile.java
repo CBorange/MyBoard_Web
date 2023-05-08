@@ -8,7 +8,7 @@ import lombok.ToString;
 @ToString
 public class PostFile {
     private int id;
-    private int postID;
-    private String fileID;
-    private String fileName;
+    private int post_id;
+    private String file_id;
+    private String file_name;
 }

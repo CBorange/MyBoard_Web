@@ -6,6 +6,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UserRepository {
-    Optional<User> findUserByID(String ID);
-    List<User> findUserByGrade(int grade);
+    Optional<User> findById(String ID);
+    //List<User> findByGradeId(int grade);
 }
