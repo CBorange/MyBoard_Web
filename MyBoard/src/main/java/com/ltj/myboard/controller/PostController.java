@@ -46,7 +46,7 @@ public class PostController extends LayoutControllerBase {
         });
 
         // Board 정보 Model에 추가
-        Optional<Board> foundBoard = boardService.findBoardByID(foundPost.get().getBoard_id());
+        Optional<Board> foundBoard = boardService.findBoardByID(foundPost.get().getBoardId());
         foundBoard.ifPresentOrElse((board) -> {
             model.addAttribute("boardInfo", foundBoard.get());
         }, () -> {

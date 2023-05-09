@@ -20,19 +20,19 @@ public class Board {
 
     private int id;
 
-    private String board_name;
+    private String boardName;
 
-    private String board_owner_id;
+    private String boardOwnerId;
 
-    private int parent_board_id;
+    private int parentBoardId;
 
-    private String board_icon;
+    private String boardIcon;
 
-    private LocalDateTime created_day;
+    private LocalDateTime createdDay;
 
-    private LocalDateTime modify_day;
+    private LocalDateTime modifyDay;
 
-    private LocalDateTime delete_day;
+    private LocalDateTime deleteDay;
 
     // 여기부터 비즈니스 로직 관련 변수
     private HashSet<Board> childBoardSet;

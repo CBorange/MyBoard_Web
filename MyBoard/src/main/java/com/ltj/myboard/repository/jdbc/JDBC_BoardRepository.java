@@ -57,9 +57,9 @@ public class JDBC_BoardRepository implements BoardRepository {
 
         // 자식 Board 객체 맵핑
         for(Board board : allBoards) {
-            if(board.getParent_board_id() == 0){  // 루트 Board만 해당
+            if(board.getParentBoardId() == 0){  // 루트 Board만 해당
                 List<Board> childBoards = allBoards.stream().filter(item -> {
-                    if(item.getParent_board_id() == board.getId())
+                    if(item.getParentBoardId() == board.getId())
                         return true;
                     return false;
                 }).collect(Collectors.toList());
@@ -75,7 +75,7 @@ public class JDBC_BoardRepository implements BoardRepository {
     public List<Board> getAllRootBoards() {
         List<Board> allBoards = getAllBoards();
         List<Board> rootBoards = allBoards.stream().filter(board -> {
-            if(board.getParent_board_id() == 0)
+            if(board.getParentBoardId() == 0)
                 return true;
             return false;
         }).collect(Collectors.toList());
@@ -98,15 +98,15 @@ public class JDBC_BoardRepository implements BoardRepository {
         public Board mapRow(ResultSet rs, int rowNum) throws SQLException {
             Board result = new Board();
             result.setId(rs.getInt("id"));
-            result.setBoard_name(rs.getString("board_name"));
-            result.setBoard_owner_id(rs.getString("board_owner_id"));
-            result.setParent_board_id(rs.getInt("parent_board_id"));
-            result.setBoard_icon(rs.getString("board_icon"));
-            result.setCreated_day(rs.getTimestamp("created_day").toLocalDateTime());
-            result.setModify_day(rs.getTimestamp("modify_day").toLocalDateTime());
+            result.setBoardName(rs.getString("board_name"));
+            result.setBoardOwnerId(rs.getString("board_owner_id"));
+            result.setParentBoardId(rs.getInt("parent_board_id"));
+            result.setBoardIcon(rs.getString("board_icon"));
+            result.setCreatedDay(rs.getTimestamp("created_day").toLocalDateTime());
+            result.setModifyDay(rs.getTimestamp("modify_day").toLocalDateTime());
             Timestamp deleteDayTS = rs.getTimestamp("delete_day");
             if(deleteDayTS != null)
-                result.setDelete_day(deleteDayTS.toLocalDateTime());
+                result.setDeleteDay(deleteDayTS.toLocalDateTime());
             return result;
         }
     }

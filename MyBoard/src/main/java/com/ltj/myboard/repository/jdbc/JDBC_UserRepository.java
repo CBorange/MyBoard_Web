@@ -38,7 +38,7 @@ public class JDBC_UserRepository implements UserRepository {
         return ret;
     }
 
-    public List<User> findByGradeId(int grade) {
+    public List<User> findByGrade_Id(int grade) {
         MapSqlParameterSource namedParameter = new MapSqlParameterSource();
         namedParameter.addValue("grade", grade);
 

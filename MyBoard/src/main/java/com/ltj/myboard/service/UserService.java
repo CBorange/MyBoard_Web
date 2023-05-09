@@ -23,12 +23,6 @@ public class UserService implements UserDetailsService {
         return userRepository.findById(ID);
     }
 
-    public List<User> findUserByGrade(int grade)
-    {
-        return null;
-        //return userRepository.findByGradeId(grade);
-    }
-
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User found = userRepository.findById(username)

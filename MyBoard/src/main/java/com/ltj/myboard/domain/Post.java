@@ -13,23 +13,23 @@ public class Post {
     }
     private int id;
 
-    private int board_id;
+    private int boardId;
 
-    private String writer_id;
+    private String writerId;
 
     private String title;
 
     private String content;
 
-    private int view_count;
+    private int viewCount;
 
-    private int good_count;
+    private int goodCount;
 
-    private int bad_count;
+    private int badCount;
 
-    private LocalDateTime created_day;
+    private LocalDateTime createdDay;
 
-    private LocalDateTime modify_day;
+    private LocalDateTime modifyDay;
 
-    private LocalDateTime delete_day;
+    private LocalDateTime deleteDay;
 }

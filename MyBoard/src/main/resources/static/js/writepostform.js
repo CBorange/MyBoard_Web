@@ -155,9 +155,9 @@ function onSubmitPost(curPostID) {
         title: writePostForm.elements['title'].value,
         content: editorRef.getData(),
         imageSource: finalImageSources,
-        postID: writePostForm.elements['postID'].value,
-        boardID: writePostForm.elements['boardID'].value,
-        writerID: writePostForm.elements['writerID'].value,
+        postId: writePostForm.elements['postID'].value,
+        boardId: writePostForm.elements['boardID'].value,
+        writerId: writePostForm.elements['writerID'].value,
     };
     const url = makeURL('/post');
     fetch(url, {

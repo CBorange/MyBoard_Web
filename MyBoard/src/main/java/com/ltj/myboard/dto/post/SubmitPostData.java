@@ -1,5 +1,4 @@
 package com.ltj.myboard.dto.post;
-import com.ltj.myboard.domain.PostFile;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -13,8 +12,8 @@ public class SubmitPostData {
     private PostFileDelta[] imageSource;
 
     //submit 하는 post의 ID, 신규 게시글 생성의 경우 ID가 들어오지 않음, '수정'일 경우에만 들어옴
-    private int postID;
+    private int postId;
 
-    private int boardID;
-    private String writerID;
+    private int boardId;
+    private String writerId;
 }

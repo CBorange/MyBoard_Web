@@ -18,23 +18,23 @@ public class Comment {
 
     private int id;
 
-    private int post_id;
+    private int postId;
 
-    private Integer parent_comment_id;
+    private Integer parentCommentId;
 
-    private String writer_id;
+    private String writerId;
 
     private String content;
 
-    private int good_count;
+    private int goodCount;
 
-    private int bad_count;
+    private int badCount;
 
-    private LocalDateTime created_day;
+    private LocalDateTime createdDay;
 
-    private LocalDateTime modify_day;
+    private LocalDateTime modifyDay;
 
-    private LocalDateTime delete_day;
+    private LocalDateTime deleteDay;
 
     // 여기부터 비즈니스 로직 관련 변수
     private HashSet<Comment> childCommentSet;

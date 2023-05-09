@@ -21,10 +21,4 @@ public class UserServiceTest {
         Optional<User> findUser = userService.findUserByID("admin");
         Assertions.assertTrue(findUser.isPresent());
     }
-
-    @Test
-    public void 유저획득_ByGrade(){
-        List<User> findUser = userService.findUserByGrade(1);
-        Assertions.assertTrue(findUser.stream().count() > 0);
-    }
 }

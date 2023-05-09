@@ -7,8 +7,8 @@ import lombok.ToString;
 @Setter
 @ToString
 public class SubmitCommentData {
-    private int postID;
-    private Integer parentCommentID;
-    private String writerID;
+    private int postId;
+    private Integer parentCommentId;
+    private String writerId;
     private String content;
 }

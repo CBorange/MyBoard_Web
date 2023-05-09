@@ -89,14 +89,14 @@ public class PostService{
         // 1. 현재 submit 데이터가 게시글 '생성' 인지, '수정'인지 검사한다.
         // postID가 음수라면 '생성' 그 외에는 '수정' 이다.
         Post submittedPost = null;
-        if(submitPostData.getPostID() < 0){
+        if(submitPostData.getPostId() < 0){
             // 1-1. 게시글 생성, 신규 Post ID 채번
-            submittedPost = insertPost(submitPostData.getTitle(), submitPostData.getContent(), submitPostData.getBoardID(),
-                    submitPostData.getWriterID());
+            submittedPost = insertPost(submitPostData.getTitle(), submitPostData.getContent(), submitPostData.getBoardId(),
+                    submitPostData.getWriterId());
         } else {
             // 1-2. 게시글 내용 수정
-            submittedPost = updatePost(submitPostData.getTitle(), submitPostData.getContent(), submitPostData.getPostID(),
-                    submitPostData.getWriterID());
+            submittedPost = updatePost(submitPostData.getTitle(), submitPostData.getContent(), submitPostData.getPostId(),
+                    submitPostData.getWriterId());
         }
 
         // 2. 게시글에 등록된 파일 state에 따라 적절한 처리 실행

@@ -17,9 +17,9 @@
                                 <hr/>
                                 <!--게시글 목록-->
                                 <div class="d-flex flex-column">
-                                    <th:block th:with="filteredPosts=${postMap[leafBoard.getID()]}">
+                                    <th:block th:with="filteredPosts=${postMap[leafBoard.getId()]}">
                                         <th:block th:each="filteredPost : ${filteredPosts}">
-                                            <a class="post-title" th:href="'/post/' + ${filteredPost.getPostData().getID()}">
+                                            <a class="post-title" th:href="'/post/' + ${filteredPost.getPostData().getId()}">
                                                 <span th:text="${filteredPost.getPostData().getTitle()}"></span>
                                                 <th:block th:if="${filteredPost.getCommentCount() > 0}">
                                                     <span class="ms-1" th:text="'(' + ${filteredPost.getCommentCount()} + ')'"></span>

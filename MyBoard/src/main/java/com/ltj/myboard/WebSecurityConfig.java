@@ -15,10 +15,14 @@ public class WebSecurityConfig {
     // URL Route 시, Servlet Dispatcher 동작 전 Filter 단계에서 처리할 Spring Security Filter Bean 등록 및 설정
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
-        http.authorizeRequests()
-                .antMatchers("/writepostform").hasAnyRole() // 글쓰기, 편집은 권한이 있어야만 가능
-                .anyRequest().permitAll();
-                // TODO Filter 설정 for JWT
+        http
+            // TODO CORS/CSRF 걸려서 POST 날리면 403 에러뜸 수정 필요
+            .cors().disable()
+            .csrf().disable()
+            .authorizeRequests()
+            //.antMatchers("/writepostform").hasAnyRole() // 글쓰기, 편집은 권한이 있어야만 가능
+            .anyRequest().permitAll();
+            // TODO Filter 설정 for JWT
         return http.build();
     }
 

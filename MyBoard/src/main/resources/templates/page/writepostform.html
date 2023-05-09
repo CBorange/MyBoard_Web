@@ -14,8 +14,8 @@
                 <!--게시글 작성 Form-->
                 <form onsubmit="return false;" id="writePostForm">
                     <div class="d-flex flex-column">
-                        <input type="hidden" name="postID" th:value="${postInfo.getID()}">
-                        <input type="hidden" name="boardID" th:value="${boardInfo.getID()}">
+                        <input type="hidden" name="postID" th:value="${postInfo.getId()}">
+                        <input type="hidden" name="boardID" th:value="${boardInfo.getId()}">
                         <input type="hidden" name="writerID" value="admin">
                         <th:block th:if="${editMode == 'write'}">
                             <input type="text" name="title" class="form-control" placeholder="제목을 입력해주세요.">

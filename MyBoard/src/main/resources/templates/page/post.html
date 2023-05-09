@@ -22,7 +22,7 @@
                 <div class="d-flex flex-row align-items-center writerinfo-div">
                     <!--작성자 이름-->
                     <img src="/img/user.png" style="width: 20px; height: 20px;"/>
-                    <span class="ms-1" th:text="${postInfo.getWriterID()}"></span>
+                    <span class="ms-1" th:text="${postInfo.getWriterId()}"></span>
                     <!--작성 일자-->
                     <img class="ms-3" src="/img/calendar.png" style="width: 20px; height: 20px;"/>
                     <span class="ms-1" th:text="${#temporals.format(postInfo.getCreatedDay(), 'yyyy-MM-dd')}"></span>
@@ -47,10 +47,10 @@
                             <ul class="dropdown-menu" style="min-width: inherit;" aria-labelledby="modifyMenubutton">
                                 <li>
                                     <a class="dropdown-item"
-                                            th:href="${'/writepostform/' + postInfo.getID() + '?boardID=' + boardInfo.getID()}">수정</a>
+                                            th:href="${'/writepostform/' + postInfo.getId() + '?boardID=' + boardInfo.getId()}">수정</a>
                                     <button class="dropdown-item"
-                                            th:boardID="${boardInfo.getID()}"
-                                            th:postID="${postInfo.getID()}"
+                                            th:boardID="${boardInfo.getId()}"
+                                            th:postID="${postInfo.getId()}"
                                             th:onclick="onClickDeletePost(this.getAttribute('boardID'),
                                             this.getAttribute('postID'))">삭제</button>
                                 </li>
@@ -81,14 +81,14 @@
                     <th:block th:each="comment : ${filteredCommentList}">
                         <!--댓글 작성자, 추천/비추천, 작성일, 대댓글 입력 form 표시-->
                         <div class="d-flex flex-row" style="min-height: 30px; background-color:#c1c7c7; border-radius: 5px / 5px;">
-                            <span class="ms-2" th:text="${comment.getCommentData().getWriterID()}"></span>
+                            <span class="ms-2" th:text="${comment.getCommentData().getWriterId()}"></span>
                             <span class="ms-auto">작성일: </span>
                             <span class="ms-2 me-2" th:text="${#temporals.format(comment.getCommentData().getCreatedDay(),'yyyy-MM-dd')}"></span>
                             <!--대댓글 작성 버튼-->
 
 
                             <button class="btn btn-secondary btn-sm" id="showReplyFormBtn"
-                                    th:commentID="${comment.getCommentData().getID()}"
+                                    th:commentID="${comment.getCommentData().getId()}"
                                     th:onclick="onClickShowReplyForm(this.getAttribute('commentID'))"
                                     th:text="댓글..">
                             </button>
@@ -103,7 +103,7 @@
                             <div class="ms-4">
                                 <!--대댓글 작성자 표시-->
                                 <div class="d-flex flex-row" style="min-height: 30px; background-color:#c1c7c7; border-radius: 5px / 5px;">
-                                    <span class="ms-2" th:text="${subComment.getWriterID()}"></span>
+                                    <span class="ms-2" th:text="${subComment.getWriterId()}"></span>
                                     <span class="ms-auto">작성일: </span>
                                     <span class="ms-2 me-2" th:text="${#temporals.format(subComment.getCreatedDay(),'yyyy-MM-dd')}"></span>
                                 </div>
@@ -116,15 +116,15 @@
                         </th:block>
                         <!--대댓글 작성 Form-->
                         <form class="ms-4" onsubmit="return false;" style="display:none;"
-                              th:id="'subReplyForm_' + ${comment.getCommentData().getID()}">
+                              th:id="'subReplyForm_' + ${comment.getCommentData().getId()}">
                             <div class="d-flex flex-column">
-                                <input type="hidden" name="postID" th:value="${postInfo.getID()}">
-                                <input type="hidden" name="parentCommentID" th:value="${comment.getCommentData().getID()}">
+                                <input type="hidden" name="postID" th:value="${postInfo.getId()}">
+                                <input type="hidden" name="parentCommentID" th:value="${comment.getCommentData().getId()}">
                                 <input type="hidden" name="writerID" value="admin">
                                 <textarea name="content" class="form-control" style="min-height:80px;"></textarea>
                                 <div class="my-2 d-flex flex-row-reverse">
                                     <input type="button" class="btn btn-info" value="등록"
-                                        th:rootCommentID="${comment.getCommentData().getID()}"
+                                        th:rootCommentID="${comment.getCommentData().getId()}"
                                         th:onclick="onSubmitComment(this.getAttribute('rootCommentID'), true)">
                                 </div>
                             </div>
@@ -140,7 +140,7 @@
                             <!--이전 페이지로 이동 버튼, 현재 페이지가 1이 아닌 경우에만 표시-->
                             <th:block th:unless="${curPageNo == 1}">
                                 <li class="page-item">
-                                    <a class="page-link" th:href="'/post/' + ${postInfo.getID()} + '?&pageNumber=' + ${curPageNo - 1}">
+                                    <a class="page-link" th:href="'/post/' + ${postInfo.getId()} + '?&pageNumber=' + ${curPageNo - 1}">
                                         <span><</span>
                                     </a>
                                 </li>
@@ -149,14 +149,14 @@
                             <th:block th:each="pageNo : ${#numbers.sequence(startPageNoInCurSession, endPageNoInCurSession)}">
                                 <th:block th:if="${pageNo == curPageNo}">
                                     <li class="page-item active">
-                                        <a class="page-link" th:href="'/post/' + ${postInfo.getID()} + '?&pageNumber=' + ${pageNo}">
+                                        <a class="page-link" th:href="'/post/' + ${postInfo.getId()} + '?&pageNumber=' + ${pageNo}">
                                             <span th:text="${pageNo}"></span>
                                         </a>
                                     </li>
                                 </th:block>
                                 <th:block th:unless="${pageNo == curPageNo}">
                                     <li class="page-item">
-                                        <a class="page-link" th:href="'/post/' + ${postInfo.getID()} + '?&pageNumber=' + ${pageNo}">
+                                        <a class="page-link" th:href="'/post/' + ${postInfo.getId()} + '?&pageNumber=' + ${pageNo}">
                                             <span th:text="${pageNo}"></span>
                                         </a>
                                     </li>
@@ -165,7 +165,7 @@
                             <!--다음 페이지로 이동 버튼, 현재 페이지번호가 페이지 개수 와 같지 않은 경우에만 표시-->
                             <th:block th:unless="${curPageNo == pageCount}">
                                 <li class="page-item">
-                                    <a class="page-link" th:href="'/post/' + ${postInfo.getID()} + '?&pageNumber=' + ${curPageNo + 1}">
+                                    <a class="page-link" th:href="'/post/' + ${postInfo.getId()} + '?&pageNumber=' + ${curPageNo + 1}">
                                         <span>></span>
                                     </a>
                                 </li>
@@ -176,7 +176,7 @@
                 <!--하단 댓글 입력 form-->
                 <form id="subReplyForm">
                     <div class="d-flex flex-column">
-                        <input type="hidden" name="postID" th:value="${postInfo.getID()}">
+                        <input type="hidden" name="postID" th:value="${postInfo.getId()}">
                         <input type="hidden" name="writerID" value="admin">
                         <textarea name="content" class="form-control" style="min-height:80px;"></textarea>
                         <div class="my-2 d-flex flex-row-reverse">

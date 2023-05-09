@@ -39,7 +39,7 @@ public class JDBC_CommentRepository implements CommentRepository {
     @Override
     public List<OrderedComment> findOrderedCommentByPostID(int postID){
         MapSqlParameterSource namedParameter = new MapSqlParameterSource();
-        namedParameter.addValue("postID", postID);
+        namedParameter.addValue("post_id", postID);
 
         // 쿼리 실행
         List<OrderedComment> comments = jdbcTemplate.query(
@@ -57,7 +57,7 @@ public class JDBC_CommentRepository implements CommentRepository {
 
         // Root 댓글만 취합
         List<OrderedComment> rootComments = comments.stream().filter(target -> {
-            if(target.getCommentData().getParent_comment_id() == 0)
+            if(target.getCommentData().getParentCommentId() == 0)
                 return true;
             return false;
         }).collect(Collectors.toList());
@@ -65,7 +65,7 @@ public class JDBC_CommentRepository implements CommentRepository {
         // 자식 Comment 객체 맵핑
         for(OrderedComment comment : rootComments){
             List<OrderedComment> childComments = comments.stream().filter(target -> {
-                if(target.getCommentData().getParent_comment_id() == comment.getCommentData().getId())
+                if(target.getCommentData().getParentCommentId() == comment.getCommentData().getId())
                     return true;
                 return false;
             }).collect(Collectors.toList());
@@ -111,17 +111,17 @@ public class JDBC_CommentRepository implements CommentRepository {
 
             Comment commentData = new Comment();
             commentData.setId(rs.getInt("id"));
-            commentData.setPost_id(rs.getInt("post_id"));
-            commentData.setParent_comment_id(rs.getInt("parent_comment_id"));
-            commentData.setWriter_id(rs.getString("writer_id"));
+            commentData.setPostId(rs.getInt("post_id"));
+            commentData.setParentCommentId(rs.getInt("parent_comment_id"));
+            commentData.setWriterId(rs.getString("writer_id"));
             commentData.setContent(rs.getString("content"));
-            commentData.setGood_count(rs.getInt("good_count"));
-            commentData.setBad_count(rs.getInt("bad_count"));
-            commentData.setCreated_day(rs.getTimestamp("created_day").toLocalDateTime());
-            commentData.setModify_day(rs.getTimestamp("modify_day").toLocalDateTime());
+            commentData.setGoodCount(rs.getInt("good_count"));
+            commentData.setBadCount(rs.getInt("bad_count"));
+            commentData.setCreatedDay(rs.getTimestamp("created_day").toLocalDateTime());
+            commentData.setModifyDay(rs.getTimestamp("modify_day").toLocalDateTime());
             Timestamp deleteDayTS = rs.getTimestamp("delete_day");
             if(deleteDayTS != null)
-                commentData.setDelete_day(deleteDayTS.toLocalDateTime());
+                commentData.setDeleteDay(deleteDayTS.toLocalDateTime());
 
             result.setCommentData(commentData);
             return result;
