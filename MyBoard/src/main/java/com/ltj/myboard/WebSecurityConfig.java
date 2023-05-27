@@ -6,6 +6,7 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -17,13 +18,19 @@ public class WebSecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
         http
             // TODO CORS/CSRF 걸려서 POST 날리면 403 에러뜸 수정 필요
-            .cors().disable()
             .csrf().disable()
             .authorizeRequests()
-            //.antMatchers("/writepostform").hasAnyRole() // 글쓰기, 편집은 권한이 있어야만 가능
+            .antMatchers("/writepostform/**").hasAnyRole() // 글쓰기, 편집은 권한이 있어야만 가능
             .anyRequest().permitAll();
+        // Login 화면 설정
+        http.formLogin((form) -> form
+                    .loginPage("/login")
+                    .permitAll()
+                )
+                .logout((logout) -> logout.permitAll());
             // TODO Filter 설정 for JWT
         return http.build();
+
     }
 
     @Bean
