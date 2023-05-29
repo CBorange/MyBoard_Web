@@ -1,6 +1,23 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
     <th:block th:fragment="login">
-        <h1>login</h1>
+        <div class="mx-auto container-lg top-div">
+            <h1>로그인</h1>
+            <div th:if="${param.error}">
+                아이디 또는 비밀번호가 일치하지 않습니다.
+            </div>
+            <div th:if="${param.logout}">
+                로그아웃됨
+            </div>
+            <form th:action="@{/login}" method="post">
+                <div>
+                    <input type="text" name="username" placeholder="아이디"/>
+                </div>
+                <div>
+                    <input type="password" name="password" placeholder="비밀번호"/>
+                </div>
+                <input type="submit" value="로그인" />
+            </form>
+        </div>
     </th:block>
 </html>
