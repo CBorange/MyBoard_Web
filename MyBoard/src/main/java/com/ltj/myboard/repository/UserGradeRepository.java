@@ -1,11 +1,12 @@
 package com.ltj.myboard.repository;
 
 import com.ltj.myboard.domain.UserGrade;
+import org.springframework.stereotype.Repository;
 
-import java.util.List;
 import java.util.Optional;
 
+@Repository
 public interface UserGradeRepository {
-    Optional<UserGrade> findGradeByLevel(int gradeLevel);
-    Optional<UserGrade> findGradeByCaption(String caption);
+    Optional<UserGrade> findByGrade(int grade);
+    Optional<UserGrade> findByCaption(String caption);
 }

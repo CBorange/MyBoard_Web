@@ -62,8 +62,6 @@ public class JDBC_FilteredPostRepository implements FilteredPostRepository {
         return filteredPostList;
     }
 
-
-
     @Override
     public List<FilteredPost> findPost_UseSearch_Content(int boardID, String condition_content, String sortTargetColumn, String orderByMethod) {
         return null;
