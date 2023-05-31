@@ -1,7 +1,11 @@
 package com.ltj.myboard.controller;
 import com.ltj.myboard.domain.Board;
+import com.ltj.myboard.domain.User;
+import com.ltj.myboard.model.UserDetailsImpl;
 import com.ltj.myboard.service.BoardService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -20,6 +24,19 @@ public class LayoutControllerBase {
     public List<Board> rootBoards(){
         List<Board> rootBoards = boardService.getAllRootBoards();
         return rootBoards;
+    }
+
+    @ModelAttribute("userInfo")
+    public User userInfo(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Object principal = authentication.getPrincipal();
+
+        if(principal == null) return null;
+        if(!(principal instanceof UserDetailsImpl)) return null;
+
+        UserDetailsImpl userDetails = (UserDetailsImpl)principal;
+        User user = userDetails.getUser();
+        return user;
     }
 
     /**
