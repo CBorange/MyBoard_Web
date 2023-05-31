@@ -21,21 +21,25 @@ public class WebSecurityConfig {
     // 세션관리자에서 유저 세션을 생성한다(cookie 정보로)
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
-        http
-            // TODO CORS/CSRF 걸려서 POST 날리면 403 에러뜸 수정 필요
-            .csrf().disable()
-            .authorizeRequests()
-            .antMatchers("/writepostform/**").hasAnyRole() // 글쓰기, 편집은 권한이 있어야만 가능
-            .anyRequest().permitAll();
+        // TODO CORS/CSRF 걸려서 POST 날리면 403 에러뜸 수정 필요
+        http.csrf().disable();
+        // URI별로 보안설정
+        http.authorizeRequests()
+                // 주의, authenticated는 인증만 되어있으면 허용한다는 의미임
+                // hasAnyAuthorithy, hasAnyRoles 얘네는 지정된 특정 권한이 있어야 접근할 수 있다는 의미
+            .antMatchers("/writepostform/**").authenticated() // 글쓰기, 편집은 권한이 있어야만 가능
+            .anyRequest().permitAll();  // 그 외 나머지 API는 권한 없어도 접근 가능
         // Login 화면 설정
         http.formLogin((form) -> form
                     .loginPage("/login")
                     .permitAll()
                 )
-                .logout((logout) -> logout.permitAll());
+                .logout((logout) -> logout
+                        .logoutUrl("/logout")
+                        .deleteCookies("JSESSIONID")
+                        .permitAll());
             // TODO Filter 설정 for JWT
         return http.build();
-
     }
 
     @Bean
