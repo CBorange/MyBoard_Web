@@ -63,4 +63,14 @@ public class HomeController extends LayoutControllerBase {
 
         return LayoutViewPath;
     }
+
+    @GetMapping("/invalid")
+    public String invalideSessionPage(Model model) {
+        return "InvalidSession";
+    }
+
+    @GetMapping("/expired")
+    public String expiredSessionPage(Model model) {
+        return "ExpiredSession";
+    }
 }

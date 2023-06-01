@@ -8,3 +8,11 @@
     color: white;
     font-size: 25px;
 }
+
+.userInfo-link > a{
+    text-decoration: none;
+}
+.userInfo-link > span{
+    color: white;
+    font-size: 10px;
+}

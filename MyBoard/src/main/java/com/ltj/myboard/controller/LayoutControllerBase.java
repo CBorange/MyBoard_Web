@@ -1,6 +1,7 @@
 package com.ltj.myboard.controller;
 import com.ltj.myboard.domain.Board;
 import com.ltj.myboard.domain.User;
+import com.ltj.myboard.dto.mypage.MyInfo;
 import com.ltj.myboard.model.UserDetailsImpl;
 import com.ltj.myboard.service.BoardService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,7 @@ public class LayoutControllerBase {
     }
 
     @ModelAttribute("userInfo")
-    public User userInfo(){
+    public MyInfo userInfo(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Object principal = authentication.getPrincipal();
 
@@ -36,7 +37,15 @@ public class LayoutControllerBase {
 
         UserDetailsImpl userDetails = (UserDetailsImpl)principal;
         User user = userDetails.getUser();
-        return user;
+
+        MyInfo response = new MyInfo(
+                user.getId(),
+                user.getNickname(),
+                user.getEmail(),
+                user.getRegisterDay() == null ? "None" : user.getRegisterDay().toString(),
+                user.getLoginDay() == null ? "None" : user.getLoginDay().toString()
+        );
+        return response;
     }
 
     /**

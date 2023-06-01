@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import javax.swing.text.html.Option;
 
+import java.util.Date;
 import java.util.Optional;
 
 import static org.apache.logging.log4j.ThreadContext.isEmpty;
@@ -39,9 +40,11 @@ public class AuthService {
 
     public User registerUser(AuthDTO request) {
         User newUser = new User();
+        newUser.setEmail(request.getEmail());
         newUser.setNickname(request.getNickname());
         newUser.setId(request.getUserID());
         newUser.setPassword(passwordEncoder.encode(request.getPassword()));
+        newUser.setRegisterDay(new Date());
 
         // 회원가입 시 기본 등급은 유저
         UserGrade defaultGrade = userGradeRepository.findByGrade(UserGradeLevel.User.getValue()).orElseThrow();

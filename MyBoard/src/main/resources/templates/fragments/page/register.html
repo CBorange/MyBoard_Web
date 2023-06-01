@@ -2,8 +2,11 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <th:block th:fragment="register">
     <div class="mx-auto container-lg top-div">
-        <h1>User Registration</h1>
-        <form th:action="@{/register}" method="post">
+        <h1>유저 회원가입</h1>
+        <form onsubmit="return false" id="registerForm">
+            <div>
+                <input type="text" name="email" placeholder="이메일주소">
+            </div>
             <div>
                 <input type="text" name="nickname" placeholder="닉네임"/>
             </div>
@@ -13,8 +16,13 @@
             <div>
                 <input type="password" name="password" placeholder="비밀번호"/>
             </div>
-            <input type="submit" value="회원가입" />
+            <input type="button" value="회원가입" onclick="onSubmitRegister()"/>
         </form>
+        <div id="resultArea" style="visibility: hidden;">
+            <p id="resultMsg">회원가입 완료</p>
+        </div>
+        <button id="loginButton" style="visibility: hidden;" onclick="location.href='/login'">로그인</button>
     </div>
+    <script src="/js/register.js"></script>
 </th:block>
 </html>

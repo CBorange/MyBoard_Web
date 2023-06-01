@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
     <th:block th:fragment="myinfo_panel">
         <h2>내 정보</h2>
-        <table class="table table-borderless">
+        <table class="table table-bordered">
             <thead>
                 <tr>
                     <th scope="col">구분</th>
@@ -13,34 +13,34 @@
                 <!--아이디-->
                 <tr>
                     <th scope="row">아이디</th>
-                    <th>admin</th>
+                    <th><span th:text="${userInfo.getUserId()}"></span></th>
                 </tr>
                 <!--닉네임-->
                 <tr>
                     <th scope="row">닉네임</th>
-                    <th>관리자</th>
+                    <th><span th:text="${userInfo.getNickname()}"></span></th>
                 </tr>
                 <!--이메일-->
                 <tr>
                     <th scope="row">이메일</th>
-                    <th>admin@gmail.com</th>
+                    <th><span th:text="${userInfo.getEmail()}"></span></th>
                 </tr>
                 <!--가입일-->
                 <tr>
                     <th scope="row">가입일</th>
-                    <th>2023-01-01</th>
+                    <th><span th:text="${userInfo.getRegisterDay()}"></span></th>
                 </tr>
                 <!--최근 로그인-->
                 <tr>
                     <th scope="row">최근 로그인</th>
-                    <th>2023-01-01</th>
+                    <th><span th:text="${userInfo.getLoginDay()}"></span></th>
                 </tr>
             </tbody>
         </table>
         <div class="d-flex flex-row">
-            <button class="btn">로그아웃</button>
-            <button class="btn">비밀번호 변경</button>
-            <button class="btn ms-auto">회원탈퇴</button>
+            <button class="btn btn-outline-dark" onclick="location.href = '/logout'">로그아웃</button>
+            <button class="btn btn-outline-dark" onclick="location.href = '/changepassword'">비밀번호 변경</button>
+            <button class="btn btn-outline-danger ms-auto">회원탈퇴</button>
         </div>
     </th:block>
 </html>
