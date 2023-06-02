@@ -30,11 +30,6 @@ public class AppConfig {
     }
 
     @Bean
-    public PostRepository postRepository(){
-        return new JDBC_PostRepository(dataSource());
-    }
-
-    @Bean
     public FilteredPostRepository filteredPostRepository(){
         return new JDBC_FilteredPostRepository(dataSource());
     }

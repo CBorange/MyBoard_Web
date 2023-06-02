@@ -28,15 +28,15 @@ public class PostService{
     private final PostFileRepository postFileRepository;
 
     public Optional<Post> findPostByID(int postID) {
-        return postRepository.findPostByID(postID);
+        return postRepository.findById(postID);
     }
 
     public List<Post> findPostByBoardID(int boardID) {
-        return postRepository.findAllPostByBoardID(boardID);
+        return postRepository.findAllByBoardId(boardID);
     }
 
     public List<Post> findPostByWriterID(String writerID) {
-        return postRepository.findPostByWriterID(writerID);
+        return postRepository.findAllByWriterId(writerID);
     }
 
     public List<FilteredPost> getLastestPost(int boardID, int resultLimit){
@@ -110,25 +110,37 @@ public class PostService{
     }
 
     private Post insertPost(String title, String content, int boardID, String writerID) {
-        int generatedRowKey = postRepository.insertPost(title, content, boardID, writerID);
-        Optional<Post> newPost = findPostByID(generatedRowKey);
-        return newPost.orElseThrow(() -> {
-            log.error("PostService : insertPost Error, can't not found from generatedKey = " + generatedRowKey);
-            return new IllegalStateException("PostService : insertPost Error, can't not found from generatedKey = " + generatedRowKey);
-        });
+        try{
+            Post newPost = new Post();
+            newPost.setTitle(title);
+            newPost.setContent(content);
+            newPost.setBoardId(boardID);
+            newPost.setWriterId(writerID);
+
+            postRepository.save(newPost);
+            return newPost;
+        }catch (Exception e){
+            log.error("insertPost Error, " + e.getMessage());
+            throw new IllegalStateException("insertPost Error" + e.getMessage());
+        }
     }
 
     private Post updatePost(String title, String content, int postID, String writerID){
-        int updateCount = postRepository.updatePost(title, content, postID, writerID);
-        if(updateCount < 1){
-            throw new IllegalStateException("PostService : updatePost Error, updatePost count is zero");
-        }
+        try{
+            Post foundPost = postRepository.findById(postID).orElseThrow(() -> {
+                log.error("updatePost Error occured " + postID + "doesn't exist");
+                throw new IllegalStateException("updatePost Error occured " + postID + "doesn't exist");
+            });
+            foundPost.setTitle(title);
+            foundPost.setContent(content);
+            foundPost.setWriterId(writerID);
 
-        Optional<Post> updatedPost = findPostByID(postID);
-        return updatedPost.orElseThrow(() -> {
-            log.error("PostService : updatePost Error, update count is greater than zero, but can't not found Post Data from updatedPostID = " + postID);
-            throw new IllegalStateException("PostService : updatePost Error, update count is greater than zero, but can't not found Post Data from updatedPostID = " + postID);
-        });
+            postRepository.save(foundPost);
+            return foundPost;
+        } catch (Exception e){
+            log.error("updatePost Error, " + e.getMessage());
+            throw new IllegalStateException("updatePost Error" + e.getMessage());
+        }
     }
 
     private int submitPostFile(int postID, PostFileDelta fileDelta){
@@ -155,11 +167,13 @@ public class PostService{
     }
 
     private int deletePost(int postID) {
-        int deleteCount = postRepository.deletePost(postID);
-        if(deleteCount < 1){
-            throw new IllegalStateException("PostService : deletePost Error, delete count is zero");
+        try{
+            postRepository.deleteById(postID);
+            return 1;
+        }catch (Exception e){
+            log.error("deletePost Error, " + e.getMessage());
+            throw new IllegalStateException("deletePost Error" + e.getMessage());
         }
-        return deleteCount;
     }
     //endregion
 }

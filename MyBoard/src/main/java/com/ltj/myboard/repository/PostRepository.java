@@ -1,16 +1,14 @@
 package com.ltj.myboard.repository;
 
 import com.ltj.myboard.domain.Post;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
-public interface PostRepository {
-    Optional<Post> findPostByID(int postID);
-    List<Post> findAllPostByBoardID(int boardID);
-    List<Post> findPostByWriterID(String writerID);
-    int insertPost(String title, String content, int boardID, String writerID);
-    int updatePost(String title, String content, int postID, String writerID);
-    int deletePost(int postID);
+public interface PostRepository extends JpaRepository<Post, Integer> {
+    Optional<Post> findById(int postID);
+    List<Post> findAllByBoardId(int boardID);
+    List<Post> findAllByWriterId(String writerID);
 }

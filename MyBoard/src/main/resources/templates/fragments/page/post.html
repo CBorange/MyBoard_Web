@@ -25,7 +25,7 @@
                     <span class="ms-1" th:text="${postInfo.getWriterId()}"></span>
                     <!--작성 일자-->
                     <img class="ms-3" src="/img/calendar.png" style="width: 20px; height: 20px;"/>
-                    <span class="ms-1" th:text="${#temporals.format(postInfo.getCreatedDay(), 'yyyy-MM-dd')}"></span>
+                    <span class="ms-1" th:text="${#dates.format(postInfo.getCreatedDay(), 'yyyy-MM-dd')}"></span>
                 </div>
                 <!--게시글 링크 및 수정,삭제 등 게시글 제어 버튼-->
                 <div class="d-flex flex-row">

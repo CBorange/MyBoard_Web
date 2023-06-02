@@ -36,7 +36,7 @@
                         </td>
                         <td><span th:text="${filteredPost.getPostData().getWriterId()}"></span></td>
                         <td><span th:text="${filteredPost.getPostData().getGoodCount()}"></span></td>
-                        <td><span th:text="${#temporals.format(filteredPost.getPostData().getCreatedDay(),'yyyy-MM-dd')}"></span></td>
+                        <td><span th:text="${#dates.format(filteredPost.getPostData().getCreatedDay(),'yyyy-MM-dd')}"></span></td>
                     </tr>
                     </th:block>
                     </tbody>
