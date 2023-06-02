@@ -15,6 +15,7 @@ import javax.sql.DataSource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -117,11 +118,11 @@ public class JDBC_CommentRepository implements CommentRepository {
             commentData.setContent(rs.getString("content"));
             commentData.setGoodCount(rs.getInt("good_count"));
             commentData.setBadCount(rs.getInt("bad_count"));
-            commentData.setCreatedDay(rs.getTimestamp("created_day").toLocalDateTime());
-            commentData.setModifyDay(rs.getTimestamp("modify_day").toLocalDateTime());
-            Timestamp deleteDayTS = rs.getTimestamp("delete_day");
+            commentData.setCreatedDay(rs.getDate("created_day"));
+            commentData.setModifyDay(rs.getDate("modify_day"));
+            Date deleteDayTS = rs.getDate("delete_day");
             if(deleteDayTS != null)
-                commentData.setDeleteDay(deleteDayTS.toLocalDateTime());
+                commentData.setDeleteDay(deleteDayTS);
 
             result.setCommentData(commentData);
             return result;

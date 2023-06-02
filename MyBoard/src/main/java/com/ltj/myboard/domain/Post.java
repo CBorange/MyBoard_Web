@@ -6,6 +6,7 @@ import lombok.ToString;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
 
 @Entity(name = "post")
 @Getter
@@ -48,4 +49,8 @@ public class Post {
 
     @Column(name="delete_day")
     private Date deleteDay;
+
+    @OneToMany
+    @JoinColumn(name="id")
+    private List<Comment> comments;
 }
