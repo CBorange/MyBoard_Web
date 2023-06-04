@@ -4,21 +4,30 @@ import com.ltj.myboard.domain.Comment;
 import com.ltj.myboard.dto.post.OrderedComment;
 import com.ltj.myboard.repository.CommentRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class CommentService {
     private final CommentRepository commentRepository;
 
+    public Comment findCommentById(int commentId){
+        List<Comment> all = commentRepository.findAll();
+        Optional<Comment> foundComment = commentRepository.findById(commentId);
+        Comment found = foundComment.orElseThrow(() -> {
+            throw new IllegalStateException("cannot find " + commentId + "Comment");
+        });
+        return found;
+    }
+
     public List<OrderedComment> findRootCommentInPost(int postID){
-        List<OrderedComment> rets = commentRepository.findOrderedRootComment(postID);
-        return rets;
+        return null;
     }
 
     public List<OrderedComment> filterCommentDataInCurPage(List<OrderedComment> sourceList, int curPage,
@@ -38,11 +47,20 @@ public class CommentService {
         return filteredCommentList;
     }
 
-    public Comment insertComment( int postID, Integer parentCommentID, String writerID, String content) throws SQLException {
-        int generatedRowKey = commentRepository.insertComment(postID, parentCommentID, writerID, content);
-        Optional<Comment> newComment = commentRepository.findCommentByID(generatedRowKey);
-        return newComment.orElseThrow(() -> {
-           return new SQLException("CommentService : insertComment Error, can't not found from generatedKey = " + generatedRowKey);
-        });
+    public Comment insertComment( int postID, Comment parentComment, String writerID, String content) {
+        try {
+            Comment newComment = new Comment();
+            newComment.setPostId(postID);
+            //newComment.setParentCommment(parentComment);
+            newComment.setWriterId(writerID);
+            newComment.setContent(content);
+
+            commentRepository.save(newComment);
+            return newComment;
+        } catch (Exception e){
+            String msg = "CommentService : insertComment Error " + e.getMessage();
+            log.error(msg);
+            throw new IllegalStateException(msg);
+        }
     }
 }

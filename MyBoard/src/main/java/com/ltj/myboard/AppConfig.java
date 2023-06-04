@@ -38,9 +38,4 @@ public class AppConfig {
     public PostFileRepository postFileRepository(){
         return new JDBC_PostFileRepository((dataSource()));
     }
-
-    @Bean
-    public CommentRepository commentRepository(){
-        return new JDBC_CommentRepository(dataSource());
-    }
 }

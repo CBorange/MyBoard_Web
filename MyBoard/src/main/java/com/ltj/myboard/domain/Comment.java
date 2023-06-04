@@ -13,7 +13,7 @@ import java.util.Optional;
 @Entity(name = "comment")
 @Getter
 @Setter
-@ToString
+@ToString(exclude = "parentComment")
 public class Comment {
 
     public Comment() {
@@ -26,9 +26,6 @@ public class Comment {
 
     @Column(name="post_id")
     private int postId;
-
-    @Column(name = "parent_comment_id")
-    private Integer parentCommentId;
 
     @Column(name = "writer_id")
     private String writerId;
@@ -50,6 +47,15 @@ public class Comment {
 
     @Column(name = "delete_day")
     private Date deleteDay;
+
+    // 부모 Comment
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent_comment_id", referencedColumnName = "id", nullable = true)
+    private Comment parentCommment = null;
+
+    // 자식 Comment
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "parentCommment")
+    private List<Comment> childComments;
 
     // 여기부터 비즈니스 로직 관련 변수
     @Transient

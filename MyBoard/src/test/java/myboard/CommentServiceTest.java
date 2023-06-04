@@ -14,6 +14,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 @SpringBootTest(classes = MyBoardApplication.class)
+@Transactional
 public class CommentServiceTest {
 
     @Autowired
@@ -21,6 +22,18 @@ public class CommentServiceTest {
 
     @Test
     public void 댓글조회(){
+        // given
+        int commentId = 408;
+
+        // when
+        Comment found = commentService.findCommentById(commentId);
+        Comment parentComment = found.getParentCommment();
+        // then
+        Assertions.assertThat(found != null);
+    }
+
+    @Test
+    public void 게시글_댓글조회(){
         // given
         int postId = 11;
 

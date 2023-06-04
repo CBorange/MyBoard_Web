@@ -1,13 +1,11 @@
 package com.ltj.myboard.repository;
 import com.ltj.myboard.domain.Comment;
-import com.ltj.myboard.dto.post.OrderedComment;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-import java.util.List;
 import java.util.Optional;
 
-public interface CommentRepository {
-    List<OrderedComment> findOrderedCommentByPostID(int postID);
-    List<OrderedComment> findOrderedRootComment(int postID);
-    Optional<Comment> findCommentByID(int commentID);
-    int insertComment(int postID, Integer parentCommentID, String writerID, String content);
+@Repository
+public interface CommentRepository extends JpaRepository<Comment, Integer> {
+    Optional<Comment> findById(int commentID);
 }

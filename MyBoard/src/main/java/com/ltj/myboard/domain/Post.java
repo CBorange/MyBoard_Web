@@ -2,16 +2,19 @@ package com.ltj.myboard.domain;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @Entity(name = "post")
 @Getter
 @Setter
-@ToString
+@ToString(exclude = "comments")
 public class Post {
     public Post(){
         id = -1;    // ID의 기본값은 음수이다. 음수인 경우 신규 게시글로 취급한다.
@@ -50,7 +53,7 @@ public class Post {
     @Column(name="delete_day")
     private Date deleteDay;
 
-    @OneToMany
-    @JoinColumn(name="id")
+    @OneToMany()
+    @JoinColumn(name = "post_id")
     private List<Comment> comments;
 }

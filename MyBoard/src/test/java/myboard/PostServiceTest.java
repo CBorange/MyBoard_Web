@@ -14,6 +14,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 @SpringBootTest(classes = MyBoardApplication.class)
+@Transactional
 public class PostServiceTest {
     @Autowired
     private PostService postService;
@@ -31,6 +32,14 @@ public class PostServiceTest {
         List<FilteredPost> result = postService.getLastestPost(boardID, limit);
 
         Assertions.assertTrue(result.stream().count() > 0);
+    }
+
+    @Test
+    public void 게시글조회(){
+        int postId = 167;
+        Post foundPost =  postService.findPostByID(postId).orElseThrow();
+
+        long cnt = foundPost.getComments().stream().count();
     }
 
     @Test
