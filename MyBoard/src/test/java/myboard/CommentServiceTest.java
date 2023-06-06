@@ -27,9 +27,21 @@ public class CommentServiceTest {
 
         // when
         Comment found = commentService.findCommentById(commentId);
-        Comment parentComment = found.getParentCommment();
+        Comment parentComment = found.getParentComment();
         // then
         Assertions.assertThat(found != null);
+    }
+
+    @Test
+    public void 루트_댓글조회(){
+        // given
+        int postId = 167;
+
+        // when
+        List<OrderedComment> rootComments = commentService.findRootCommentInPost(167);
+
+        // then
+        Assertions.assertThat(rootComments.stream().count() == 41);
     }
 
     @Test

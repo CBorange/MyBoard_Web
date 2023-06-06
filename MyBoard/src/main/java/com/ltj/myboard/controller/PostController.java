@@ -67,9 +67,9 @@ public class PostController extends LayoutControllerBase {
         if(pageCount < endPageNoInCurSession) endPageNoInCurSession = pageCount;
 
         // 정렬된 댓글 리스트에서 현재 페이지에 해당하는 부분만 filtering
-        List<OrderedComment> filteredCommentList = commentService.filterCommentDataInCurPage(comments, pageNumber,
+        List<OrderedComment> orderedCommentList = commentService.filterCommentDataInCurPage(comments, pageNumber,
                 MAX_VISIBLE_COMMENT_COUNT_INPAGE);
-        model.addAttribute("filteredCommentList", filteredCommentList);
+        model.addAttribute("orderedCommentList", orderedCommentList);
 
         // 현재 페이지 정보 Model에 추가
         model.addAttribute("commentCount", commentCount);

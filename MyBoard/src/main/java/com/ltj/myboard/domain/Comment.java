@@ -1,24 +1,15 @@
 package com.ltj.myboard.domain;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 
 @Entity(name = "comment")
 @Getter
 @Setter
-@ToString(exclude = "parentComment")
 public class Comment {
-
-    public Comment() {
-        childCommentSet = new HashSet<Comment>();
-    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -51,61 +42,13 @@ public class Comment {
     // 부모 Comment
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_comment_id", referencedColumnName = "id", nullable = true)
-    private Comment parentCommment = null;
+    private Comment parentComment = null;
 
     // 자식 Comment
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "parentCommment")
+    // mappedBy는 mapping 되는 객체(여기서는 자식 Comment)에서 참조하는 부모객체의 field명을 의미한다.
+    // 이 case에서 childComments 리스트의 원소 Comment의 parentComment field는 부모 Comment를 가르키고 있으므로
+    // mappedBy는 parentComment가 되어야 한다.
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "parentComment")
+    @OrderBy("created_day")
     private List<Comment> childComments;
-
-    // 여기부터 비즈니스 로직 관련 변수
-    @Transient
-    private HashSet<Comment> childCommentSet;
-
-    public boolean addChildComment(Comment comment){
-        return childCommentSet.add(comment);
-    }
-
-    public boolean addChildComment(List<Comment> commentList){
-        return childCommentSet.addAll(commentList);
-    }
-
-    public boolean removeChildComment(Comment comment){
-        return childCommentSet.remove(comment);
-    }
-
-    public boolean removeChildCommentByID(int commentID){
-        Optional<Comment> commentOptional = childCommentSet.stream().filter(comment -> {
-            if(comment.id == commentID)
-                return true;
-            return false;
-        }).findAny();
-
-        Comment foundComment = commentOptional.get();
-        if(foundComment != null){
-            childCommentSet.remove(foundComment);
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public int hashCode() {
-        return this.id;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if(o == null)
-            return false;
-
-        if(this.getClass() != o.getClass())
-            return false;
-
-        Comment comment = (Comment)o;
-
-        // ID가 같으면 같은 Comment.
-        if(comment.getId() == this.id)
-            return true;
-        return false;
-    }
 }

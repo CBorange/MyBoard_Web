@@ -78,15 +78,13 @@
                 </div>
                 <!--댓글 내용 영역-->
                 <div class="d-flex flex-column">
-                    <th:block th:each="comment : ${filteredCommentList}">
+                    <th:block th:each="comment : ${orderedCommentList}">
                         <!--댓글 작성자, 추천/비추천, 작성일, 대댓글 입력 form 표시-->
                         <div class="d-flex flex-row" style="min-height: 30px; background-color:#c1c7c7; border-radius: 5px / 5px;">
                             <span class="ms-2" th:text="${comment.getCommentData().getWriterId()}"></span>
                             <span class="ms-auto">작성일: </span>
                             <span class="ms-2 me-2" th:text="${#dates.format(comment.getCommentData().getCreatedDay(),'yyyy-MM-dd')}"></span>
                             <!--대댓글 작성 버튼-->
-
-
                             <button class="btn btn-secondary btn-sm" id="showReplyFormBtn"
                                     th:commentID="${comment.getCommentData().getId()}"
                                     th:onclick="onClickShowReplyForm(this.getAttribute('commentID'))"
@@ -99,7 +97,7 @@
                         </div>
                         <div style="height: 20px;"></div>
                         <!--대댓글 영역-->
-                        <th:block th:each="subComment : ${comment.getCommentData().getChildCommentSet()}">
+                        <th:block th:each="subComment : ${comment.getCommentData().getChildComments()}">
                             <div class="ms-4">
                                 <!--대댓글 작성자 표시-->
                                 <div class="d-flex flex-row" style="min-height: 30px; background-color:#c1c7c7; border-radius: 5px / 5px;">

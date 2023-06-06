@@ -5,8 +5,10 @@ import com.ltj.myboard.dto.post.OrderedComment;
 import com.ltj.myboard.repository.CommentRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -18,7 +20,6 @@ public class CommentService {
     private final CommentRepository commentRepository;
 
     public Comment findCommentById(int commentId){
-        List<Comment> all = commentRepository.findAll();
         Optional<Comment> foundComment = commentRepository.findById(commentId);
         Comment found = foundComment.orElseThrow(() -> {
             throw new IllegalStateException("cannot find " + commentId + "Comment");
@@ -27,7 +28,24 @@ public class CommentService {
     }
 
     public List<OrderedComment> findRootCommentInPost(int postID){
-        return null;
+        List<Comment> rootComments = commentRepository.findAllByPostIdAndParentCommentIsNull(
+                postID,
+                Sort.by(Sort.Direction.ASC,
+                "createdDay"));
+
+        List<OrderedComment> ret = new ArrayList<>();
+
+        int idx = 0;
+        for(Comment rootComment : rootComments){
+            OrderedComment newOrderedComment = new OrderedComment();
+            newOrderedComment.setOrderedCommentNo(idx + 1);
+            newOrderedComment.setCommentData(rootComment);
+
+            ret.add(newOrderedComment);
+            idx++;
+        }
+
+        return ret;
     }
 
     public List<OrderedComment> filterCommentDataInCurPage(List<OrderedComment> sourceList, int curPage,
