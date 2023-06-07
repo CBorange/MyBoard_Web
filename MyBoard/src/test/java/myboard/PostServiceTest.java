@@ -28,7 +28,7 @@ public class PostServiceTest {
     @Test
     public void 최신게시글조회(){
         int boardID = 126;
-        int limit = 10;
+        int limit = 4;
         List<FilteredPost> result = postService.getLastestPost(boardID, limit);
 
         Assertions.assertTrue(result.stream().count() > 0);

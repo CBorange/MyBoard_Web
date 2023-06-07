@@ -10,6 +10,8 @@ import com.ltj.myboard.repository.PostFileRepository;
 import com.ltj.myboard.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,7 +42,23 @@ public class PostService{
     }
 
     public List<FilteredPost> getLastestPost(int boardID, int resultLimit){
-        return filteredPostRepository.findPost_Lastest(boardID, resultLimit);
+        List<Post> lastestPosts = postRepository.findAllByBoardId(boardID,
+                PageRequest.of(0, resultLimit, Sort.by(Sort.Direction.DESC, "modifyDay")));
+
+        List<FilteredPost> ret = new ArrayList<>();
+
+        int idx = 0;
+        for(Post post : lastestPosts){
+            FilteredPost newFilteredPost = new FilteredPost();
+            newFilteredPost.setOrderedPostNo(idx + 1);
+            long commentCnt = post.getComments().stream().count();
+            newFilteredPost.setCommentCount(commentCnt);
+            newFilteredPost.setPostData(post);
+
+            ret.add(newFilteredPost);
+            idx++;
+        }
+        return ret;
     }
 
     public List<FilteredPost> findPost_UserParam(int boardID, String searchMethod, String searchCondition, String sortOrderTarget,
