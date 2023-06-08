@@ -9,6 +9,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -48,6 +49,10 @@ public class CommentService {
         return ret;
     }
 
+    public long getCommentCountByPost(int postId){
+        return commentRepository.countByPostId(postId);
+    }
+
     public List<OrderedComment> filterCommentDataInCurPage(List<OrderedComment> sourceList, int curPage,
                                                            int maxVisibleCommentCountInPage){
         // 현재 페이지의 첫번째, 마지막 게시글 범위 지정
@@ -69,9 +74,11 @@ public class CommentService {
         try {
             Comment newComment = new Comment();
             newComment.setPostId(postID);
-            //newComment.setParentCommment(parentComment);
+            newComment.setParentComment(parentComment);
             newComment.setWriterId(writerID);
             newComment.setContent(content);
+            newComment.setCreatedDay(new Date());
+            newComment.setModifyDay(new Date());
 
             commentRepository.save(newComment);
             return newComment;

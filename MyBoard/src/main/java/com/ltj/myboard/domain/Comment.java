@@ -21,6 +21,9 @@ public class Comment {
     @Column(name = "writer_id")
     private String writerId;
 
+    @Column(name="writer_nickname")
+    private String writerNickname;
+
     @Column(columnDefinition = "LONGTEXT")
     private String content;
 

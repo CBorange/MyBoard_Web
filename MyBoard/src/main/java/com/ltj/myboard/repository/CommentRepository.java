@@ -9,6 +9,7 @@ import java.util.Optional;
 
 @Repository
 public interface CommentRepository extends JpaRepository<Comment, Integer> {
+    long countByPostId(int postId);
     Optional<Comment> findById(int commentID);
     List<Comment> findAllByPostIdAndParentCommentIsNull(int postId, Sort sort);
 }

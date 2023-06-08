@@ -1,19 +1,23 @@
 # 샘플게시글_추가.sql 먼저 실행 후 아래 쿼리 실행
 # 자유게시판 게시글(자유게시판 샘플 게시글 1) 샘플 댓글 INSERT
-DELIMITER $$
-DROP PROCEDURE IF EXISTS loopSampleCommentInsert;
+DELIMITER //
+
+DROP PROCEDURE IF EXISTS loopSampleCommentInsert //
 CREATE PROCEDURE loopSampleCommentInsert()
 BEGIN
     DECLARE i INT;
     SET i = 1;
     WHILE (i <= 300) DO
-            INSERT INTO comment(PostID, WriterID, Content)
-            SELECT p.ID, "admin", CONCAT("테스트 Root 댓글 입력 ", i)
-            FROM post p
-            WHERE p.Title = '자유게시판 샘플 게시글 1';
-            SET i = i + 1;
-	END WHILE;
-END $$
+        INSERT INTO comment(post_id, writer_id, content)
+        SELECT p.id, 'admin', CONCAT('테스트 Root 댓글 입력 ', i)
+        FROM post p
+        WHERE p.title = 'sdfgsd';
+        SET i = i + 1;
+    END WHILE;
+END //
+
+DELIMITER ;
+
 CALL loopSampleCommentInsert();
 
 # 아래 쿼리 실행 시 또 2014 Commands out of sync; 발생 하는 경우 있음
@@ -27,10 +31,10 @@ BEGIN
     DECLARE i INT;
     SET i = 1;
     WHILE (i <= subCommentCount) DO
-        INSERT INTO comment (PostID, ParentCommentID, WriterID, Content)
-        SELECT PostID, ID, "admin", CONCAT("대댓글 입력 ", i)
+        INSERT INTO comment (post_id, parent_comment_id, writer_id, content)
+        SELECT post_id, id, "admin", CONCAT("대댓글 입력 ", i)
         FROM comment
-        WHERE Content = CONCAT("테스트 Root 댓글 입력 ", sampleCommentNum);
+        WHERE content = CONCAT("테스트 Root 댓글 입력 ", sampleCommentNum);
         SET i = i + 1;
     END WHILE;
 END $$

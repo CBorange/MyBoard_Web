@@ -30,6 +30,9 @@ public class Post {
     @Column(name="writer_id")
     private String writerId;
 
+    @Column(name="writer_nickname")
+    private String writerNickname;
+
     private String title;
 
     @Column(columnDefinition = "LONGTEXT")

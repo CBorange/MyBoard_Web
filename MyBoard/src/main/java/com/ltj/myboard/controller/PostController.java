@@ -57,8 +57,9 @@ public class PostController extends LayoutControllerBase {
         List<OrderedComment> comments = commentService.findRootCommentInPost(foundPost.get().getId());
 
         // 페이지 개수 구하기
-        long commentCount = comments.stream().count();
+        long commentCount = commentService.getCommentCountByPost(id);
         int pageCount = Paginator.getPageCount(commentCount, MAX_VISIBLE_COMMENT_COUNT_INPAGE);
+        if(pageNumber > pageCount) pageNumber = pageCount;
 
         // 현재 페이지의 세션 구하기
         int curSession = Paginator.getCurSessionByCurPage(pageNumber, MAX_VISIBLE_PAGE_COUNT_INSESSION);

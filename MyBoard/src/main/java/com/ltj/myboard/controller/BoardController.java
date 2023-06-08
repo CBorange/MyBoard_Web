@@ -48,6 +48,8 @@ public class BoardController extends LayoutControllerBase {
         // 페이지 개수 구하기
         long postCount = postList.stream().count();
         int pageCount = Paginator.getPageCount(postCount, MAX_VISIBLE_POST_COUNT_INPAGE);
+        if(pageNumber > pageCount)
+            pageNumber = pageCount;
 
         // 현재 페이지의 세션 구하기
         int curSession = Paginator.getCurSessionByCurPage(pageNumber, MAX_VISIBLE_PAGE_COUNT_INSESSION);

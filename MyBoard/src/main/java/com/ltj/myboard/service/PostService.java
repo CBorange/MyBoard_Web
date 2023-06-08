@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -60,6 +61,8 @@ public class PostService{
         }
         return ret;
     }
+
+
 
     public List<FilteredPost> findPost_UserParam(int boardID, String searchMethod, String searchCondition, String sortOrderTarget,
                                                  String orderByMethod) {
@@ -152,6 +155,7 @@ public class PostService{
             foundPost.setTitle(title);
             foundPost.setContent(content);
             foundPost.setWriterId(writerID);
+            foundPost.setModifyDay(new Date());
 
             postRepository.save(foundPost);
             return foundPost;
