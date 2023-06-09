@@ -18,7 +18,11 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
     List<Post> findAllByBoardId(int boardID);
     List<Post> findAllByWriterId(String writerID);
 
-    @Query("")
+    @Query("SELECT p " +
+            "FROM Post p " +
+            "WHERE p.title LIKE '%:title%' OR " +
+            "      p.content LIKE '%:content%' OR " +
+            "      p.writerNickname LIKE '%:nickname%' ")
     List<Post> findAllByCondition(@Param("title") String title,
                                   @Param("content") String content,
                                   @Param("nickname") String nickname);

@@ -3,6 +3,7 @@ package myboard;
 import com.ltj.myboard.MyBoardApplication;
 import com.ltj.myboard.domain.Post;
 import com.ltj.myboard.dto.post.FilteredPost;
+import com.ltj.myboard.repository.PostRepository;
 import com.ltj.myboard.service.PostService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -18,6 +19,9 @@ import java.util.List;
 public class PostServiceTest {
     @Autowired
     private PostService postService;
+
+    @Autowired
+    private PostRepository postRepository;
 
     @Test
     public void 제목검색조건으로_게시글조회(){
@@ -40,6 +44,15 @@ public class PostServiceTest {
         Post foundPost =  postService.findPostByID(postId).orElseThrow();
 
         long cnt = foundPost.getComments().stream().count();
+    }
+
+    @Test
+    public void 다중조건_게시글조회(){
+        String title = "";
+        String content = "";
+        String nickname = "";
+
+        List<Post> ret = postRepository.findAllByCondition(title, content, nickname);
     }
 
     @Test
