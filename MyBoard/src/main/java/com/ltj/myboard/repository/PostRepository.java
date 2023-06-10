@@ -1,6 +1,7 @@
 package com.ltj.myboard.repository;
 
 import com.ltj.myboard.domain.Post;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -19,11 +20,15 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
     List<Post> findAllByWriterId(String writerID);
 
     @Query("SELECT p " +
-            "FROM Post p " +
-            "WHERE p.title LIKE '%:title%' OR " +
-            "      p.content LIKE '%:content%' OR " +
-            "      p.writerNickname LIKE '%:nickname%' ")
-    List<Post> findAllByCondition(@Param("title") String title,
+            "FROM post p " +
+            "WHERE p.boardId = :boardId AND " +
+            "      (:title IS NOT NULL AND p.title LIKE CONCAT('%', COALESCE(:title, ''), '%') OR " +
+            "      :content IS NOT NULL AND p.content LIKE CONCAT('%', COALESCE(:content, ''), '%') OR " +
+            "      :nickname IS NOT NULL AND p.writerNickname LIKE CONCAT('%', COALESCE(:nickname, ''), '%')) " +
+            "ORDER BY createdDay DESC")
+    Page<Post> findAllByCondition(@Param("boardId") int boardId,
+                                  @Param("title") String title,
                                   @Param("content") String content,
-                                  @Param("nickname") String nickname);
+                                  @Param("nickname") String nickname,
+                                  Pageable pageable);
 }

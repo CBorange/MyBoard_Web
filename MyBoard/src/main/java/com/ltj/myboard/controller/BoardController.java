@@ -4,13 +4,17 @@ import com.ltj.myboard.dto.post.FilteredPost;
 import com.ltj.myboard.service.BoardService;
 import com.ltj.myboard.service.PostService;
 import com.ltj.myboard.util.Paginator;
+import com.ltj.myboard.util.Ref;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -27,10 +31,8 @@ public class BoardController extends LayoutControllerBase {
     @GetMapping("/board/{id}")
     public String board_Request(Model model, @PathVariable("id") int id,
                                              @RequestParam(required = false, defaultValue = "1") int pageNumber,
-                                             @RequestParam(required = false, defaultValue = "Title") String searchMethod,
-                                             @RequestParam(required = false, defaultValue = "") String searchCondition,
-                                             @RequestParam(required = false, defaultValue = "ModifyDay") String sortOrderTarget,
-                                             @RequestParam(required = false, defaultValue = "DESC") String sortMethod){
+                                             @RequestParam(required = false, defaultValue = "title") String searchType,
+                                             @RequestParam(required = false, defaultValue = "") String searchValue){
         addLayoutModel_FragmentContent(model,"board.html","board");
 
         // log test
@@ -42,14 +44,24 @@ public class BoardController extends LayoutControllerBase {
             model.addAttribute("boardInfo", foundBoard.get());
         });
 
+        // 검색조건 처리
+        String searchConditions[] = {null, null, null}; // title, content, nickname 순
+        if(searchType.equals("title")) searchConditions[0] = searchValue;
+        if(searchType.equals("content")) searchConditions[1] = searchValue;
+        if(searchType.equals("nickname")) searchConditions[2] = searchValue;
+
         // 검색 조건에 따라 게시글 리스트 Select
-        List<FilteredPost> postList = postService.findPost_UserParam(id, searchMethod, searchCondition, sortOrderTarget, sortMethod);
+        Ref<Integer> totalPageRef = new Ref<>();
+        List<FilteredPost> postList = postService.findPost_UserParam(id,
+                searchConditions[0], searchConditions[1], searchConditions[2],
+                PageRequest.of(pageNumber - 1, MAX_VISIBLE_POST_COUNT_INPAGE), totalPageRef);
 
         // 페이지 개수 구하기
-        long postCount = postList.stream().count();
-        int pageCount = Paginator.getPageCount(postCount, MAX_VISIBLE_POST_COUNT_INPAGE);
+        int pageCount = totalPageRef.getValue();
+        if(pageCount == 0)
+            pageCount = 1;
         if(pageNumber > pageCount)
-            pageNumber = pageCount;
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, pageNumber + " page is out of bound");
 
         // 현재 페이지의 세션 구하기
         int curSession = Paginator.getCurSessionByCurPage(pageNumber, MAX_VISIBLE_PAGE_COUNT_INSESSION);
@@ -57,20 +69,15 @@ public class BoardController extends LayoutControllerBase {
         int startPageNoInCurSession = endPageNoInCurSession - (MAX_VISIBLE_PAGE_COUNT_INSESSION - 1);
         if(pageCount < endPageNoInCurSession) endPageNoInCurSession = pageCount;
 
-
-        // 검색된 게시글 리스트에서 현재 페이지에 해당하는 부분만 filtering
-        List<FilteredPost> filteredPostList = postService.filterPostDataInCurPage(postList, pageNumber, MAX_VISIBLE_POST_COUNT_INPAGE);
-        model.addAttribute("filteredPostList", filteredPostList);
-
         // 현재 페이지 정보 Model에 추가
+        model.addAttribute("filteredPostList", postList);
         model.addAttribute("curPageNo", pageNumber);
         model.addAttribute("endPageNoInCurSession", endPageNoInCurSession);
         model.addAttribute("startPageNoInCurSession", startPageNoInCurSession);
         model.addAttribute("pageCount", pageCount);
-        model.addAttribute("searchMethod", searchMethod);
-        model.addAttribute("searchCondition", searchCondition);
-        model.addAttribute("sortOrderTarget", sortOrderTarget);
-        model.addAttribute("sortMethod", sortMethod);
+
+        model.addAttribute("searchType", searchType);
+        model.addAttribute("searchValue", searchValue);
         return LayoutViewPath;
     }
 }

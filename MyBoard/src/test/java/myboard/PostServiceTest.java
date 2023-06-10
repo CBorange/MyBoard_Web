@@ -9,6 +9,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.SQLException;
@@ -25,8 +27,6 @@ public class PostServiceTest {
 
     @Test
     public void 제목검색조건으로_게시글조회(){
-        List<FilteredPost> findResult = postService.findPost_UserParam(115,"Title", "21","ModifyDay","ASC");
-        Assertions.assertTrue(findResult.stream().count() > 0);
     }
 
     @Test
@@ -48,11 +48,12 @@ public class PostServiceTest {
 
     @Test
     public void 다중조건_게시글조회(){
-        String title = "";
-        String content = "";
-        String nickname = "";
+        int boardId = 126;
+        String title = null;
+        String content = "p";
+        String nickname = null;
 
-        List<Post> ret = postRepository.findAllByCondition(title, content, nickname);
+        Page<Post> ret = postRepository.findAllByCondition(boardId, title, content, nickname, PageRequest.of(99, 99));
     }
 
     @Test

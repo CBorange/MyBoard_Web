@@ -8,8 +8,10 @@ import com.ltj.myboard.dto.post.SubmitPostData;
 import com.ltj.myboard.repository.FilteredPostRepository;
 import com.ltj.myboard.repository.PostFileRepository;
 import com.ltj.myboard.repository.PostRepository;
+import com.ltj.myboard.util.Ref;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -34,14 +36,6 @@ public class PostService{
         return postRepository.findById(postID);
     }
 
-    public List<Post> findPostByBoardID(int boardID) {
-        return postRepository.findAllByBoardId(boardID);
-    }
-
-    public List<Post> findPostByWriterID(String writerID) {
-        return postRepository.findAllByWriterId(writerID);
-    }
-
     public List<FilteredPost> getLastestPost(int boardID, int resultLimit){
         List<Post> lastestPosts = postRepository.findAllByBoardId(boardID,
                 PageRequest.of(0, resultLimit, Sort.by(Sort.Direction.DESC, "modifyDay")));
@@ -64,24 +58,26 @@ public class PostService{
 
 
 
-    public List<FilteredPost> findPost_UserParam(int boardID, String searchMethod, String searchCondition, String sortOrderTarget,
-                                                 String orderByMethod) {
-        List<FilteredPost> selectRet = new ArrayList<FilteredPost>();
+    public List<FilteredPost> findPost_UserParam(int boardID, String title, String content, String nickname,
+                                                 PageRequest pageRequest, Ref<Integer> totalPageCntRet) {
+        Page<Post> queryRet = postRepository.findAllByCondition(boardID, title, content, nickname, pageRequest);
+        List<Post> retList = queryRet.getContent();
+        totalPageCntRet.setValue(queryRet.getTotalPages());
 
-        // 검색 Method에 따른 검색 쿼리 수행
-        switch (searchMethod){
-            case "Title":
-                selectRet = filteredPostRepository.findPost_UseSearch_Title(boardID, searchCondition, sortOrderTarget, orderByMethod);
-                break;
-            case "Content":
-                break;
-            case "Comment":
-                break;
-            case "Nickname":
-                break;
+        List<FilteredPost> ret = new ArrayList<>();
+
+        int idx = 0;
+        for(Post post : retList){
+            FilteredPost newFilteredPost = new FilteredPost();
+            newFilteredPost.setOrderedPostNo(idx + 1);
+            newFilteredPost.setCommentCount(post.getComments().stream().count());
+            newFilteredPost.setPostData(post);
+
+            ret.add(newFilteredPost);
+            idx++;
         }
 
-        return selectRet;
+        return ret;
     }
 
     public List<FilteredPost> filterPostDataInCurPage(List<FilteredPost> sourceList, int curPage,
