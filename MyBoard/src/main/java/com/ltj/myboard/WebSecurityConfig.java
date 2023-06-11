@@ -40,6 +40,7 @@ public class WebSecurityConfig {
                 // 주의, authenticated는 인증만 되어있으면 허용한다는 의미임
                 // hasAnyAuthorithy, hasAnyRoles 얘네는 지정된 특정 권한이 있어야 접근할 수 있다는 의미
             .antMatchers("/writepostform/**").authenticated()
+            .antMatchers("/comment").authenticated()
             .antMatchers("/mypage/**").authenticated()
             .antMatchers("/changepassword").authenticated()
             .anyRequest().permitAll();  // 그 외 나머지 API는 권한 없어도 접근 가능

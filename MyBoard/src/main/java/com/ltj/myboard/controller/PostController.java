@@ -8,8 +8,11 @@ import com.ltj.myboard.service.BoardService;
 import com.ltj.myboard.service.CommentService;
 import com.ltj.myboard.service.PostService;
 import com.ltj.myboard.util.Paginator;
+import com.ltj.myboard.util.Ref;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -54,12 +57,20 @@ public class PostController extends LayoutControllerBase {
         });
 
         // Comment 정보 얻어냄
-        List<OrderedComment> comments = commentService.findRootCommentInPost(foundPost.get().getId());
+        Ref<Integer> totalPageRef = new Ref<>();
+        List<OrderedComment> comments = commentService.findRootCommentInPost(foundPost.get().getId(),
+                PageRequest.of(pageNumber - 1,
+                                MAX_VISIBLE_COMMENT_COUNT_INPAGE,
+                                Sort.by(Sort.Direction.DESC, "createdDay")),
+                                totalPageRef);
 
         // 페이지 개수 구하기
         long commentCount = commentService.getCommentCountByPost(id);
-        int pageCount = Paginator.getPageCount(commentCount, MAX_VISIBLE_COMMENT_COUNT_INPAGE);
-        if(pageNumber > pageCount) pageNumber = pageCount;
+        int pageCount = totalPageRef.getValue();
+        if(pageCount == 0)
+            pageCount = 1;
+        if(pageNumber > pageCount)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, pageNumber + " page is out of bound");
 
         // 현재 페이지의 세션 구하기
         int curSession = Paginator.getCurSessionByCurPage(pageNumber, MAX_VISIBLE_PAGE_COUNT_INSESSION);
@@ -67,10 +78,7 @@ public class PostController extends LayoutControllerBase {
         int startPageNoInCurSession = endPageNoInCurSession - (MAX_VISIBLE_PAGE_COUNT_INSESSION - 1);
         if(pageCount < endPageNoInCurSession) endPageNoInCurSession = pageCount;
 
-        // 정렬된 댓글 리스트에서 현재 페이지에 해당하는 부분만 filtering
-        List<OrderedComment> orderedCommentList = commentService.filterCommentDataInCurPage(comments, pageNumber,
-                MAX_VISIBLE_COMMENT_COUNT_INPAGE);
-        model.addAttribute("orderedCommentList", orderedCommentList);
+        model.addAttribute("orderedCommentList", comments);
 
         // 현재 페이지 정보 Model에 추가
         model.addAttribute("commentCount", commentCount);

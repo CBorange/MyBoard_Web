@@ -3,8 +3,11 @@ package com.ltj.myboard.service;
 import com.ltj.myboard.domain.Comment;
 import com.ltj.myboard.dto.post.OrderedComment;
 import com.ltj.myboard.repository.CommentRepository;
+import com.ltj.myboard.util.Ref;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -28,16 +31,17 @@ public class CommentService {
         return found;
     }
 
-    public List<OrderedComment> findRootCommentInPost(int postID){
-        List<Comment> rootComments = commentRepository.findAllByPostIdAndParentCommentIsNull(
+    public List<OrderedComment> findRootCommentInPost(int postID, PageRequest pageRequest, Ref<Integer> totalPageCntRet){
+        Page<Comment> rootComments = commentRepository.findAllByPostIdAndParentCommentIsNull(
                 postID,
-                Sort.by(Sort.Direction.ASC,
-                "createdDay"));
+                pageRequest);
+        List<Comment> retList = rootComments.getContent();
+        totalPageCntRet.setValue(rootComments.getTotalPages());
 
         List<OrderedComment> ret = new ArrayList<>();
 
         int idx = 0;
-        for(Comment rootComment : rootComments){
+        for(Comment rootComment : retList){
             OrderedComment newOrderedComment = new OrderedComment();
             newOrderedComment.setOrderedCommentNo(idx + 1);
             newOrderedComment.setCommentData(rootComment);
@@ -53,29 +57,13 @@ public class CommentService {
         return commentRepository.countByPostId(postId);
     }
 
-    public List<OrderedComment> filterCommentDataInCurPage(List<OrderedComment> sourceList, int curPage,
-                                                           int maxVisibleCommentCountInPage){
-        // 현재 페이지의 첫번째, 마지막 게시글 범위 지정
-        int pageStartRowNo = (curPage - 1) * maxVisibleCommentCountInPage;
-        int pageEndRowNo = curPage * maxVisibleCommentCountInPage;
-
-        // 현재 페이지의 범위에 해당하는 댓글을 Stream으로 filtering 한다
-        List<OrderedComment> filteredCommentList = sourceList.stream().filter((source) -> {
-            if(source.getOrderedCommentNo() >= pageStartRowNo &&
-                    source.getOrderedCommentNo() <= pageEndRowNo)
-                return true;
-            return false;
-        }).collect(Collectors.toList());
-
-        return filteredCommentList;
-    }
-
-    public Comment insertComment( int postID, Comment parentComment, String writerID, String content) {
+    public Comment insertComment( int postID, Comment parentComment, String writerID, String writerNickname, String content) {
         try {
             Comment newComment = new Comment();
             newComment.setPostId(postID);
             newComment.setParentComment(parentComment);
             newComment.setWriterId(writerID);
+            newComment.setWriterNickname(writerNickname);
             newComment.setContent(content);
             newComment.setCreatedDay(new Date());
             newComment.setModifyDay(new Date());

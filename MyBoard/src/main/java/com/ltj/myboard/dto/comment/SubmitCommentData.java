@@ -10,5 +10,6 @@ public class SubmitCommentData {
     private int postId;
     private Integer parentCommentId;
     private String writerId;
+    private String writerNickname;
     private String content;
 }

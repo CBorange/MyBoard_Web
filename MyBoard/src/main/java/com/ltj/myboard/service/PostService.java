@@ -2,10 +2,10 @@ package com.ltj.myboard.service;
 
 
 import com.ltj.myboard.domain.Post;
+import com.ltj.myboard.domain.PostFile;
 import com.ltj.myboard.dto.post.FilteredPost;
 import com.ltj.myboard.dto.post.PostFileDelta;
 import com.ltj.myboard.dto.post.SubmitPostData;
-import com.ltj.myboard.repository.FilteredPostRepository;
 import com.ltj.myboard.repository.PostFileRepository;
 import com.ltj.myboard.repository.PostRepository;
 import com.ltj.myboard.util.Ref;
@@ -29,7 +29,6 @@ import java.util.stream.Collectors;
 public class PostService{
 
     private final PostRepository postRepository;
-    private final FilteredPostRepository filteredPostRepository;
     private final PostFileRepository postFileRepository;
 
     public Optional<Post> findPostByID(int postID) {
@@ -56,8 +55,6 @@ public class PostService{
         return ret;
     }
 
-
-
     public List<FilteredPost> findPost_UserParam(int boardID, String title, String content, String nickname,
                                                  PageRequest pageRequest, Ref<Integer> totalPageCntRet) {
         Page<Post> queryRet = postRepository.findAllByCondition(boardID, title, content, nickname, pageRequest);
@@ -80,23 +77,6 @@ public class PostService{
         return ret;
     }
 
-    public List<FilteredPost> filterPostDataInCurPage(List<FilteredPost> sourceList, int curPage,
-                                                      int maxVisiblePostCountInPage) {
-        // 현재 페이지의 첫번째, 마지막 게시글 범위 지정
-        int pageStartRowNo = (curPage - 1) * maxVisiblePostCountInPage;
-        int pageEndRowNo = curPage * maxVisiblePostCountInPage;
-
-        // 현재 페이지의 범위에 해당하는 게시글을 Stream으로 filtering 한다
-        List<FilteredPost> filteredPostList = sourceList.stream().filter((source) -> {
-            if(source.getOrderedPostNo() >= pageStartRowNo &&
-               source.getOrderedPostNo() <= pageEndRowNo)
-                return true;
-            return false;
-        }).collect(Collectors.toList());
-
-        return filteredPostList;
-    }
-
     //region SubmitPost(Insert, Update)
     @Transactional
     public Post submitPostProcess(SubmitPostData submitPostData) {
@@ -108,12 +88,18 @@ public class PostService{
         Post submittedPost = null;
         if(submitPostData.getPostId() < 0){
             // 1-1. 게시글 생성, 신규 Post ID 채번
-            submittedPost = insertPost(submitPostData.getTitle(), submitPostData.getContent(), submitPostData.getBoardId(),
-                    submitPostData.getWriterId());
+            submittedPost = insertPost(submitPostData.getTitle(),
+                                        submitPostData.getContent(),
+                                        submitPostData.getBoardId(),
+                                        submitPostData.getWriterId(),
+                                        submitPostData.getWriterNickname());
         } else {
             // 1-2. 게시글 내용 수정
-            submittedPost = updatePost(submitPostData.getTitle(), submitPostData.getContent(), submitPostData.getPostId(),
-                    submitPostData.getWriterId());
+            submittedPost = updatePost(submitPostData.getTitle(),
+                                        submitPostData.getContent(),
+                                        submitPostData.getPostId(),
+                                        submitPostData.getWriterId(),
+                                        submitPostData.getWriterNickname());
         }
 
         // 2. 게시글에 등록된 파일 state에 따라 적절한 처리 실행
@@ -126,13 +112,16 @@ public class PostService{
         return submittedPost;
     }
 
-    private Post insertPost(String title, String content, int boardID, String writerID) {
+    private Post insertPost(String title, String content, int boardID, String writerID, String writerNickname) {
         try{
             Post newPost = new Post();
             newPost.setTitle(title);
             newPost.setContent(content);
             newPost.setBoardId(boardID);
             newPost.setWriterId(writerID);
+            newPost.setWriterNickname(writerNickname);
+            newPost.setCreatedDay(new Date());
+            newPost.setModifyDay(new Date());
 
             postRepository.save(newPost);
             return newPost;
@@ -142,7 +131,7 @@ public class PostService{
         }
     }
 
-    private Post updatePost(String title, String content, int postID, String writerID){
+    private Post updatePost(String title, String content, int postID, String writerID, String writerNickname){
         try{
             Post foundPost = postRepository.findById(postID).orElseThrow(() -> {
                 log.error("updatePost Error occured " + postID + "doesn't exist");
@@ -151,6 +140,7 @@ public class PostService{
             foundPost.setTitle(title);
             foundPost.setContent(content);
             foundPost.setWriterId(writerID);
+            foundPost.setWriterNickname(writerNickname);
             foundPost.setModifyDay(new Date());
 
             postRepository.save(foundPost);
@@ -161,15 +151,26 @@ public class PostService{
         }
     }
 
-    private int submitPostFile(int postID, PostFileDelta fileDelta){
+    private PostFile submitPostFile(int postID, PostFileDelta fileDelta){
         // PostFileDelta의 State에 따라서 적절한 처리를 실행한다.
         // PostFileDelta의 State는 항상 Insert 또는 Delete 둘 중 하나이다.
         // * 사용자가 기등록한 게시글의 이미지를 수정할 수 있는 경로는 이미지를 제거 후 재등록 하는 경우 밖에 없으므로
         // 이 와 같은 경우 Delete, Insert로 총 2번 이 함수가 호출될 것이다.
         if(PostFileDelta.checkIsInsertData(fileDelta)) {
-            return postFileRepository.insertPostFile(postID, fileDelta.getFileID(), fileDelta.getFileName());
+            PostFile newPostFile = new PostFile();
+            newPostFile.setPostId(postID);
+            newPostFile.setFileId(fileDelta.getFileID());
+            newPostFile.setFileName(fileDelta.getFileName());
+
+            postFileRepository.save(newPostFile);
+
+            return newPostFile;
         } else if (PostFileDelta.checkIsDeleteData(fileDelta)){
-            return postFileRepository.deletePostFile(postID, fileDelta.getFileID());
+            List<PostFile> targetFiles = postFileRepository.findAllByPostId(postID);
+            for(PostFile file : targetFiles){
+                postFileRepository.delete(file);
+            }
+            return null;
         } else{
             throw new IllegalStateException("PostService : submitPostFile Error, PostFileDelta의 State가 Insert 또는 Delete 가 아닙니다. 현재 State: " +
                     fileDelta.getState());

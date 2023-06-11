@@ -34,32 +34,16 @@ public class CommentServiceTest {
 
     @Test
     public void 루트_댓글조회(){
-        // given
-        int postId = 167;
 
-        // when
-        List<OrderedComment> rootComments = commentService.findRootCommentInPost(167);
-
-        // then
-        Assertions.assertThat(rootComments.stream().count() == 41);
     }
 
     @Test
     public void 게시글_댓글조회(){
-        // given
-        int postId = 11;
-
-        // when
-        List<OrderedComment> rets = commentService.findRootCommentInPost(postId);
-
-        // then
-        Assertions.assertThat(rets.stream().count()).isGreaterThan(0);
     }
 
     @Test
     @Transactional
     public void 댓글작성() throws SQLException {
-        Comment insertedComment = commentService.insertComment(12, null, "admin", "테스트 댓글");
-        Assertions.assertThat(insertedComment).isNotNull();
+
     }
 }

@@ -63,10 +63,12 @@
                     <p th:utext="${postInfo.getContent()}"></p>
                 </div>
                 <!--추천/비추천 버튼 영역-->
-                <div class="mb-4 d-flex flex-row justify-content-center">
-                    <button class="btn-primary">추천</button>
-                    <button class="ms-3 btn-primary">비추천</button>
-                </div>
+                <th:block th:if="${userInfo != null}">
+                    <div class="mb-4 d-flex flex-row justify-content-center">
+                        <button class="btn-primary">추천</button>
+                        <button class="ms-3 btn-primary">비추천</button>
+                    </div>
+                </th:block>
                 <hr/>
                 <!--댓글 타이틀 영역-->
                 <div class="d-flex flex-row" id="commentTitleDiv">
@@ -85,11 +87,14 @@
                             <span class="ms-auto">작성일: </span>
                             <span class="ms-2 me-2" th:text="${#dates.format(comment.getCommentData().getCreatedDay(),'yyyy-MM-dd')}"></span>
                             <!--대댓글 작성 버튼-->
-                            <button class="btn btn-secondary btn-sm" id="showReplyFormBtn"
-                                    th:commentID="${comment.getCommentData().getId()}"
-                                    th:onclick="onClickShowReplyForm(this.getAttribute('commentID'))"
-                                    th:text="댓글..">
-                            </button>
+                            <th:block th:if="${userInfo != null}">
+                                <button class="btn btn-secondary btn-sm" id="showReplyFormBtn"
+                                        th:commentID="${comment.getCommentData().getId()}"
+                                        th:onclick="onClickShowReplyForm(this.getAttribute('commentID'))"
+                                        th:text="댓글..">
+                                </button>
+                            </th:block>
+
                         </div>
                         <!--댓글 본문 내용-->
                         <div class="ms-2">
@@ -113,12 +118,14 @@
                             <div style="height: 20px;"></div>
                         </th:block>
                         <!--대댓글 작성 Form-->
-                        <form class="ms-4" onsubmit="return false;" style="display:none;"
+                        <th:block th:if="${userInfo != null}">
+                            <form class="ms-4" onsubmit="return false;" style="display:none;"
                               th:id="'subReplyForm_' + ${comment.getCommentData().getId()}">
                             <div class="d-flex flex-column">
                                 <input type="hidden" name="postID" th:value="${postInfo.getId()}">
                                 <input type="hidden" name="parentCommentID" th:value="${comment.getCommentData().getId()}">
-                                <input type="hidden" name="writerID" value="admin">
+                                <input type="hidden" name="writerID" th:value="${userInfo.getUserId()}">
+                                <input type="hidden" name="writerNickname" th:value="${userInfo.getNickname()}">
                                 <textarea name="content" class="form-control" style="min-height:80px;"></textarea>
                                 <div class="my-2 d-flex flex-row-reverse">
                                     <input type="button" class="btn btn-info" value="등록"
@@ -127,6 +134,7 @@
                                 </div>
                             </div>
                         </form>
+                        </th:block>
                     </th:block>
                 </div>
                 <!--댓글 리스트 / 하단 페이지 제어 구분선-->
@@ -172,17 +180,20 @@
                     </nav>
                 </div>
                 <!--하단 댓글 입력 form-->
-                <form id="subReplyForm">
-                    <div class="d-flex flex-column">
-                        <input type="hidden" name="postID" th:value="${postInfo.getId()}">
-                        <input type="hidden" name="writerID" value="admin">
-                        <textarea name="content" class="form-control" style="min-height:80px;"></textarea>
-                        <div class="my-2 d-flex flex-row-reverse">
-                            <input type="submit" class="btn btn-info" value="등록"
-                                th:onclick="onSubmitComment(0, false)">
+                <th:block th:if="${userInfo != null}">
+                    <form id="subReplyForm">
+                        <div class="d-flex flex-column">
+                            <input type="hidden" name="postID" th:value="${postInfo.getId()}">
+                            <input type="hidden" name="writerID" th:value="${userInfo.getUserId()}">
+                            <input type="hidden" name="writerNickname" th:value="${userInfo.getNickname()}">
+                            <textarea name="content" class="form-control" style="min-height:80px;"></textarea>
+                            <div class="my-2 d-flex flex-row-reverse">
+                                <input type="button" class="btn btn-info" value="등록"
+                                    th:onclick="onSubmitComment(0, false)">
+                            </div>
                         </div>
-                    </div>
-                </form>
+                    </form>
+                </th:block>
             </div>
         </div>
     </th:block>

@@ -16,7 +16,8 @@
                     <div class="d-flex flex-column">
                         <input type="hidden" name="postID" th:value="${postInfo.getId()}">
                         <input type="hidden" name="boardID" th:value="${boardInfo.getId()}">
-                        <input type="hidden" name="writerID" value="admin">
+                        <input type="hidden" name="writerID" th:value="${userInfo.getUserId()}">
+                        <input type="hidden" name="writerNickname" th:value="${userInfo.getNickname()}">
                         <th:block th:if="${editMode == 'write'}">
                             <input type="text" name="title" class="form-control" placeholder="제목을 입력해주세요.">
                         </th:block>

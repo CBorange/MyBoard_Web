@@ -16,10 +16,6 @@ import java.util.Set;
 @Setter
 @ToString(exclude = "comments")
 public class Post {
-    public Post(){
-        id = -1;    // ID의 기본값은 음수이다. 음수인 경우 신규 게시글로 취급한다.
-    }
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;

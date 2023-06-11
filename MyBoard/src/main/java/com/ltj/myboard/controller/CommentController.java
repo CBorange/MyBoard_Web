@@ -23,14 +23,18 @@ public class CommentController {
     @PostMapping("/comment")
     public ResponseEntity submitComment(@RequestBody SubmitCommentData submitCommentData){
         try {
-            Comment foundParentComment = commentService.findCommentById(submitCommentData.getParentCommentId());
+            Comment foundParentComment;
+            try{
+                foundParentComment = commentService.findCommentById(submitCommentData.getParentCommentId());
+            } catch (IllegalStateException e){
+                foundParentComment = null;
+            }
 
             Comment insertedComment = commentService.insertComment(submitCommentData.getPostId(),
                     foundParentComment,
                     submitCommentData.getWriterId(),
+                    submitCommentData.getWriterNickname(),
                     submitCommentData.getContent());
-
-            String redirectURI = String.format("/post/%d", submitCommentData.getPostId());
 
             return new ResponseEntity<String>(HttpStatus.OK);
         } catch (IllegalStateException e){

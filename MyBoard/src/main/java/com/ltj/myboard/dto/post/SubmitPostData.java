@@ -16,4 +16,7 @@ public class SubmitPostData {
 
     private int boardId;
     private String writerId;
+    private String writerNickname;
+
+    
 }

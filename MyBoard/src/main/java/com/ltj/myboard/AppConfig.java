@@ -2,10 +2,6 @@ package com.ltj.myboard;
 
 import com.ltj.myboard.repository.*;
 import com.ltj.myboard.repository.jdbc.*;
-import com.ltj.myboard.service.BoardService;
-import com.ltj.myboard.service.CommentService;
-import com.ltj.myboard.service.FtpService;
-import com.ltj.myboard.service.PostService;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
@@ -29,13 +25,4 @@ public class AppConfig {
         return new JDBC_BoardRepository(dataSource());
     }
 
-    @Bean
-    public FilteredPostRepository filteredPostRepository(){
-        return new JDBC_FilteredPostRepository(dataSource());
-    }
-
-    @Bean
-    public PostFileRepository postFileRepository(){
-        return new JDBC_PostFileRepository((dataSource()));
-    }
 }

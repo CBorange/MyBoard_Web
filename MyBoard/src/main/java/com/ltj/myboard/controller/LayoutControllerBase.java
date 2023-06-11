@@ -45,6 +45,7 @@ public class LayoutControllerBase {
                 user.getRegisterDay() == null ? "None" : user.getRegisterDay().toString(),
                 user.getLoginDay() == null ? "None" : user.getLoginDay().toString()
         );
+
         return response;
     }
 

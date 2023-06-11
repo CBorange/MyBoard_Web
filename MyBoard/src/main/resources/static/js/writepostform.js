@@ -158,6 +158,7 @@ function onSubmitPost(curPostID) {
         postId: writePostForm.elements['postID'].value,
         boardId: writePostForm.elements['boardID'].value,
         writerId: writePostForm.elements['writerID'].value,
+        writerNickname: writePostForm.elements['writerNickname'].value,
     };
     const url = makeURL('/post');
     fetch(url, {

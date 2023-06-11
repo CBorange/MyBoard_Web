@@ -24,21 +24,21 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <th:block th:each="filteredPost : ${filteredPostList}">
-                    <tr>
-                        <td class="table_row_title">
-                            <a th:href="'/post/' + ${filteredPost.getPostData().getId()}">
-                                <span class="title_span" th:text="${filteredPost.getPostData().getTitle()}"></span>
-                                <th:block th:if="${filteredPost.getCommentCount() > 0}">
-                                    <span class="ms-1" th:text="${filteredPost.getCommentCount()}"></span>
-                                </th:block>
-                            </a>
-                        </td>
-                        <td><span th:text="${filteredPost.getPostData().getWriterId()}"></span></td>
-                        <td><span th:text="${filteredPost.getPostData().getGoodCount()}"></span></td>
-                        <td><span th:text="${#dates.format(filteredPost.getPostData().getCreatedDay(),'yyyy-MM-dd')}"></span></td>
-                    </tr>
-                    </th:block>
+                        <th:block th:each="filteredPost : ${filteredPostList}">
+                            <tr>
+                                <td class="table_row_title">
+                                    <a th:href="'/post/' + ${filteredPost.getPostData().getId()}">
+                                        <span class="title_span" th:text="${filteredPost.getPostData().getTitle()}"></span>
+                                        <th:block th:if="${filteredPost.getCommentCount() > 0}">
+                                            <span class="ms-1" th:text="${filteredPost.getCommentCount()}"></span>
+                                        </th:block>
+                                    </a>
+                                </td>
+                                <td><span th:text="${filteredPost.getPostData().getWriterId()}"></span></td>
+                                <td><span th:text="${filteredPost.getPostData().getGoodCount()}"></span></td>
+                                <td><span th:text="${#dates.format(filteredPost.getPostData().getCreatedDay(),'yyyy-MM-dd')}"></span></td>
+                            </tr>
+                        </th:block>
                     </tbody>
                 </table>
                 <!--게시판 메인 테이블 / 하단 페이지 제어 및 버튼 구분선-->
@@ -63,11 +63,13 @@
                             <img src="/img/search_icon.png" style="width: 30px; height: 30px;">
                         </button>
                     </form>
-                    <form class="ms-auto" th:action="@{/writepostform/-1}">
-                        <!--글쓰기 Button-->
-                        <input type="hidden" th:name="boardID" th:value="${boardInfo.getId()}">
-                        <input class="ms-auto btn btn-info" type="submit" value="글쓰기">
-                    </form>
+                    <th:block th:if="${userInfo != null}">
+                        <form class="ms-auto" th:action="@{/writepostform/-1}">
+                            <!--글쓰기 Button-->
+                            <input type="hidden" th:name="boardID" th:value="${boardInfo.getId()}">
+                            <input class="ms-auto btn btn-info" type="submit" value="글쓰기">
+                        </form>
+                    </th:block>
                 </div>
                 <!--조회 기능 영역 <-> Pagination 분리 여백-->
                 <div style="height: 20px;"></div>
