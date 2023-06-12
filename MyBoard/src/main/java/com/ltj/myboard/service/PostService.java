@@ -84,9 +84,9 @@ public class PostService{
         // * 게시글 삭제는 별도의 API로 접근한다 이 함수로 들어오지 않는다.
 
         // 1. 현재 submit 데이터가 게시글 '생성' 인지, '수정'인지 검사한다.
-        // postID가 음수라면 '생성' 그 외에는 '수정' 이다.
+        // state 값으로 생성인지 수정인지 검사
         Post submittedPost = null;
-        if(submitPostData.getPostId() < 0){
+        if(submitPostData.getState().equals("insert")){
             // 1-1. 게시글 생성, 신규 Post ID 채번
             submittedPost = insertPost(submitPostData.getTitle(),
                                         submitPostData.getContent(),

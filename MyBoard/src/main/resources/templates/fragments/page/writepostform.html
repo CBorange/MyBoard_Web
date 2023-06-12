@@ -30,10 +30,10 @@
                     <div class="d-flex flex-row-reverse">
                         <!--작성/수정 버튼-->
                         <th:block th:if="${editMode == 'write'}">
-                            <input type="button" class="btn btn-info" value="작성" onclick="onSubmitPost()">
+                            <input type="button" class="btn btn-info" value="작성" onclick="onSubmitPost('insert')">
                         </th:block>
                         <th:block th:if="${editMode == 'modify'}">
-                            <input type="button" class="btn btn-info" value="수정" onclick="onSubmitPost()">
+                            <input type="button" class="btn btn-info" value="수정" onclick="onSubmitPost('update')">
                         </th:block>
                     </div>
                 </form>

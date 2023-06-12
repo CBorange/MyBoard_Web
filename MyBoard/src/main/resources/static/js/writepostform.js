@@ -133,8 +133,8 @@ function getUnsubmittedImages() {
 }
 
 // 게시글 생성 또는 수정 POST API 호출
-// curPostID는 '수정'으로 접근할때만 들어온다. 신규 게시글 '생성'의 경우에는 빈값으로 전달된다.
-function onSubmitPost(curPostID) {
+// submitState : 신규 게시글 등록(insert), 기존 게시글 수정(update)로 들어옴
+function onSubmitPost(submitState) {
 
     // submitPost 호출할 때 서버에 넘기는 Image Delta 데이터는 일차적으로
     // insert 데이터와 delete 데이터로 분리하여 전달한다.
@@ -152,6 +152,7 @@ function onSubmitPost(curPostID) {
 
     const writePostForm = document.querySelector('#writePostForm');
     const sendData = {
+        state : submitState,
         title: writePostForm.elements['title'].value,
         content: editorRef.getData(),
         imageSource: finalImageSources,

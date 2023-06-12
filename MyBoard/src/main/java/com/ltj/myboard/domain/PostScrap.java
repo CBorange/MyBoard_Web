@@ -4,12 +4,13 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.*;
+import java.util.Date;
 
-@Entity(name = "post_file")
+@Entity(name = "post_scrap")
 @Getter
 @Setter
 @ToString
-public class PostFile {
+public class PostScrap {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -17,9 +18,14 @@ public class PostFile {
     @Column(name="post_id")
     private int postId;
 
-    @Column(name="file_id")
-    private String fileId;
+    @Column(name="user_id")
+    private String userId;
 
-    @Column(name="file_name")
-    private String fileName;
+    @Column(name="created_day")
+    private Date createdDay;
+
+    @Column(name="modify_day")
+    private Date modifyDay;
+
+    private String remark;
 }
