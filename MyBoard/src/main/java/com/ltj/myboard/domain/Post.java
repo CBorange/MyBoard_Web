@@ -37,11 +37,13 @@ public class Post {
     @Column(name="view_count")
     private int viewCount;
 
-    @Column(name="good_count")
-    private int goodCount;
+    @OneToMany()
+    @JoinColumn(name = "post_id")
+    private List<PostLikesHistory> likesHistories;
 
-    @Column(name="bad_count")
-    private int badCount;
+    @OneToMany()
+    @JoinColumn(name = "post_id")
+    private List<PostDislikesHistory> dislikesHistories;
 
     @Column(name="created_day")
     private Date createdDay;

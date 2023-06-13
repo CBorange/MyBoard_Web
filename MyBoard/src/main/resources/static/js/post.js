@@ -75,11 +75,26 @@ function onClickDeletePost(boardID, postID) {
 
 // 게시글 추천 request 전송
 function onClickLike(postId, userId){
+    if(userId == null) {
+        alert("추천할 수 없습니다. 먼저 로그인 해주세요.");
+        return;
+    }
+
     const url = makeURL('/post/' + postId + '/like');
     fetch(url,{
-        method: 'POST'
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: 'userId=' + userId
     })
     .then((response) => {
+        if(response.status == 400){
+            response.text()
+                .then((text) => {
+                    alert(text);
+                })
+        }
         // refresh
         window.location.reload();
     })
@@ -90,10 +105,30 @@ function onClickLike(postId, userId){
 
 // 게시글 비추천 request 전송
 function onClickDislike(postId, userId){
-    const sendData = {
-        postId: postId,
-        userId: userId
-    };
+    if(userId == null) {
+        alert("비추천할 수 없습니다. 먼저 로그인 해주세요.");
+        return;
+    }
 
-
+    const url = makeURL('/post/' + postId + '/dislike');
+    fetch(url,{
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: 'userId=' + userId
+    })
+    .then((response) => {
+        if(response.status == 400){
+            response.text()
+                .then((text) => {
+                    alert(text);
+                })
+        }
+        // refresh
+        window.location.reload();
+    })
+    .catch((error) => {
+        console.log('onClickDislike 실패 : ', error);
+    })
 }

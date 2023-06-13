@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.Date;
 
@@ -31,6 +32,16 @@ public class MyAuthenticationSuccessHandler implements AuthenticationSuccessHand
         user.setLoginDay(new Date());
         userRepository.save(user);
 
-        response.sendRedirect("/");
+        // 리다이렉트
+        HttpSession session = request.getSession(false);
+        if(session != null){
+            String redirectURL = (String) session.getAttribute("prevPage");
+            if(redirectURL != null){
+                session.removeAttribute("prevPage");
+                response.sendRedirect(redirectURL);
+            }
+        } else{
+            response.sendRedirect("/");
+        }
     }
 }

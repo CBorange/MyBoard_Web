@@ -84,6 +84,7 @@ public class PostService{
             FilteredPost newFilteredPost = new FilteredPost();
             newFilteredPost.setOrderedPostNo(idx + 1);
             newFilteredPost.setCommentCount(post.getComments().stream().count());
+            newFilteredPost.setLikeCount(post.getLikesHistories().stream().count());
             newFilteredPost.setPostData(post);
 
             ret.add(newFilteredPost);
@@ -194,7 +195,16 @@ public class PostService{
     }
     //endregion
 
-    public PostLikesHistory applyLikePost(int postId, String userId){
+    public PostLikesHistory applyLikePost(int postId, String userId) {
+        long likeCountOnThis = postLikesHistoryRepository.countByPostIdAndUserId(postId, userId);
+        if(likeCountOnThis > 0){
+            throw new IllegalStateException("이미 추천하였습니다.");
+        }
+        long dislikeCountOnThis = postDislikesHistoryRepository.countByPostIdAndUserId(postId, userId);
+        if(dislikeCountOnThis > 0){
+            throw new IllegalStateException("이미 비추천하였습니다. 추천 또는 비추천은 한번만 할 수 있습니다.");
+        }
+
         PostLikesHistory newHistory = new PostLikesHistory();
         newHistory.setPostId(postId);
         newHistory.setUserId(userId);
@@ -212,6 +222,15 @@ public class PostService{
     }
 
     public PostDislikesHistory applyDislikePost(int postId, String userId){
+        long dislikeCountOnThis = postDislikesHistoryRepository.countByPostIdAndUserId(postId, userId);
+        if(dislikeCountOnThis > 0){
+            throw new IllegalStateException("이미 비추천하였습니다.");
+        }
+        long likeCountOnThis = postLikesHistoryRepository.countByPostIdAndUserId(postId, userId);
+        if(likeCountOnThis > 0){
+            throw new IllegalStateException("이미 추천하였습니다. 추천 또는 비추천은 한번만 할 수 있습니다.");
+        }
+
         PostDislikesHistory newHistory = new PostDislikesHistory();
         newHistory.setPostId(postId);
         newHistory.setUserId(userId);

@@ -12,6 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.NoSuchElementException;
 
 @Controller
@@ -22,7 +23,12 @@ public class AuthController extends LayoutControllerBase {
 
     // 로그인 페이지 반환, login post api는 spring security 자체적으로 제공한다.
     @GetMapping("/login")
-    public String loginPage(Model model) {
+    public String loginPage(HttpServletRequest request, Model model) {
+        // 로그인 페이지 이동 전 마지막 페이지 caching
+        String referrer = request.getHeader("Referer");
+        request.getSession().setAttribute("prevPage", referrer);
+        
+        // 로그인 페이지 반환
         addLayoutModel_FragmentContent(model,"login.html", "login");
         return LayoutViewPath;
     }

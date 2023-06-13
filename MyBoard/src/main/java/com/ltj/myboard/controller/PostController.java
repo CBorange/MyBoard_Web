@@ -51,10 +51,8 @@ public class PostController extends LayoutControllerBase {
         });
 
         // 추천/비추천 개수
-        long likesCount = postService.getLikesCount(id);
-        long dislikesCount = postService.getDislikesCount(id);
-        model.addAttribute("likesCount", likesCount);
-        model.addAttribute("dislikesCount", dislikesCount);
+        model.addAttribute("likesCount", foundPost.get().getLikesHistories().stream().count());
+        model.addAttribute("dislikesCount", foundPost.get().getDislikesHistories().stream().count());
 
         // Board 정보 Model에 추가
         Optional<Board> foundBoard = boardService.findBoardByID(foundPost.get().getBoardId());
@@ -166,25 +164,41 @@ public class PostController extends LayoutControllerBase {
 
     @PostMapping("/post/{id}/like")
     public ResponseEntity applyLikePost(@PathVariable("id") int id, @RequestParam("userId") String userId){
-        PostLikesHistory history = postService.applyLikePost(id, userId);
-        return new ResponseEntity(history, HttpStatus.OK);
+        try{
+            PostLikesHistory history = postService.applyLikePost(id, userId);
+            return new ResponseEntity(history, HttpStatus.OK);
+        }catch (IllegalStateException e){
+            return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
     @DeleteMapping("/post/{id}/like")
     public ResponseEntity deleteLikePost(@PathVariable("id") int id, @RequestParam("userId") String userId){
-        int ret = postService.deleteLikePost(id, userId);
-        return new ResponseEntity(ret, HttpStatus.NO_CONTENT);
+        try{
+            int ret = postService.deleteLikePost(id, userId);
+            return new ResponseEntity(ret, HttpStatus.NO_CONTENT);
+        }catch (IllegalStateException e){
+            return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
     @PostMapping("/post/{id}/dislike")
     public ResponseEntity applyDislikePost(@PathVariable("id") int id, @RequestParam("userId") String userId){
-        PostDislikesHistory history = postService.applyDislikePost(id, userId);
-        return new ResponseEntity(history, HttpStatus.OK);
+        try{
+            PostDislikesHistory history = postService.applyDislikePost(id, userId);
+            return new ResponseEntity(history, HttpStatus.OK);
+        } catch (IllegalStateException e){
+            return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
     @DeleteMapping("/post/{id}/dislike")
     public ResponseEntity deleteDislikePost(@PathVariable("id") int id, @RequestParam("userId") String userId){
-        int ret = postService.deleteDislikePost(id, userId);
-        return new ResponseEntity(ret, HttpStatus.NO_CONTENT);
+        try{
+            int ret = postService.deleteDislikePost(id, userId);
+            return new ResponseEntity(ret, HttpStatus.NO_CONTENT);
+        } catch (IllegalStateException e){
+            return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 }

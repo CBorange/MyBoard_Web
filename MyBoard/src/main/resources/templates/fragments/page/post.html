@@ -68,9 +68,11 @@
                 <div class="mb-4 d-flex flex-row justify-content-center">
                     <form>
                         <span class="me-1" th:text="${likesCount}"></span>
-                        <input type="button" class="btn-primary" value="추천">
+                        <input type="button" class="btn btn-outline-primary" value="추천"
+                                th:onclick="onClickLike([[${postInfo.getId()}]], [[${userInfo != null ? userInfo.getUserId() : null}]])">
                         <span class="ms-1 me-1" th:text="${dislikesCount}"></span>
-                        <input type="button" class="btn-primary" value="비추천">
+                        <input type="button" class="btn btn-outline-danger" value="비추천"
+                                th:onclick="onClickDislike([[${postInfo.getId()}]], [[${userInfo != null ? userInfo.getUserId() : null}]])">
                     </form>
                 </div>
                 <hr/>

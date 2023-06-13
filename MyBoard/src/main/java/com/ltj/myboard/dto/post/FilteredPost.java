@@ -14,5 +14,6 @@ import lombok.ToString;
 public class FilteredPost {
     private int OrderedPostNo;
     private long CommentCount;
+    private long likeCount;
     private Post PostData;
 }
