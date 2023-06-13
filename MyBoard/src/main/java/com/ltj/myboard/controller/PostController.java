@@ -2,6 +2,8 @@ package com.ltj.myboard.controller;
 
 import com.ltj.myboard.domain.Board;
 import com.ltj.myboard.domain.Post;
+import com.ltj.myboard.domain.PostDislikesHistory;
+import com.ltj.myboard.domain.PostLikesHistory;
 import com.ltj.myboard.dto.post.OrderedComment;
 import com.ltj.myboard.dto.post.SubmitPostData;
 import com.ltj.myboard.service.BoardService;
@@ -47,6 +49,12 @@ public class PostController extends LayoutControllerBase {
         }, () -> {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         });
+
+        // 추천/비추천 개수
+        long likesCount = postService.getLikesCount(id);
+        long dislikesCount = postService.getDislikesCount(id);
+        model.addAttribute("likesCount", likesCount);
+        model.addAttribute("dislikesCount", dislikesCount);
 
         // Board 정보 Model에 추가
         Optional<Board> foundBoard = boardService.findBoardByID(foundPost.get().getBoardId());
@@ -154,5 +162,29 @@ public class PostController extends LayoutControllerBase {
         }
 
         return LayoutViewPath;
+    }
+
+    @PostMapping("/post/{id}/like")
+    public ResponseEntity applyLikePost(@PathVariable("id") int id, @RequestParam("userId") String userId){
+        PostLikesHistory history = postService.applyLikePost(id, userId);
+        return new ResponseEntity(history, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/post/{id}/like")
+    public ResponseEntity deleteLikePost(@PathVariable("id") int id, @RequestParam("userId") String userId){
+        int ret = postService.deleteLikePost(id, userId);
+        return new ResponseEntity(ret, HttpStatus.NO_CONTENT);
+    }
+
+    @PostMapping("/post/{id}/dislike")
+    public ResponseEntity applyDislikePost(@PathVariable("id") int id, @RequestParam("userId") String userId){
+        PostDislikesHistory history = postService.applyDislikePost(id, userId);
+        return new ResponseEntity(history, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/post/{id}/dislike")
+    public ResponseEntity deleteDislikePost(@PathVariable("id") int id, @RequestParam("userId") String userId){
+        int ret = postService.deleteDislikePost(id, userId);
+        return new ResponseEntity(ret, HttpStatus.NO_CONTENT);
     }
 }

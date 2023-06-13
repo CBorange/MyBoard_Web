@@ -24,8 +24,5 @@ public class PostScrap {
     @Column(name="created_day")
     private Date createdDay;
 
-    @Column(name="modify_day")
-    private Date modifyDay;
-
     private String remark;
 }

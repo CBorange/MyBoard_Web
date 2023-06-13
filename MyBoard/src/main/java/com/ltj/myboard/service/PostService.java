@@ -2,11 +2,16 @@ package com.ltj.myboard.service;
 
 
 import com.ltj.myboard.domain.Post;
+import com.ltj.myboard.domain.PostDislikesHistory;
 import com.ltj.myboard.domain.PostFile;
+import com.ltj.myboard.domain.PostLikesHistory;
+import com.ltj.myboard.dto.post.ApplyLikeData;
 import com.ltj.myboard.dto.post.FilteredPost;
 import com.ltj.myboard.dto.post.PostFileDelta;
 import com.ltj.myboard.dto.post.SubmitPostData;
+import com.ltj.myboard.repository.PostDislikesHistoryRepository;
 import com.ltj.myboard.repository.PostFileRepository;
+import com.ltj.myboard.repository.PostLikesHistoryRepository;
 import com.ltj.myboard.repository.PostRepository;
 import com.ltj.myboard.util.Ref;
 import lombok.RequiredArgsConstructor;
@@ -29,10 +34,21 @@ import java.util.stream.Collectors;
 public class PostService{
 
     private final PostRepository postRepository;
+    private final PostLikesHistoryRepository postLikesHistoryRepository;
+    private final PostDislikesHistoryRepository postDislikesHistoryRepository;
+
     private final PostFileRepository postFileRepository;
 
     public Optional<Post> findPostByID(int postID) {
         return postRepository.findById(postID);
+    }
+
+    public long getLikesCount(int postId){
+        return postLikesHistoryRepository.countByPostId(postId);
+    }
+
+    public long getDislikesCount(int postId){
+        return postDislikesHistoryRepository.countByPostId(postId);
     }
 
     public List<FilteredPost> getLastestPost(int boardID, int resultLimit){
@@ -177,6 +193,40 @@ public class PostService{
         }
     }
     //endregion
+
+    public PostLikesHistory applyLikePost(int postId, String userId){
+        PostLikesHistory newHistory = new PostLikesHistory();
+        newHistory.setPostId(postId);
+        newHistory.setUserId(userId);
+        newHistory.setCreatedDay(new Date());
+
+        return postLikesHistoryRepository.save(newHistory);
+    }
+
+    public int deleteLikePost(int postId, String userId){
+        PostLikesHistory history = postLikesHistoryRepository.findByPostIdAndUserId(postId, userId)
+                .orElseThrow(() -> new IllegalStateException(postId + "/" + userId + " like history not found"));
+
+        postLikesHistoryRepository.delete(history);
+        return 1;
+    }
+
+    public PostDislikesHistory applyDislikePost(int postId, String userId){
+        PostDislikesHistory newHistory = new PostDislikesHistory();
+        newHistory.setPostId(postId);
+        newHistory.setUserId(userId);
+        newHistory.setCreatedDay(new Date());
+
+        return postDislikesHistoryRepository.save(newHistory);
+    }
+
+    public int deleteDislikePost(int postId, String userId){
+        PostDislikesHistory history = postDislikesHistoryRepository.findByPostIdAndUserId(postId, userId)
+                .orElseThrow(() -> new IllegalStateException(postId + "/" + userId + " like history not found"));
+
+        postDislikesHistoryRepository.delete(history);
+        return 1;
+    }
 
     //region DeletePost
     @Transactional

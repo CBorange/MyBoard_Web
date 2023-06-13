@@ -35,40 +35,44 @@
                         <a class="ms-1 text-postlink" href="./" id="postLink"></a>
                     </div>
                     <!--게시글 수정 form-->
-                    <div class="mt-2 mb-5 ms-auto me-1">
-                        <div class="dropdown">
-                            <!--메뉴 toggle 버튼-->
-                            <button style="background-color:transparent; border: transparent;"
-                                    id="modifyMenubutton" data-bs-toggle="dropdown" data-bs-display="static"
-                                    aria-expanded="false">
-                                <img src="/img/menu.png" style="width: 35px; height: 35px;">
-                            </button>
-                            <!--드랍다운 메뉴-->
-                            <ul class="dropdown-menu" style="min-width: inherit;" aria-labelledby="modifyMenubutton">
-                                <li>
-                                    <a class="dropdown-item"
-                                            th:href="${'/writepostform/' + postInfo.getId() + '?boardID=' + boardInfo.getId()}">수정</a>
-                                    <button class="dropdown-item"
-                                            th:boardID="${boardInfo.getId()}"
-                                            th:postID="${postInfo.getId()}"
-                                            th:onclick="onClickDeletePost(this.getAttribute('boardID'),
-                                            this.getAttribute('postID'))">삭제</button>
-                                </li>
-                            </ul>
+                    <th:block th:if="${userInfo != null && postInfo.getWriterId() == userInfo.getUserId()}">
+                        <div class="mt-2 mb-5 ms-auto me-1">
+                            <div class="dropdown">
+                                <!--메뉴 toggle 버튼-->
+                                <button style="background-color:transparent; border: transparent;"
+                                        id="modifyMenubutton" data-bs-toggle="dropdown" data-bs-display="static"
+                                        aria-expanded="false">
+                                    <img src="/img/menu.png" style="width: 35px; height: 35px;">
+                                </button>
+                                <!--드랍다운 메뉴-->
+                                <ul class="dropdown-menu" style="min-width: inherit;" aria-labelledby="modifyMenubutton">
+                                    <li>
+                                        <a class="dropdown-item"
+                                                th:href="${'/writepostform/' + postInfo.getId() + '?boardID=' + boardInfo.getId()}">수정</a>
+                                        <button class="dropdown-item"
+                                                th:boardID="${boardInfo.getId()}"
+                                                th:postID="${postInfo.getId()}"
+                                                th:onclick="onClickDeletePost(this.getAttribute('boardID'),
+                                                this.getAttribute('postID'))">삭제</button>
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
-                    </div>
+                    </th:block>
                 </div>
                 <!--게시글 출력 영역-->
                 <div class="mb-4" style="min-height: 500px; background-color: white;">
                     <p th:utext="${postInfo.getContent()}"></p>
                 </div>
                 <!--추천/비추천 버튼 영역-->
-                <th:block th:if="${userInfo != null}">
-                    <div class="mb-4 d-flex flex-row justify-content-center">
-                        <button class="btn-primary">추천</button>
-                        <button class="ms-3 btn-primary">비추천</button>
-                    </div>
-                </th:block>
+                <div class="mb-4 d-flex flex-row justify-content-center">
+                    <form>
+                        <span class="me-1" th:text="${likesCount}"></span>
+                        <input type="button" class="btn-primary" value="추천">
+                        <span class="ms-1 me-1" th:text="${dislikesCount}"></span>
+                        <input type="button" class="btn-primary" value="비추천">
+                    </form>
+                </div>
                 <hr/>
                 <!--댓글 타이틀 영역-->
                 <div class="d-flex flex-row" id="commentTitleDiv">
