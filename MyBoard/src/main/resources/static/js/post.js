@@ -72,3 +72,28 @@ function onClickDeletePost(boardID, postID) {
         console.log('onClickDeletePost 실패 : ', error);
     })
 }
+
+// 게시글 추천 request 전송
+function onClickLike(postId, userId){
+    const url = makeURL('/post/' + postId + '/like');
+    fetch(url,{
+        method: 'POST'
+    })
+    .then((response) => {
+        // refresh
+        window.location.reload();
+    })
+    .catch((error) => {
+        console.log('onClickLike 실패 : ', error);
+    })
+}
+
+// 게시글 비추천 request 전송
+function onClickDislike(postId, userId){
+    const sendData = {
+        postId: postId,
+        userId: userId
+    };
+
+
+}
