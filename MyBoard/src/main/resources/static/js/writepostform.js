@@ -48,7 +48,7 @@ function init(editMode, content){
         // 이미지 업로드 시 EditView에 class 추가
         editorRef.editing.view.change( writer => {
             const viewImage = editorRef.editing.mapper.toViewElement(imageElement).getChild(0);
-            writer.addClass('post_image', viewImage);
+            writer.addClass('unsubmitted_image', viewImage);
         } );
 
         // 이미지 업로드 시 Model에 attribute 추가
@@ -57,6 +57,11 @@ function init(editMode, content){
         });
         imgAddedCount += 1;*/
     })
+
+    // 23-06-16 아래 부분은 제거 예정, remove event에서 받아서 처리하지 말고
+    // 최종 editor 데이터 취합해서 서버로 전송할 때 editor 상에 존재하는 imageBlock만 취합해서 전송
+    // 서버가 알아서 db와 대조하여 delete 실행 DB -> 취합 데이터 방향으로 조회해서 DB에 있는데 취합데이터에 없으면
+    // 삭제로 인식, 추가된 Image는 이미 취합하고 있으니 수정 불필요
 
     // 이미지 변경(이미지 업로드 후 undo 또는 삽입 한 이미지 에디터에서 삭제)
     // 이 시점에서는 삭제 editor 기준에서 event 발생한 img element가 기등록된 img인지
@@ -111,9 +116,9 @@ function getUnsubmittedImages() {
     
     var result = new Array();
 
-    // '수정' 단계 즉, 게시글 수정 시점한정으로 DB에서 content 읽어와서 이 JS가 호출된 시점에는 img태그에 post_image CSS Class가 입력되어 있지 않음
-    // 신규 이미지 삽입, 저장된 데이터 에만 post_image CSS Class가 입력되어 있으므로 현재시점에서 해당 Class 존재하는지 여부로 신규 이미지 인지 구분
-    const images = document.querySelectorAll('.post_image');
+    // '수정' 단계 즉, 게시글 수정 시점한정으로 DB에서 content 읽어와서 이 JS가 호출된 시점에는 img태그에 unsubmitted_image CSS Class가 입력되어 있지 않음
+    // 신규 이미지 삽입, 저장된 데이터 에만 unsubmitted_image CSS Class가 입력되어 있으므로 현재시점에서 해당 Class 존재하는지 여부로 신규 이미지 인지 구분
+    const images = document.querySelectorAll('.unsubmitted_image');
     for(let i =0; i < images.length; ++i) {
         // 이미지 src 에서 파일이름 추출, 확장자 때고 id로 저장
         var imageSrcURL = images[i].getAttribute('src');
@@ -121,7 +126,7 @@ function getUnsubmittedImages() {
 
         var extIdx = fileName.lastIndexOf('.');
         var fileID = fileName.substring(0, extIdx);
-        var fileState = 'insert'; // post_image class 가 등록된 image는 DB에 저장되지 않은 이미지 이므로 insert다
+        var fileState = 'insert'; // unsubmitted_image class 가 등록된 image는 DB에 저장되지 않은 이미지 이므로 insert다
         result[i] = {
             // FileID
             fileID: fileID,
@@ -138,7 +143,7 @@ function onSubmitPost(submitState) {
 
     // submitPost 호출할 때 서버에 넘기는 Image Delta 데이터는 일차적으로
     // insert 데이터와 delete 데이터로 분리하여 전달한다.
-    // post_image class가 등록된 이미지(unsubmittedImage)는 insert로(수정 또는 생성 시 신규로 삽입된 이미지임)
+    // unsubmitted_image class가 등록된 이미지(unsubmittedImage)는 insert로(수정 또는 생성 시 신규로 삽입된 이미지임)
     // editor에서 remove event 발생 시 caching한 데이터는 delete로(기등록된 데이터, 신규데이터 구분 없음 전부 전달하고
     // DB에서 구분 없이 전부 삭제 쿼리 실행함, 유효하면 삭제되고 아니면 무시될것임)
     var unsubmittedImages = getUnsubmittedImages();
