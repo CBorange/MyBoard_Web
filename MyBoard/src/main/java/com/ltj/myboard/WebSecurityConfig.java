@@ -4,6 +4,7 @@ import com.ltj.myboard.service.MyAuthenticationSuccessHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -40,6 +41,8 @@ public class WebSecurityConfig {
                 // 주의, authenticated는 인증만 되어있으면 허용한다는 의미임
                 // hasAnyAuthorithy, hasAnyRoles 얘네는 지정된 특정 권한이 있어야 접근할 수 있다는 의미
             .antMatchers("/writepostform/**").authenticated()
+            .antMatchers(HttpMethod.POST, "/ftp/**").authenticated()
+            .antMatchers(HttpMethod.DELETE, "/ftp/**").authenticated()
             .antMatchers("/comment").authenticated()
             .antMatchers("/mypage/**").authenticated()
             .antMatchers("/changepassword").authenticated()

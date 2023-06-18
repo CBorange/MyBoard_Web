@@ -24,6 +24,9 @@ public class FtpController {
     @Value("${server.url}")
     private String serverURL;
 
+    @Value("${ftp.userfilepath}")
+    private String userFilePath;
+
     private final FtpService ftpService;
 
     @GetMapping(
@@ -61,7 +64,7 @@ public class FtpController {
         String fileExtension = FileUtilExt.getFileExtension(fullFileName);
         String uploadFileName = uuidAsString + "." + fileExtension;
         try{
-            ftpService.uploadFile("/UserFiles/Image", uploadFileName, bytes);
+            ftpService.uploadFile(userFilePath, uploadFileName, bytes);
         } catch (Exception e){
             log.error("FtpController uploadUserImage 오류발생 : " + e.getMessage());
             return new ResponseEntity<UserImageURL>(new UserImageURL(), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -80,7 +83,7 @@ public class FtpController {
     public ResponseEntity deleteUserImage(@PathVariable("fileName") String fileName){
         // FTP 파일 제거
         try{
-            ftpService.deleteFile("/UserFiles/Image", fileName);
+            ftpService.deleteFile(userFilePath, fileName);
         } catch (Exception e){
             log.error("FtpController deleteUserImage 오류발생 : " + e.getMessage());
             return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);

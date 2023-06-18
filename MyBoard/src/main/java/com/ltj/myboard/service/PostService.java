@@ -16,12 +16,14 @@ import com.ltj.myboard.repository.PostRepository;
 import com.ltj.myboard.util.Ref;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -32,6 +34,10 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 public class PostService{
+    @Value("${ftp.userfilepath}")
+    private String userFilePath;
+
+    private final FtpService ftpService;
 
     private final PostRepository postRepository;
     private final PostLikesHistoryRepository postLikesHistoryRepository;
@@ -96,7 +102,7 @@ public class PostService{
 
     //region SubmitPost(Insert, Update)
     @Transactional
-    public Post submitPostProcess(SubmitPostData submitPostData) {
+    public Post submitPostProcess(SubmitPostData submitPostData) throws IOException {
         // SubmitPostData 의 State에 따라 게시글을 생성할지, 수정할지 결정한다.
         // * 게시글 삭제는 별도의 API로 접근한다 이 함수로 들어오지 않는다.
 
@@ -168,7 +174,7 @@ public class PostService{
         }
     }
 
-    private PostFile submitPostFile(int postID, PostFileDelta fileDelta){
+    private PostFile submitPostFile(int postID, PostFileDelta fileDelta) throws IOException {
         // PostFileDelta의 State에 따라서 적절한 처리를 실행한다.
         // PostFileDelta의 State는 항상 Insert 또는 Delete 둘 중 하나이다.
         // * 사용자가 기등록한 게시글의 이미지를 수정할 수 있는 경로는 이미지를 제거 후 재등록 하는 경우 밖에 없으므로
@@ -185,6 +191,7 @@ public class PostService{
         } else if (PostFileDelta.checkIsDeleteData(fileDelta)){
             List<PostFile> targetFiles = postFileRepository.findAllByPostId(postID);
             for(PostFile file : targetFiles){
+                ftpService.deleteFile(userFilePath, fileDelta.getFileName());
                 postFileRepository.delete(file);
             }
             return null;

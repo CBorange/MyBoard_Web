@@ -1,7 +1,10 @@
 let editorRef;
 let nowSubmitting = false;
 let editMode;
-let deleteImgCached = new Array();
+
+// 수정 모드일 경우 editor에 content 로드할 때 DB에 저장된 content에서 img 태그만 발라내어 여기에 저장해둔다(원본)
+// 마지막에 변경된 내용 저장할 때 또는 창이 닫힐 때 이 원본 데이터와 비교하여 삭제된 이미지가 무엇인지 판별한다.
+let loadedContentImages = new Array();
 
 // ClassicEditor 기본 설정
 ClassicEditor
@@ -34,70 +37,15 @@ function init(editMode, content){
         conversionApi.writer.addClass('post_image', imageElement);
     });
 
-    // editor Data setData() 실행하여 upcastDispatcher 실행되는 시점에 img 관련 처리
-    editorRef.data.upcastDispatcher.on('element:img', (evt, data, conversionApi) => {
-        if(data.modelCursor.stickiness != 'toNone'){
-            // Do Something
-        }
-        console.log('upcast'); 
-    });
-
-    // 이미지 업로드 시 이벤트
-    const imageUploadEditing = editorRef.plugins.get('ImageUploadEditing');
-    imageUploadEditing.on('uploadComplete', (evt, { data, imageElement} ) => {
-        // 이미지 업로드 시 EditView에 class 추가
-        editorRef.editing.view.change( writer => {
-            const viewImage = editorRef.editing.mapper.toViewElement(imageElement).getChild(0);
-            writer.addClass('unsubmitted_image', viewImage);
-        } );
-
-        // 이미지 업로드 시 Model에 attribute 추가
-        /*editorRef.model.change( writer => {
-            writer.setAttribute('imageID', imgAddedCount, imageElement);
-        });
-        imgAddedCount += 1;*/
-    })
-
-    // 23-06-16 아래 부분은 제거 예정, remove event에서 받아서 처리하지 말고
-    // 최종 editor 데이터 취합해서 서버로 전송할 때 editor 상에 존재하는 imageBlock만 취합해서 전송
-    // 서버가 알아서 db와 대조하여 delete 실행 DB -> 취합 데이터 방향으로 조회해서 DB에 있는데 취합데이터에 없으면
-    // 삭제로 인식, 추가된 Image는 이미 취합하고 있으니 수정 불필요
-
-    // 이미지 변경(이미지 업로드 후 undo 또는 삽입 한 이미지 에디터에서 삭제)
-    // 이 시점에서는 삭제 editor 기준에서 event 발생한 img element가 기등록된 img인지
-    // 신규로 삽입한 img인지 구별할 방법이 없으므로(src Attribute만 들어옴)
-    // delete할 img list를 caching하여 모두 DB로 전달한다.
-    // DB에서 PostFile delete 시에 유효한 데이터(기등록된 파일)라면 제거할것이고 아니면 제거 안될것임
-    // 프론트에서는 구분없이 전부 전달
-    editorRef.model.document.on('change:data', (e, batch) => {
-        var changedArray = e.source.differ._cachedChanges;
-        for(var changedData of changedArray){
-            if(changedData.name == 'imageBlock' && changedData.type == 'remove'){
-                var imageSource = changedData.attributes.get('src');
-                if(typeof imageSource != 'undefined'){  // FTP 이미지 업로드 실패 시 imageSource가 undefined일 수 있다. 이런경우는 FTP에 올라간 데이터가 없기 때문에 삭제 X
-
-                    // 
-                    var fileName = getFileNameByImageSrcURL(imageSource);
-                    var extIdx = fileName.lastIndexOf('.');
-                    var fileID = fileName.substring(0, extIdx);
-                    
-                    var deleteImgData = {
-                        fileID: fileID,
-                        fileName: fileName,
-                        state: 'delete'
-                    };
-
-                    deleteImgCached.push(deleteImgData);
-                    sendFTPDeleteImage(fileName);
-                }
-            }
-        }
-        console.log('data changed');
-    })
-
     // 수정 모드일 경우 editor에 기등록된 게시글 content binding
-    if(editMode == 'modify')
+    if(editMode == 'modify'){
+        loadedContentImages = Array.from( new DOMParser().parseFromString( content, 'text/html' )
+        .querySelectorAll( 'img' ) )
+        .map( img => img.getAttribute( 'src' ) );
+
         initData(content);
+    }
+        
 }
 
 // writepostform 수정 일 경우 editor에 binding 할 게시글 내용 전송
@@ -113,27 +61,81 @@ function getFileNameByImageSrcURL(imageSrcURL){
 
 // 아직 DB에 저장되지 않은(작성중인) 이미지 src 얻어냄
 function getUnsubmittedImages() {
-    
+    let resultIdx = 0;
     var result = new Array();
 
-    // '수정' 단계 즉, 게시글 수정 시점한정으로 DB에서 content 읽어와서 이 JS가 호출된 시점에는 img태그에 unsubmitted_image CSS Class가 입력되어 있지 않음
-    // 신규 이미지 삽입, 저장된 데이터 에만 unsubmitted_image CSS Class가 입력되어 있으므로 현재시점에서 해당 Class 존재하는지 여부로 신규 이미지 인지 구분
-    const images = document.querySelectorAll('.unsubmitted_image');
-    for(let i =0; i < images.length; ++i) {
-        // 이미지 src 에서 파일이름 추출, 확장자 때고 id로 저장
-        var imageSrcURL = images[i].getAttribute('src');
-        var fileName = getFileNameByImageSrcURL(imageSrcURL);
+    // editor에서 getData 실행하여 img만 얻어내어 src를 발라낸다.
+    const imageSources = Array.from( new DOMParser().parseFromString( editorRef.getData(), 'text/html' )
+        .querySelectorAll( 'img' ) )
+        .map( img => img.getAttribute( 'src' ) );
 
-        var extIdx = fileName.lastIndexOf('.');
-        var fileID = fileName.substring(0, extIdx);
-        var fileState = 'insert'; // unsubmitted_image class 가 등록된 image는 DB에 저장되지 않은 이미지 이므로 insert다
-        result[i] = {
-            // FileID
-            fileID: fileID,
-            fileName: fileName,
-            state: fileState
-        };
+    // 현재 editor 의 getData(imageSources) -> 원본데이터 를 비교하여 추가된 이미지를 판별한다.
+    for(let orgIdx = 0; orgIdx < imageSources.length; ++ orgIdx){
+        var orgFileName = getFileNameByImageSrcURL(imageSources[orgIdx]);
+        var orgExtIdx = orgFileName.lastIndexOf('.');
+        var orgFileID = orgFileName.substring(0, orgExtIdx);
+
+        let editorExistsInOrg = false;
+        for(let i = 0; i < loadedContentImages.length;++i){
+            var targetFileName = getFileNameByImageSrcURL(loadedContentImages[i]);
+            var targetExtIdx = targetFileName.lastIndexOf('.');
+            var targetFileID = targetFileName.substring(0, targetExtIdx);
+
+            if(orgFileID == targetFileID){
+                editorExistsInOrg = true;
+                break;
+            }
+        }
+        if(!editorExistsInOrg) {
+            result[resultIdx] = {
+                fileID: orgFileID,
+                fileName: orgFileName,
+                state: 'insert'
+            };
+        }
     }
+
+
+
+    return result;
+}
+
+// 삭제된 이미지 src 얻어냄
+function getDeletedImages(){
+    let resultIdx = 0;
+    var result = new Array();
+
+    // editor에서 getData 실행하여 img만 얻어내어 src를 발라낸다.
+    const imageSources = Array.from( new DOMParser().parseFromString( editorRef.getData(), 'text/html' )
+        .querySelectorAll( 'img' ) )
+        .map( img => img.getAttribute( 'src' ) );
+
+    // 원본 데이터 -> 현재 editor 의 getData(imageSources) 를 비교하여 삭제된 이미지를 판별한다.
+    for(let orgIdx = 0; orgIdx < loadedContentImages.length; ++ orgIdx){
+        var orgFileName = getFileNameByImageSrcURL(loadedContentImages[orgIdx]);
+        var orgExtIdx = orgFileName.lastIndexOf('.');
+        var orgFileID = orgFileName.substring(0, orgExtIdx);
+
+        let orgExistsInEditor = false;
+        for(let i = 0; i < imageSources.length;++i){
+            var targetFileName = getFileNameByImageSrcURL(imageSources[i]);
+            var targetExtIdx = targetFileName.lastIndexOf('.');
+            var targetFileID = targetFileName.substring(0, targetExtIdx);
+
+            if(orgFileID == targetFileID){
+                orgExistsInEditor = true;
+                break;
+            }
+        }
+        if(!orgExistsInEditor) {
+            result[resultIdx] = {
+                fileID: orgFileID,
+                fileName: orgFileName,
+                state: 'delete'
+            };
+        }
+    }
+
     return result;
 }
 
@@ -147,12 +149,13 @@ function onSubmitPost(submitState) {
     // editor에서 remove event 발생 시 caching한 데이터는 delete로(기등록된 데이터, 신규데이터 구분 없음 전부 전달하고
     // DB에서 구분 없이 전부 삭제 쿼리 실행함, 유효하면 삭제되고 아니면 무시될것임)
     var unsubmittedImages = getUnsubmittedImages();
+    var deletedImages = getDeletedImages();
     var finalImageSources = new Array();
     for(let i = 0; i < unsubmittedImages.length; ++i){
         finalImageSources.push(unsubmittedImages[i]);
     }
-    for(let i = 0; i < deleteImgCached.length; ++i){
-        finalImageSources.push(deleteImgCached[i]);
+    for(let i = 0; i < deletedImages.length; ++i){
+        finalImageSources.push(deletedImages[i]);
     }
 
     const writePostForm = document.querySelector('#writePostForm');
