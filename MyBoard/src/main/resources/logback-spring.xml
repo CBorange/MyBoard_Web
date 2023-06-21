@@ -2,9 +2,16 @@
 <!--60초마다 설정 파일의 변경을 확인 하여 변경시 갱신-->
 <configuration scan="true" scanPeriod="60 seconds">
     <!--springProfile 태그를 사용하면 logback 설정파일에서 복수개의 프로파일을 설정할 수 있다.-->
-    <!--application.properties의 spring.profiles.active값으로 분기하여 적절한 logback properties 파일을 불러온다-->
+    <!--spring.profiles.active 변수 값으로 분기하여 적절한 logback properties 파일을 불러온다-->
+    <!--spring.profiles.active 값은 Application 실행 시에 배포환경에 따라 arguments로 들어온다-->
     <springProfile name="local">
         <property resource="logback-local.properties"/>
+    </springProfile>
+    <springProfile name="dev">
+        <property resource="logback-dev.properties"/>
+    </springProfile>
+    <springProfile name="product">
+        <property resource="logback-product.properties"/>
     </springProfile>
 
     <!--아래의 property 태그는 앞서 불러온 logback properties 파일에 정의한 값을 읽어온다-->
