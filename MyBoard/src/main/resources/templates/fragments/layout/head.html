@@ -7,7 +7,15 @@
         <script src="/js/bootstrap/bootstrap.bundle.js"></script>
 
         <!--글로벌 JS-->
-        <script src="/js/globalvari.js"></script>
+        <th:block th:if="${versionInfo.getDeployEnvironment().equals('local')}">
+            <script src="/js/globalvari-local.js"></script>
+        </th:block>
+        <th:block th:if="${versionInfo.getDeployEnvironment().equals('dev')}">
+            <script src="/js/globalvari-dev.js"></script>
+        </th:block>
+        <th:block th:if="${versionInfo.getDeployEnvironment().equals('product')}">
+            <script src="/js/globalvari-product.js"></script>
+        </th:block>
         <script src="/js/util.js"></script>
     </head>
 </html>

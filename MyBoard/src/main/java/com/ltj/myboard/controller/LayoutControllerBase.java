@@ -1,10 +1,12 @@
 package com.ltj.myboard.controller;
 import com.ltj.myboard.domain.Board;
 import com.ltj.myboard.domain.User;
+import com.ltj.myboard.dto.VersionInfo;
 import com.ltj.myboard.dto.mypage.MyInfo;
 import com.ltj.myboard.model.UserDetailsImpl;
 import com.ltj.myboard.service.BoardService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -18,8 +20,17 @@ public class LayoutControllerBase {
 
     protected final String LayoutViewPath = "layout/default_layout.html";
 
+    @Value("${spring.profiles.active}")
+    private String activatedProfile;
+
     @Autowired
     private BoardService boardService;
+
+    @ModelAttribute("versionInfo")
+    public VersionInfo versionInfo(){
+        VersionInfo versionInfo = new VersionInfo(activatedProfile, "");
+        return versionInfo;
+    }
 
     @ModelAttribute("rootBoards")
     public List<Board> rootBoards(){
