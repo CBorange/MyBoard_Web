@@ -86,4 +86,10 @@ public class AuthController extends LayoutControllerBase {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
+
+    // test
+    @PostMapping("/apitest")
+    public ResponseEntity sslTest(){
+        return ResponseEntity.ok().body("success");
+    }
 }

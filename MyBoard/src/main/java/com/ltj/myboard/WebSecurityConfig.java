@@ -46,6 +46,7 @@ public class WebSecurityConfig {
             .antMatchers("/comment").authenticated()
             .antMatchers("/mypage/**").authenticated()
             .antMatchers("/changepassword").authenticated()
+            .antMatchers("/apitest").authenticated()
             .anyRequest().permitAll();  // 그 외 나머지 API는 권한 없어도 접근 가능
         // Login 화면 설정
         http.formLogin((form) -> form
