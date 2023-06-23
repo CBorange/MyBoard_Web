@@ -81,26 +81,39 @@ public class FtpService {
     public void uploadFile(String directoryPath, String fileName, byte[] fileBytes) throws IOException {
         FTPClient ftpClient = null;
         try {
+            log.info("FTPService uploadFile -> directoryPath : " + directoryPath);
+            log.info("FTPService uploadFile -> fileName : " + fileName);
+            log.info("FTPService uploadFile -> byte 크기 : " + fileBytes.length);
             // FTP Client 생성
             ftpClient = makeClient();
+            log.info("FTPService uploadFile -> ftpClient 유효성 : " + ftpClient.isAvailable());
 
             // 업로드
             String encoded = Base64.getEncoder().encodeToString(fileBytes);
-            ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
-            ftpClient.makeDirectory(directoryPath);
+            if(!ftpClient.setFileType(FTP.BINARY_FILE_TYPE)){
+                int replyCode = ftpClient.getReplyCode();
+
+                throw new IllegalStateException("FTPService -> setFileType 실패 오류코드: " + replyCode);
+            }
+            if(!ftpClient.makeDirectory(directoryPath)){
+                int replyCode = ftpClient.getReplyCode();
+
+                throw new IllegalStateException("FTPService -> makeDirectory 실패 오류코드: " + replyCode);
+            }
 
             InputStream targetStream = new ByteArrayInputStream(fileBytes);
             String fileFullPath = directoryPath + "/" + fileName;
+            log.info("FTPService uploadFile -> fileFullPath : " + fileFullPath);
             if(!ftpClient.storeFile(fileFullPath, targetStream)) {
                 int replyCode = ftpClient.getReplyCode();
-                log.error("FTP 파일 업로드 실패: " + replyCode);
-                throw new IllegalStateException("FTP 파일 업로드 실패: " + replyCode);
+                
+                throw new IllegalStateException("FTPService -> storeFile 실패 오류코드: " + replyCode);
             }
             targetStream.close();
         } catch (Exception e){
-            log.error("FTP 업로드 알 수 없는 오류발생: " + e.getMessage());
-            throw new IllegalStateException("FTP 업로드 알 수 없는 오류발생: " + e.getMessage());
+            throw new IllegalStateException("FTPService -> 업로드 알 수 없는 오류발생: " + e.getMessage());
         } finally {
+            log.info("FTPService uploadFile -> FTP Client 해제");
             // FTP Client 해제
             ftpClient.logout();
             ftpClient.disconnect();
@@ -130,3 +143,4 @@ public class FtpService {
         }
     }
 }
+

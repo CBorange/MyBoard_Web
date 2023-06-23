@@ -54,6 +54,7 @@ public class FtpController {
         try{
 
              bytes = upload.getBytes();
+            log.info("FTPController 업로드 이미지 byte 크기: " + bytes.length);
         } catch (IOException e){
             log.error("UserFile Upload Failed: " + upload.getName());
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -63,6 +64,9 @@ public class FtpController {
         String fullFileName = upload.getOriginalFilename();
         String fileExtension = FileUtilExt.getFileExtension(fullFileName);
         String uploadFileName = uuidAsString + "." + fileExtension;
+        log.info("FTPController 업로드 이미지 fullFileName: " + fullFileName);
+        log.info("FTPController 업로드 이미지 fileExtension: " + fileExtension);
+        log.info("FTPController 업로드 이미지 uploadFileName: " + uploadFileName);
         try{
             ftpService.uploadFile(userFilePath, uploadFileName, bytes);
         } catch (Exception e){
