@@ -10,7 +10,8 @@ let loadedContentImages = new Array();
 ClassicEditor
     .create( document.querySelector( '#editor' ), {
         simpleUpload: {
-             uploadUrl: makeURL('/ftp/userimage')
+             uploadUrl: makeURL('/ftp/userimage'),
+             withCredentials: true,
         }
     })
     .then( newEditor => {
