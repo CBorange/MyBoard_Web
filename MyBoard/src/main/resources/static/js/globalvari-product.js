@@ -1,2 +1,2 @@
-// Production
-const host = "https://ltj-myboard.kro.kr";
+// Product
+const host = "https://ltj-myboard.kro.kr;
