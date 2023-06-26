@@ -1,2 +1,2 @@
 // Product
-const host = "https://ltj-myboard.kro.kr;
+const host = "https://ltj-myboard.kro.kr";
