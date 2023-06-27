@@ -56,6 +56,14 @@ public class FtpService {
             // FTP Client 생성
             ftpClient = makeClient();
 
+            // filetype 지정
+            if(!ftpClient.setFileType(FTP.BINARY_FILE_TYPE)){
+                int replyCode = ftpClient.getReplyCode();
+                String replyMessage = ftpClient.getReplyString();
+
+                throw new IllegalStateException("FTPService -> setFileType 실패 오류코드: " + replyCode+ "," + replyMessage);
+            }
+
             // 파일 읽어오기
             InputStream inputStream = ftpClient.retrieveFileStream(directoryPath + "/" + fileName);
             if(inputStream != null){
