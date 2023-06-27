@@ -35,7 +35,9 @@ public class FtpController {
     )
     public ResponseEntity<byte[]> getUserImage(@RequestParam(value = "filename") String fileName){
         try{
+            log.info("try getUserImage.filename : " + fileName);
             byte[] data = ftpService.getFile("/UserFiles/Image", fileName);
+            log.info("file size : " + data.length);
             return new ResponseEntity<byte[]>(data, HttpStatus.OK);
         }catch (Exception e){
             log.error("FtpController getUserImage 오류발생 : " + e.getMessage());
