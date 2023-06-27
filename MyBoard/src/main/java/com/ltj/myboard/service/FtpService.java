@@ -42,6 +42,7 @@ public class FtpService {
                 log.error("FTP 로그인 실패");
                 throw new IllegalStateException("FTP 로그인 실패");
             }
+            ftpClient.enterLocalPassiveMode();
             return ftpClient;
         } catch (Exception e){
             log.error("FTP 클라이언트 생성중 알 수 없는 오류발생: " + e.getMessage());
