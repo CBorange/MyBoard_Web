@@ -21,8 +21,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Slf4j
 public class FtpController {
-    @Value("${server.url}")
-    private String serverURL;
+    @Value("${server.userfile.url}")
+    private String serverUserFileURL;
 
     @Value("${ftp.userfilepath}")
     private String userFilePath;
@@ -76,7 +76,7 @@ public class FtpController {
 
         // 4. 업로드 경로 반환
         UserImageURL userImageURL = new UserImageURL();
-        String imageRequestURL = serverURL + "/ftp/userimage?filename=" + uploadFileName;
+        String imageRequestURL = serverUserFileURL + "/ftp/userimage?filename=" + uploadFileName;
         userImageURL.setUrl(imageRequestURL);
         userImageURL.setUploadedFileID(uuidAsString);
         userImageURL.setUploadedFileName(uploadFileName);

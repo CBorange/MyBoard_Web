@@ -92,22 +92,31 @@ public class FtpService {
             String encoded = Base64.getEncoder().encodeToString(fileBytes);
             if(!ftpClient.setFileType(FTP.BINARY_FILE_TYPE)){
                 int replyCode = ftpClient.getReplyCode();
+                String replyMessage = ftpClient.getReplyString();
 
-                throw new IllegalStateException("FTPService -> setFileType 실패 오류코드: " + replyCode);
+                throw new IllegalStateException("FTPService -> setFileType 실패 오류코드: " + replyCode+ "," + replyMessage);
             }
-            if(!ftpClient.makeDirectory(directoryPath)){
-                int replyCode = ftpClient.getReplyCode();
+            boolean directoryExists = ftpClient.changeWorkingDirectory(directoryPath);
+            if(!directoryExists){
+                if(!ftpClient.makeDirectory(directoryPath)){
+                    int replyCode = ftpClient.getReplyCode();
+                    String replyMessage = ftpClient.getReplyString();
 
-                throw new IllegalStateException("FTPService -> makeDirectory 실패 오류코드: " + replyCode);
+                    throw new IllegalStateException("FTPService -> makeDirectory 실패 오류코드: " + replyCode + "," + replyMessage);
+                }
+            } else{
+                log.info("FTPService.uploadFile : directory [ " + directoryPath + "] is exists, skip make directory");
             }
+
 
             InputStream targetStream = new ByteArrayInputStream(fileBytes);
             String fileFullPath = directoryPath + "/" + fileName;
             log.info("FTPService uploadFile -> fileFullPath : " + fileFullPath);
             if(!ftpClient.storeFile(fileFullPath, targetStream)) {
                 int replyCode = ftpClient.getReplyCode();
-                
-                throw new IllegalStateException("FTPService -> storeFile 실패 오류코드: " + replyCode);
+                String replyMessage = ftpClient.getReplyString();
+
+                throw new IllegalStateException("FTPService -> storeFile 실패 오류코드: " + replyCode+ "," + replyMessage);
             }
             targetStream.close();
         } catch (Exception e){

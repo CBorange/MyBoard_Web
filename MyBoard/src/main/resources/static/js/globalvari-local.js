@@ -1,2 +1,2 @@
 // Local
-const host = "https://localhost";
+const host = "http://localhost:8080";
