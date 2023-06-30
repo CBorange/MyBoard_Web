@@ -35,14 +35,19 @@ public class FtpService {
             int resultCode = ftpClient.getReplyCode();
 
             if(!FTPReply.isPositiveCompletion(resultCode)){
-                log.error("FTP 연결 실패: " + resultCode);
-                throw new IllegalStateException("FTP 연결 실패: " + resultCode);
+                String replyMessage = ftpClient.getReplyString();
+
+                log.error("FTP 연결 실패: " + resultCode + ", Msg: " + replyMessage);
+                throw new IllegalStateException("FTP 연결 실패: " + resultCode + ", Msg: " + replyMessage);
             }
 
             ftpClient.setSoTimeout(10000);
             if(!ftpClient.login(ftpUser, ftpPassword)){
-                log.error("FTP 로그인 실패");
-                throw new IllegalStateException("FTP 로그인 실패");
+                int replyCode = ftpClient.getReplyCode();
+                String replyMessage = ftpClient.getReplyString();
+
+                log.error("FTP 로그인 실패: " + replyCode + ", Msg: " + replyMessage);
+                throw new IllegalStateException("FTP 로그인 실패: " + replyCode + ", Msg: " + replyMessage);
             }
             ftpClient.enterLocalPassiveMode();
             return ftpClient;
