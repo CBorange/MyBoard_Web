@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPReply;
+import org.apache.commons.net.ftp.FTPSClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -25,11 +26,12 @@ public class FtpService {
     @Value("${ftp.password}")
     private String ftpPassword;
 
-    private FTPClient makeClient(){
-        FTPClient ftpClient = new FTPClient();
+    private FTPSClient makeClient(){
+        FTPSClient ftpClient = new FTPSClient();
         try {
             ftpClient.setControlEncoding("UTF-8");
             ftpClient.connect(ftpHost, 21);
+            ftpClient.execPROT("P");
             int resultCode = ftpClient.getReplyCode();
 
             if(!FTPReply.isPositiveCompletion(resultCode)){
@@ -51,7 +53,7 @@ public class FtpService {
     }
 
     public byte[] getFile(String directoryPath, String fileName) throws IOException {
-        FTPClient ftpClient = null;
+        FTPSClient ftpClient = null;
         try {
             // FTP Client 생성
             ftpClient = makeClient();
@@ -74,8 +76,10 @@ public class FtpService {
                 return data;
             }
             else{
-                log.error("FTP 파일을 찾을 수 없습니다.: " + fileName);
-                throw new IllegalStateException("FTP 파일을 찾을 수 없습니다.: " + fileName);
+                int replyCode = ftpClient.getReplyCode();
+                String replyMessage = ftpClient.getReplyString();
+                log.error("FTP 파일찾는 중 오류발생 파일명: " + fileName + ", replyCode: " + replyCode + ", replyMsg: " + replyMessage);
+                throw new IllegalStateException("FTP 파일찾는 중 오류발생 파일명: " + fileName + ", replyCode: " + replyCode + ", replyMsg: " + replyMessage);
             }
         } catch (Exception e) {
             log.error("FTP 파일읽기 알 수 없는 오류발생: " + e.getMessage());
@@ -88,7 +92,7 @@ public class FtpService {
     }
 
     public void uploadFile(String directoryPath, String fileName, byte[] fileBytes) throws IOException {
-        FTPClient ftpClient = null;
+        FTPSClient ftpClient = null;
         try {
             log.info("FTPService uploadFile -> directoryPath : " + directoryPath);
             log.info("FTPService uploadFile -> fileName : " + fileName);
@@ -139,7 +143,7 @@ public class FtpService {
     }
 
     public void deleteFile(String directoryPath, String fileName) throws IOException {
-        FTPClient ftpClient = null;
+        FTPSClient ftpClient = null;
         try {
             // FTP Client 생성
             ftpClient = makeClient();
