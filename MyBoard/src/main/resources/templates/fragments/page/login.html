@@ -3,25 +3,23 @@
     <th:block th:fragment="login">
         <div class="mx-auto container-lg top-div">
             <h1>로그인</h1>
-            <div th:if="${param.error}">
-                아이디 또는 비밀번호가 일치하지 않습니다.
+            <div id="resultArea" style="visibility: hidden;">
+                <p id="resultMsg">로그인 성공</p>
             </div>
-            <div th:if="${param.logout}">
-                로그아웃됨
-            </div>
-            <form th:action="@{/login}" method="post">
+            <form onsubmit="return false" id="loginForm">
                 <div>
                     <input type="text" name="username" placeholder="아이디"/>
                 </div>
                 <div>
                     <input type="password" name="password" placeholder="비밀번호"/>
                 </div>
-                <input type="submit" value="로그인" />
+                <input type="button" value="로그인" onclick="onSubmitLogin()"/>
             </form>
 
             <div>
                 <span>계정이 없으시다면? <a href="/register">회원가입</a></span>
             </div>
         </div>
+        <script src="/js/login.js"></script>
     </th:block>
 </html>

@@ -1,4 +1,6 @@
 package com.ltj.myboard;
+import com.ltj.myboard.model.JwtAuthenticationFilter;
+import com.ltj.myboard.model.JwtTokenProvider;
 import com.ltj.myboard.service.MyAuthenticationFailureHandler;
 import com.ltj.myboard.service.MyAuthenticationSuccessHandler;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +29,8 @@ public class WebSecurityConfig {
     MyAuthenticationSuccessHandler myAuthenticationSuccessHandler;
     @Autowired
     MyAuthenticationFailureHandler myAuthenticationFailureHandler;
+    @Autowired
+    JwtTokenProvider jwtTokenProvider;
 
     // URL Route 시, Servlet Dispatcher 동작 전 Filter 단계에서 처리할 Spring Security Filter Bean 등록 및 설정
     // Spring Security는 기본적으로 Cookie, Session을 사용하여 유저정보를 저장한다.
@@ -47,8 +51,19 @@ public class WebSecurityConfig {
             .antMatchers("/mypage/**").authenticated()
             .antMatchers("/changepassword").authenticated()
             .antMatchers("/apitest").authenticated()
-            .anyRequest().permitAll();  // 그 외 나머지 API는 권한 없어도 접근 가능
-        // Login 화면 설정
+            .anyRequest().permitAll() // 그 외 나머지 API는 권한 없어도 접근 가능
+
+            // Jwt인증필터를 기본 UsernamePasswordAuthenticationFilter 전에 넣는다.
+            // UsernamePasswordAuthenticationFilter는 해당 Filter가 실행될 시점에 SecurityContext가 등록돼있으면
+            // 인증처리를 실행하지 않는다. 따라서 Jwt필터가 먼저 실행돼서 SecuirtyContext에 인증정보 넣어줘야 함
+            .and().addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
+
+        // JWT(Token-Base) 인증방식
+        http.sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+
+        // 아래 주석처리된 부분은 Session-Base 인증방식
+       /* // Login 화면 설정
         http.formLogin((form) -> form
                     .loginPage("/login")
                     .successHandler(myAuthenticationSuccessHandler)
@@ -71,13 +86,18 @@ public class WebSecurityConfig {
                 .invalidSessionUrl("/invalid")
                 .maximumSessions(1)
                 .maxSessionsPreventsLogin(true)
-                .expiredUrl("/expired");
+                .expiredUrl("/expired");*/
         return http.build();
     }
 
     @Bean
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
     }
 
 }
