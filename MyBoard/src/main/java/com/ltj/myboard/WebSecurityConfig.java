@@ -40,7 +40,7 @@ public class WebSecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
         // TODO CORS/CSRF 걸려서 POST 날리면 403 에러뜸 수정 필요
         http.csrf().disable();
-        // URI별로 보안설정
+/*        // URI별로 보안설정
         http.authorizeRequests()
                 // 주의, authenticated는 인증만 되어있으면 허용한다는 의미임
                 // hasAnyAuthorithy, hasAnyRoles 얘네는 지정된 특정 권한이 있어야 접근할 수 있다는 의미
@@ -60,10 +60,22 @@ public class WebSecurityConfig {
 
         // JWT(Token-Base) 인증방식
         http.sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);*/
 
-        // 아래 주석처리된 부분은 Session-Base 인증방식
-       /* // Login 화면 설정
+        // URI별로 보안설정
+        http.authorizeRequests()
+        // 주의, authenticated는 인증만 되어있으면 허용한다는 의미임
+        // hasAnyAuthorithy, hasAnyRoles 얘네는 지정된 특정 권한이 있어야 접근할 수 있다는 의미
+            .antMatchers("/writepostform/**").authenticated()
+            .antMatchers(HttpMethod.POST, "/ftp/**").authenticated()
+            .antMatchers(HttpMethod.DELETE, "/ftp/**").authenticated()
+            .antMatchers("/comment").authenticated()
+            .antMatchers("/mypage/**").authenticated()
+            .antMatchers("/changepassword").authenticated()
+            .antMatchers("/apitest").authenticated()
+            .anyRequest().permitAll(); // 그 외 나머지 API는 권한 없어도 접근 가능
+
+        // Login 화면 설정
         http.formLogin((form) -> form
                     .loginPage("/login")
                     .successHandler(myAuthenticationSuccessHandler)
@@ -78,15 +90,15 @@ public class WebSecurityConfig {
         http.rememberMe()
                 .rememberMeParameter("remember-me")
                 .tokenValiditySeconds(3600)
-                .alwaysRemember(true)
+                .alwaysRemember(false)
                 .userDetailsService(userDetailsService);
 
         // SessionManagement
         http.sessionManagement()
                 .invalidSessionUrl("/invalid")
-                .maximumSessions(1)
-                .maxSessionsPreventsLogin(true)
-                .expiredUrl("/expired");*/
+                .maximumSessions(1)// 최대 세션 수
+                .maxSessionsPreventsLogin(true) // 다중 로그인 허용여부(max Session 넘어서 로그인 하면 튕겨내는지)
+                .expiredUrl("/expired");
         return http.build();
     }
 

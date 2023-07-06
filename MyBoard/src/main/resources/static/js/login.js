@@ -17,7 +17,7 @@ function onSubmitLogin(){
         },
         body: JSON.stringify(sendData)
     })
-    .then((response) => {
+    .then(async (response) => {
         console.log('onSubmitLogin POST API 전송결과 : ', response);
         resultMsg.style.color = "green";
         if(response.status == 400){
@@ -30,9 +30,9 @@ function onSubmitLogin(){
                 resultMsg.innerText = msg;
             })
         }else{
+            const retObj = await response.json();
             resultArea.style.visibility = "visible";
             resultMsg.innerText = msg;
-            loginButton.style.visibility = "visible";
         }
     })
     .catch((error) => {
