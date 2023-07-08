@@ -38,8 +38,6 @@ public class WebSecurityConfig {
     // 세션관리자에서 유저 세션을 생성한다(cookie 정보로)
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
-        // TODO CORS/CSRF 걸려서 POST 날리면 403 에러뜸 수정 필요
-        http.csrf().disable();
 /*        // URI별로 보안설정
         http.authorizeRequests()
                 // 주의, authenticated는 인증만 되어있으면 허용한다는 의미임
@@ -95,10 +93,10 @@ public class WebSecurityConfig {
 
         // SessionManagement
         http.sessionManagement()
-                .invalidSessionUrl("/invalid")
+                //.invalidSessionUrl("/invalid")
                 .maximumSessions(1)// 최대 세션 수
-                .maxSessionsPreventsLogin(true) // 다중 로그인 허용여부(max Session 넘어서 로그인 하면 튕겨내는지)
-                .expiredUrl("/expired");
+                .maxSessionsPreventsLogin(true); // 다중 로그인 허용여부(max Session 넘어서 로그인 하면 튕겨내는지)
+                //.expiredUrl("/expired");
         return http.build();
     }
 

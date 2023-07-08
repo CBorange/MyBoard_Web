@@ -6,6 +6,12 @@
         <link rel="stylesheet" href="/css/bootstrap/bootstrap.css">
         <script src="/js/bootstrap/bootstrap.bundle.js"></script>
 
+        <!--CSRF token, User 로그인시에 meta 데이터에 포함합니다.-->
+        <th:block th:if="${userInfo != null}">
+            <meta name="_csrf" th:content="${_csrf.token}">
+            <meta name="_csrf_header" th:content="${_csrf.headerName}">
+        </th:block>
+
         <!--글로벌 JS-->
         <th:block th:if="${versionInfo.getDeployEnvironment().equals('local')}">
             <script src="/js/globalvari-local.js"></script>

@@ -12,12 +12,15 @@ function onSubmitRegister(){
     const resultMsg = document.querySelector('#resultMsg');
     const loginButton = document.querySelector('#loginButton');
 
+    var tokenInfo = getCSRFToken();
+    var headers = new Headers();
+    headers.append('Content-Type', 'application/json');
+    headers.append(tokenInfo.header, tokenInfo.token);
+
     const url = makeURL('/register');
     fetch(url, {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
+        headers: headers,
         body: JSON.stringify(sendData)
     })
     .then((response) => {

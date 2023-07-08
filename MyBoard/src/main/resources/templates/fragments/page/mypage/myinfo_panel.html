@@ -38,7 +38,9 @@
             </tbody>
         </table>
         <div class="d-flex flex-row">
-            <button class="btn btn-outline-dark" onclick="location.href = '/logout'">로그아웃</button>
+            <form th:action="@{/logout}" method="post">
+                <button type="submit" class="btn btn-outline-dark">로그아웃</button>
+            </form>
             <button class="btn btn-outline-dark" onclick="location.href = '/changepassword'">비밀번호 변경</button>
             <button class="btn btn-outline-danger ms-auto">회원탈퇴</button>
         </div>

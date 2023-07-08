@@ -6,47 +6,52 @@ let editMode;
 // 마지막에 변경된 내용 저장할 때 또는 창이 닫힐 때 이 원본 데이터와 비교하여 삭제된 이미지가 무엇인지 판별한다.
 let loadedContentImages = new Array();
 
-// ClassicEditor 기본 설정
-ClassicEditor
-    .create( document.querySelector( '#editor' ), {
-        simpleUpload: {
-             uploadUrl: makeURL('/ftp/userimage'),
-             withCredentials: true,
-        }
-    })
-    .then( newEditor => {
-        editorRef = newEditor;
-    } )
-    .catch( error => {
-        console.error( error );
-    } );
-
 // writepostform init
 function init(editMode, content){
     this.editMode = editMode;
 
-    // 이미지 관련 공통 처리
-    // edtior Data getData() 실행하여 downcastDispatcher 실행되는 시점에 img 관련 처리
-    editorRef.data.downcastDispatcher.on('insert:imageBlock', (evt, data, conversionApi) => {
-        // imageBlock model element view element로 전환(imageBlock -> figure)
-        const figureElement = conversionApi.mapper.toViewElement(data.item);
+    var tokenInfo = getCSRFToken();
+    const headers = {
+        [tokenInfo.header]: tokenInfo.token,
+    };
 
-        // figure의 자식 img 태그 탐색
-        const imageElement = figureElement.getChild(0);
+    // ClassicEditor 기본 설정
+    ClassicEditor
+        .create( document.querySelector( '#editor' ), {
+            simpleUpload: {
+                 uploadUrl: makeURL('/ftp/userimage'),
+                 withCredentials: true,
+                 headers: headers
+            }
+        })
+        .then( newEditor => {
+            editorRef = newEditor;
 
-        // img에 class 추가
-        conversionApi.writer.addClass('post_image', imageElement);
-    });
+            // 이미지 관련 공통 처리
+            // edtior Data getData() 실행하여 downcastDispatcher 실행되는 시점에 img 관련 처리
+            editorRef.data.downcastDispatcher.on('insert:imageBlock', (evt, data, conversionApi) => {
+                // imageBlock model element view element로 전환(imageBlock -> figure)
+                const figureElement = conversionApi.mapper.toViewElement(data.item);
 
-    // 수정 모드일 경우 editor에 기등록된 게시글 content binding
-    if(editMode == 'modify'){
-        loadedContentImages = Array.from( new DOMParser().parseFromString( content, 'text/html' )
-        .querySelectorAll( 'img' ) )
-        .map( img => img.getAttribute( 'src' ) );
+                // figure의 자식 img 태그 탐색
+                const imageElement = figureElement.getChild(0);
 
-        initData(content);
-    }
-        
+                // img에 class 추가
+                conversionApi.writer.addClass('post_image', imageElement);
+            });
+
+            // 수정 모드일 경우 editor에 기등록된 게시글 content binding
+            if(editMode == 'modify'){
+                loadedContentImages = Array.from( new DOMParser().parseFromString( content, 'text/html' )
+                .querySelectorAll( 'img' ) )
+                .map( img => img.getAttribute( 'src' ) );
+
+                initData(content);
+            }
+        })
+        .catch( error => {
+            console.error( error );
+        });
 }
 
 // writepostform 수정 일 경우 editor에 binding 할 게시글 내용 전송
@@ -170,12 +175,17 @@ function onSubmitPost(submitState) {
         writerId: writePostForm.elements['writerID'].value,
         writerNickname: writePostForm.elements['writerNickname'].value,
     };
+
     const url = makeURL('/post');
+
+    var tokenInfo = getCSRFToken();
+    var headers = new Headers();
+    headers.append('Content-Type', 'application/json');
+    headers.append(tokenInfo.header, tokenInfo.token);
+
     fetch(url, {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
+        headers: headers,
         body: JSON.stringify(sendData)
     })
     .then((response) => {
@@ -192,8 +202,14 @@ function onSubmitPost(submitState) {
 // FTP 이미지 삭제 Reqeust 전송
 function sendFTPDeleteImage(targetImageFileName){
     const url = makeURL('/ftp/userimage/' + targetImageFileName);
+
+    var tokenInfo = getCSRFToken();
+    var headers = new Headers();
+    headers.append(tokenInfo.header, tokenInfo.token);
+
     fetch(url, {
         method: 'DELETE',
+        headers:headers,
         keepalive: true
     })
     .then((response) => {

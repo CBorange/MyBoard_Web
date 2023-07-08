@@ -40,11 +40,15 @@ function onSubmitComment(rootCommentID, isSubComment) {
         content: writeCommentForm.elements['content'].value,
     };
     const url = makeURL('/comment');
+
+    var tokenInfo = getCSRFToken();
+    var headers = new Headers();
+    headers.append('Content-Type', 'application/json');
+    headers.append(tokenInfo.header, tokenInfo.token);
+
     fetch(url, {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
+        headers: headers,
         body: JSON.stringify(sendData)
     })
     .then((response) => {
@@ -59,9 +63,14 @@ function onSubmitComment(rootCommentID, isSubComment) {
 
 // 게시글 삭제 request 전송
 function onClickDeletePost(boardID, postID) {
+    var tokenInfo = getCSRFToken();
+    var headers = new Headers();
+    headers.append(tokenInfo.header, tokenInfo.token);
+
     const url = makeURL('/post/' + postID);
     fetch(url, {
-        method: 'DELETE'
+        method: 'DELETE',
+        headers: headers,
     })
     .then((response) => {
         console.log('onClickDeletePost 성공 : ', response);
@@ -80,12 +89,15 @@ function onClickLike(postId, userId){
         return;
     }
 
+    var tokenInfo = getCSRFToken();
+    var headers = new Headers();
+    headers.append('Content-Type', 'application/x-www-form-urlencoded');
+    headers.append(tokenInfo.header, tokenInfo.token);
+
     const url = makeURL('/post/' + postId + '/like');
     fetch(url,{
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        },
+        headers: headers,
         body: 'userId=' + userId
     })
     .then((response) => {
@@ -110,12 +122,15 @@ function onClickDislike(postId, userId){
         return;
     }
 
+    var tokenInfo = getCSRFToken();
+    var headers = new Headers();
+    headers.append('Content-Type', 'application/x-www-form-urlencoded');
+    headers.append(tokenInfo.header, tokenInfo.token);
+
     const url = makeURL('/post/' + postId + '/dislike');
     fetch(url,{
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        },
+        headers: headers,
         body: 'userId=' + userId
     })
     .then((response) => {

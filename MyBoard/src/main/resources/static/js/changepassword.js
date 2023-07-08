@@ -10,12 +10,15 @@ function onSubmitChange(){
     const resultArea = document.querySelector('#resultArea');
     const resultMsg = document.querySelector('#resultMsg');
 
+    var tokenInfo = getCSRFToken();
+    var headers = new Headers();
+    headers.append('Content-Type', 'application/json');
+    headers.append(tokenInfo.header, tokenInfo.token);
+
     const url = makeURL('/changepassword');
     fetch(url, {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
+        headers: headers,
         body: JSON.stringify(sendData)
     })
     .then((response) => {
