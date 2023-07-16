@@ -59,6 +59,10 @@ public class HomeController extends LayoutControllerBase {
                 postMap.put(leaf.getId(), result);
             }
         }
+
+        // 베스트 게시판은 별도 쿼리로 데이터 집어넣음
+
+
         model.addAttribute("postMap", postMap);
 
         return LayoutViewPath;

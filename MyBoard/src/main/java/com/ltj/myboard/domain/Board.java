@@ -3,89 +3,49 @@ package com.ltj.myboard.domain;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.core.annotation.Order;
 
+import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
+@Entity(name = "board")
 @Getter
 @Setter
 @ToString
 public class Board {
 
-    public Board(){
-        childBoardSet = new HashSet<Board>();
-    }
-
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    private String boardName;
+    private String name;
 
-    private String boardOwnerId;
+    @Column(name="owner_id")
+    private String ownerId;
 
-    private int parentBoardId;
+    private String icon;
 
-    private String boardIcon;
+    @Column(name = "created_day")
+    private Date createdDay;
 
-    private LocalDateTime createdDay;
+    @Column(name = "modify_day")
+    private Date modifyDay;
 
-    private LocalDateTime modifyDay;
+    @Column(name = "delete_day")
+    private Date deleteDay;
 
-    private LocalDateTime deleteDay;
+    @Column(name = "sort_order")
+    private int sortOrder;
 
-    // 여기부터 비즈니스 로직 관련 변수
-    private HashSet<Board> childBoardSet;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent_board_id", referencedColumnName = "id", nullable = true)
+    private Board parentBoard = null;
 
-    public int getChildBoardCount(){
-        return (int)childBoardSet.stream().count();
-    }
-
-    public boolean addChildBoard(Board newBoard){
-        return childBoardSet.add(newBoard);
-    }
-
-    public boolean addChildBoard(List<Board> newBoards){
-        return childBoardSet.addAll(newBoards);
-    }
-
-    public boolean removeChildBoard(Board removeBoard){
-        return childBoardSet.remove(removeBoard);
-    }
-
-    public boolean removeChildBoardByID(int removeBoardID){
-        Optional<Board> boardOptional = childBoardSet.stream().filter(board -> {
-            if(board.id == removeBoardID)
-                return true;
-            return false;
-        }).findAny();
-
-        Board foundBoard =  boardOptional.get();
-        if(foundBoard != null){
-            childBoardSet.remove(foundBoard);
-            return true;
-        }
-        return false;
-    }
-    @Override
-    public int hashCode(){
-        // ID가 유일한 PK다. ID가 같으면 같은 Board다.
-        return this.id;
-    }
-
-    @Override
-    public boolean equals(Object object){
-        if(object == null)
-            return false;
-
-        if(this.getClass() != object.getClass())
-            return false;
-
-        Board board = (Board)object;
-
-        // ID가 같으면 같은 Board다 ID가 유일한 PK다.
-        if(board.getId() == this.id)
-            return true;
-        return false;
-    }
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "parentBoard")
+    @OrderBy("sort_order")
+    private List<Board> childBoards;
 }

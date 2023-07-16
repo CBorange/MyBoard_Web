@@ -15,21 +15,21 @@
                         </div>
                         <!--Section2 : 게시판 리스트-->
                         <th:block th:each="rootBoard : ${rootBoards}">
-                            <th:block th:if="${rootBoard.getChildBoardCount().equals(0)}">
+                            <th:block th:if="${rootBoard.getChildBoards().stream().count() == 0}">
                                 <a class="navlinkitem mx-3" th:href="'/board/' + ${rootBoard.getId()}">
-                                    <span th:text="${rootBoard.boardName}"></span>
+                                    <span th:text="${rootBoard.getName()}"></span>
                                 </a>
                             </th:block>
-                            <th:block th:unless="${rootBoard.getChildBoardCount().equals(0)}">
+                            <th:block th:unless="${rootBoard.getChildBoards().stream().count() == 0}">
                                 <div class="d-inline-flex dropdown">
                                     <a class="dropdown-toggle navlinkitem mx-3" href="#" id="dropdownMenuLink-0"
                                        data-bs-toggle="dropdown" aria-expanded="false">
-                                        <span th:text="${rootBoard.boardName}"></span>
+                                        <span th:text="${rootBoard.getName()}"></span>
                                     </a>
                                     <ul class="dropdown-menu" aria-lebelledby="dropdownMenuLink-0">
-                                        <th:block th:each="childBoard : ${rootBoard.getChildBoardSet()}">
+                                        <th:block th:each="childBoard : ${rootBoard.getChildBoards()}">
                                             <li><a class="dropdown-item" th:href="'/board/' + ${childBoard.getId()}">
-                                                <span th:text="${childBoard.boardName}"></span></a></li>
+                                                <span th:text="${childBoard.getName()}"></span></a></li>
                                         </th:block>
                                     </ul>
                                 </div>

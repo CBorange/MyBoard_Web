@@ -34,7 +34,7 @@ public class LayoutControllerBase {
 
     @ModelAttribute("rootBoards")
     public List<Board> rootBoards(){
-        List<Board> rootBoards = boardService.getAllRootBoards();
+        List<Board> rootBoards = boardService.getAllLeafBoards();
         return rootBoards;
     }
 

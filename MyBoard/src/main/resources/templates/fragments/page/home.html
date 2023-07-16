@@ -9,11 +9,11 @@
             <div class="container">
                 <!-- 한줄에 게시판을 2개씩 표시하고 게시판 2개 조합을 LeafBundle이라 칭함-->
                 <th:block th:each="curBundle : ${leafBoardBundle}">
-                    <div class="row board-row">
+                    <div class="row">
                         <th:block th:each="leafBoard : ${curBundle}">
-                            <div class="col">
+                            <div class="col-sm board-col">
                                 <!--게시판 명-->
-                                <span class="board-title" th:text="${leafBoard.getBoardName()}"></span>
+                                <span class="board-title" th:text="${leafBoard.getName()}"></span>
                                 <hr/>
                                 <!--게시글 목록-->
                                 <div class="d-flex flex-column">

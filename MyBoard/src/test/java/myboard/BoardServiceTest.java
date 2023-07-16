@@ -19,11 +19,11 @@ public class BoardServiceTest {
     @Test
     public void 루트_게시판_읽어오기(){
         // when
-        List<Board> rootBoards = boardService.getAllRootBoards();
+        List<Board> rootBoards = boardService.getAllLeafBoards();
 
         // then
         for (Board rootBoard : rootBoards){
-            Assertions.assertEquals(0, rootBoard.getParentBoardId());
+            Assertions.assertEquals(0, rootBoard.getParentBoard().getId());
         }
     }
 
@@ -32,8 +32,8 @@ public class BoardServiceTest {
         // when
         List<Board> boards = boardService.getAllBoards();
         for (Board item : boards){
-            if(item.getParentBoardId() == 0){
-                HashSet<Board> boardSet = item.getChildBoardSet();
+            if(item.getParentBoard().getParentBoard().getId() == 0){
+                List<Board> boardSet = item.getChildBoards();
                 for(Board childBoard : boardSet){
                     System.out.println(childBoard.toString());
                 }

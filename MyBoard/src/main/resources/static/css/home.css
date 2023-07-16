@@ -2,8 +2,8 @@
     font-size: 30px;
 }
 
-.board-row{
-    min-height: 400px;
+.board-col{
+    min-height: 300px;
 }
 
 .post-title{

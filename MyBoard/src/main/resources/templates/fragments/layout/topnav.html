@@ -17,24 +17,22 @@
                     </div>
                     <!--item2 : Link List-->
                     <div class="d-flex flex-row d-none d-lg-block">
-                        <!--하위 게시판이 존재하지 않는 경우 : getChildBoardCount() 가 0 이다-->
-                        <!--하위 게시판이 존재하는 경우 : getChildBoardCount() 가 0이 아니다-->
                         <th:block th:each="rootBoard : ${rootBoards}">
-                            <th:block th:if="${rootBoard.getChildBoardCount().equals(0)}">
+                            <th:block th:if="${rootBoard.getChildBoards().stream().count() == 0}">
                                 <a class="navlinkitem mx-3" th:href="'/board/' + ${rootBoard.getId()}">
-                                    <span th:text="${rootBoard.boardName}"></span>
+                                    <span th:text="${rootBoard.getName()}"></span>
                                 </a>
                             </th:block>
-                            <th:block th:unless="${rootBoard.getChildBoardCount().equals(0)}">
+                            <th:block th:unless="${rootBoard.getChildBoards().stream().count() == 0}">
                                 <div class="d-inline-flex dropdown">
                                     <a class="dropdown-toggle navlinkitem mx-3" href="#" id="dropdownMenuLink-0"
                                        data-bs-toggle="dropdown" aria-expanded="false">
-                                        <span th:text="${rootBoard.boardName}"></span>
+                                        <span th:text="${rootBoard.getName()}"></span>
                                     </a>
                                     <ul class="dropdown-menu" aria-lebelledby="dropdownMenuLink-0" style="min-width: inherit;">
-                                        <th:block th:each="childBoard : ${rootBoard.getChildBoardSet()}">
+                                        <th:block th:each="childBoard : ${rootBoard.getChildBoards()}">
                                             <li><a class="dropdown-item" th:href="'/board/' + ${childBoard.getId()}">
-                                                <span th:text="${childBoard.boardName}"></span></a>
+                                                <span th:text="${childBoard.getName()}"></span></a>
                                             </li>
                                         </th:block>
                                     </ul>
