@@ -31,4 +31,18 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
                                   @Param("content") String content,
                                   @Param("nickname") String nickname,
                                   Pageable pageable);
+
+    @Query("SELECT p " +
+            "FROM post p " +
+            "WHERE (0 < (SELECT count(id) " +
+            "           FROM post_likes_history pl " +
+            "           WHERE p.id = pl.postId)) AND " +
+            "      (:title IS NOT NULL AND p.title LIKE CONCAT('%', COALESCE(:title, ''), '%') OR " +
+            "      :content IS NOT NULL AND p.content LIKE CONCAT('%', COALESCE(:content, ''), '%') OR " +
+            "      :nickname IS NOT NULL AND p.writerNickname LIKE CONCAT('%', COALESCE(:nickname, ''), '%')) " +
+            "ORDER BY createdDay DESC")
+    Page<Post> findBestsByCondition(@Param("title") String title,
+                                    @Param("content") String content,
+                                    @Param("nickname") String nickname,
+                                    Pageable pageable);
 }

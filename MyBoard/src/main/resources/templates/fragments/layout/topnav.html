@@ -17,6 +17,11 @@
                     </div>
                     <!--item2 : Link List-->
                     <div class="d-flex flex-row d-none d-lg-block">
+                        <!--베스트 게시판 출력(주소 고정됨, 일반 게시판 이랑 별도로 분리)-->
+                        <a class="navlinkitem mx-3" th:href="'/board/best'">
+                            <span th:text="베스트"></span>
+                        </a>
+                        <!--DB에 저장된 게시판 리스트 출력-->
                         <th:block th:each="rootBoard : ${rootBoards}">
                             <th:block th:if="${rootBoard.getChildBoards().stream().count() == 0}">
                                 <a class="navlinkitem mx-3" th:href="'/board/' + ${rootBoard.getId()}">
@@ -51,7 +56,7 @@
                     </th:block>
                     <th:block th:if="${userInfo == null}">
                         <a class="me-2" th:href="'/login'">
-                            <button>로그인</button>
+                            <button class="btn btn-light">로그인</button>
                         </a>
                     </th:block>
                 </div>

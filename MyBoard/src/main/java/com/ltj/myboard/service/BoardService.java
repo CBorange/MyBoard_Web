@@ -2,10 +2,8 @@ package com.ltj.myboard.service;
 import com.ltj.myboard.domain.Board;
 import com.ltj.myboard.repository.BoardRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,7 +21,11 @@ public class BoardService{
         return boardRepository.findAll();
     }
 
-    public List<Board> getAllLeafBoards(){
+    public List<Board> getAllRootBoards(){
         return boardRepository.findAllByParentBoardIsNull();
+    }
+
+    public List<Board> getAllLeafBoards(){
+        return boardRepository.findLeafBoards();
     }
 }

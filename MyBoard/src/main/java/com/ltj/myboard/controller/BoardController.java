@@ -80,4 +80,49 @@ public class BoardController extends LayoutControllerBase {
         model.addAttribute("searchValue", searchValue);
         return LayoutViewPath;
     }
+
+    @GetMapping("/board/best")
+    public String board_Best(Model model,
+                             @RequestParam(required = false, defaultValue = "1") int pageNumber,
+                             @RequestParam(required = false, defaultValue = "title") String searchType,
+                             @RequestParam(required = false, defaultValue = "") String searchValue)
+    {
+        addLayoutModel_FragmentContent(model,"board_best.html","board_best");
+
+        // 검색조건 처리
+        String searchConditions[] = {null, null, null}; // title, content, nickname 순
+        if(searchType.equals("title")) searchConditions[0] = searchValue;
+        if(searchType.equals("content")) searchConditions[1] = searchValue;
+        if(searchType.equals("nickname")) searchConditions[2] = searchValue;
+
+        // 검색 조건에 따라 게시글 리스트 Select
+        Ref<Integer> totalPageRef = new Ref<>();
+        List<FilteredPost> postList = postService.findPost_Best(
+                searchConditions[0], searchConditions[1], searchConditions[2],
+                PageRequest.of(pageNumber - 1, MAX_VISIBLE_POST_COUNT_INPAGE), totalPageRef);
+
+        // 페이지 개수 구하기
+        int pageCount = totalPageRef.getValue();
+        if(pageCount == 0)
+            pageCount = 1;
+        if(pageNumber > pageCount)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, pageNumber + " page is out of bound");
+
+        // 현재 페이지의 세션 구하기
+        int curSession = Paginator.getCurSessionByCurPage(pageNumber, MAX_VISIBLE_PAGE_COUNT_INSESSION);
+        int endPageNoInCurSession = curSession * MAX_VISIBLE_PAGE_COUNT_INSESSION;
+        int startPageNoInCurSession = endPageNoInCurSession - (MAX_VISIBLE_PAGE_COUNT_INSESSION - 1);
+        if(pageCount < endPageNoInCurSession) endPageNoInCurSession = pageCount;
+
+        // 현재 페이지 정보 Model에 추가
+        model.addAttribute("filteredPostList", postList);
+        model.addAttribute("curPageNo", pageNumber);
+        model.addAttribute("endPageNoInCurSession", endPageNoInCurSession);
+        model.addAttribute("startPageNoInCurSession", startPageNoInCurSession);
+        model.addAttribute("pageCount", pageCount);
+
+        model.addAttribute("searchType", searchType);
+        model.addAttribute("searchValue", searchValue);
+        return LayoutViewPath;
+    }
 }

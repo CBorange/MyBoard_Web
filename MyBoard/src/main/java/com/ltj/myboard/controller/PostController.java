@@ -67,7 +67,7 @@ public class PostController extends LayoutControllerBase {
         List<OrderedComment> comments = commentService.findRootCommentInPost(foundPost.get().getId(),
                 PageRequest.of(pageNumber - 1,
                                 MAX_VISIBLE_COMMENT_COUNT_INPAGE,
-                                Sort.by(Sort.Direction.DESC, "createdDay")),
+                                Sort.by(Sort.Direction.ASC, "createdDay")),
                                 totalPageRef);
 
         // 페이지 개수 구하기

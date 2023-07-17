@@ -7,13 +7,36 @@
             <div style="height:100px;"></div>
             <!-- 게시판 표기 -->
             <div class="container">
+                <!--베스트 게시글 표시-->
+                <div class="row">
+                    <div class="col-sm board-col">
+                        <!--게시판 명-->
+                        <a class="board-title" th:href="'/board/best'">
+                            <span th:text="베스트"></span>
+                        </a>
+                        <hr/>
+                        <!--게시글 목록-->
+                        <div class="d-flex flex-column">
+                            <th:block th:each="bestPost : ${bestPosts}">
+                                <a class="post-title" th:href="'/post/' + ${bestPost.getPostData().getId()}">
+                                    <span th:text="${bestPost.getPostData().getTitle()}"></span>
+                                    <th:block th:if="${bestPost.getCommentCount() > 0}">
+                                        <span class="ms-1" th:text="'(' + ${bestPost.getCommentCount()} + ')'"></span>
+                                    </th:block>
+                                </a>
+                            </th:block>
+                        </div>
+                    </div>
+                </div>
                 <!-- 한줄에 게시판을 2개씩 표시하고 게시판 2개 조합을 LeafBundle이라 칭함-->
                 <th:block th:each="curBundle : ${leafBoardBundle}">
                     <div class="row">
                         <th:block th:each="leafBoard : ${curBundle}">
                             <div class="col-sm board-col">
                                 <!--게시판 명-->
-                                <span class="board-title" th:text="${leafBoard.getName()}"></span>
+                                <a class="board-title" th:href="'/board/' + ${leafBoard.getId()}">
+                                    <span th:text="${leafBoard.getName()}"></span>
+                                </a>
                                 <hr/>
                                 <!--게시글 목록-->
                                 <div class="d-flex flex-column">

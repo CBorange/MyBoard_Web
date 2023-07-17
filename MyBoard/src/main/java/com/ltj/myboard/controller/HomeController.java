@@ -3,8 +3,10 @@ import com.ltj.myboard.domain.Board;
 import com.ltj.myboard.dto.post.FilteredPost;
 import com.ltj.myboard.service.BoardService;
 import com.ltj.myboard.service.PostService;
+import com.ltj.myboard.util.Ref;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -48,7 +50,6 @@ public class HomeController extends LayoutControllerBase {
             curBundle.add(leafBoard);
             addCntInCurBundle++;
         }
-
         model.addAttribute("leafBoardBundle", leafBoardBundle);
 
         // Leaf 게시판 별로 Post 데이터 조회하여 Map(boardID is key)으로 반환
@@ -59,11 +60,13 @@ public class HomeController extends LayoutControllerBase {
                 postMap.put(leaf.getId(), result);
             }
         }
-
-        // 베스트 게시판은 별도 쿼리로 데이터 집어넣음
-
-
         model.addAttribute("postMap", postMap);
+
+        // 베스트 게시판 게시글 데이터
+        Ref<Integer> totalPageRef = new Ref<>();
+        List<FilteredPost> bestPosts = postService.findPost_Best("", null, null,
+                PageRequest.of(0, 10), totalPageRef);
+        model.addAttribute("bestPosts", bestPosts);
 
         return LayoutViewPath;
     }

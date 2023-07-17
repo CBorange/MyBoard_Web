@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.HashSet;
 import java.util.List;
 
 @SpringBootTest
@@ -19,7 +18,7 @@ public class BoardServiceTest {
     @Test
     public void 루트_게시판_읽어오기(){
         // when
-        List<Board> rootBoards = boardService.getAllLeafBoards();
+        List<Board> rootBoards = boardService.getAllRootBoards();
 
         // then
         for (Board rootBoard : rootBoards){
