@@ -1,15 +1,19 @@
 package com.ltj.myboard.service;
 
 import com.ltj.myboard.domain.Comment;
+import com.ltj.myboard.domain.UserNotification;
 import com.ltj.myboard.dto.post.OrderedComment;
 import com.ltj.myboard.repository.CommentRepository;
+import com.ltj.myboard.repository.UserNotificationRepository;
 import com.ltj.myboard.util.Ref;
+import com.ltj.myboard.util.UserNotiUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -22,6 +26,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class CommentService {
     private final CommentRepository commentRepository;
+    private final UserNotificationRepository userNotificationRepository;
 
     public Comment findCommentById(int commentId){
         Optional<Comment> foundComment = commentRepository.findById(commentId);
@@ -57,8 +62,10 @@ public class CommentService {
         return commentRepository.countByPostId(postId);
     }
 
-    public Comment insertComment( int postID, Comment parentComment, String writerID, String writerNickname, String content) {
+    @Transactional
+    public Comment insertComment( int postID, String postWriterId, Comment parentComment, String writerID, String writerNickname, String content) {
         try {
+            // 댓글 작성
             Comment newComment = new Comment();
             newComment.setPostId(postID);
             newComment.setParentComment(parentComment);
@@ -69,6 +76,23 @@ public class CommentService {
             newComment.setModifyDay(new Date());
 
             commentRepository.save(newComment);
+
+            // 알림 보내기
+            UserNotification newNoti = new UserNotification();
+            if(parentComment == null){  // 신규 댓글 -> 게시글 작성자 한테 알림 보내기
+                newNoti.setSenderId(writerID);
+                newNoti.setUserId(postWriterId);
+                newNoti.setContent(UserNotiUtil.makeContentForComment(writerID, content));
+            } else{ // 대댓글 -> 원댓글 작성자 한테 알림 보내기
+                newNoti.setSenderId(writerID);
+                newNoti.setUserId(parentComment.getWriterId());
+                newNoti.setContent(UserNotiUtil.makeContentForSubComment(writerID, content));
+            }
+            newNoti.setRead(false);
+            newNoti.setCreatedDay(new Date());
+            newNoti.setModifyDay(new Date());
+            userNotificationRepository.save(newNoti);
+
             return newComment;
         } catch (Exception e){
             String msg = "CommentService : insertComment Error " + e.getMessage();

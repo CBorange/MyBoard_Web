@@ -48,7 +48,8 @@
                     <!--item3 : 유저정보 버튼-->
                     <th:block th:if="${userInfo != null}">
                         <div class="userInfo-link">
-                            <a class="me-2" th:href="'/mypage'">
+                            <a class="me-2" style="position: relative;" th:href="'/mypage/myinfo'">
+                                <!--<span class="nav-counter">10</span>-->
                                 <img src="/img/user.png" style="width: 30px; height :30px;"/>
                                 <span style="color: white;" th:text="${userInfo.getNickname()}"></span>
                             </a>

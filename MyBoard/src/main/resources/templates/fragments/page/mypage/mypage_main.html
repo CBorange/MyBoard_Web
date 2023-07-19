@@ -7,40 +7,76 @@
             <ul class="nav nav-tabs" id="myTab" role="tablist">
                 <!--탭 리스트 정의-->
                 <!--내정보 탭 오픈 버튼-->
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link active" id="myinfo-tab" data-bs-toggle="tab" data-bs-target="#myinfo" type="button" role="tab" aria-controls="myinfo" aria-selected="true">내정보</button>
+                <li class="nav-item">
+                    <th:block th:if="${selectedTab.equals('myinfo')}">
+                        <a th:href="'/mypage/myinfo'" class="nav-link active">내정보</a>
+                    </th:block>
+                    <th:block th:unless="${selectedTab.equals('myinfo')}">
+                        <a th:href="'/mypage/myinfo'" class="nav-link">내정보</a>
+                    </th:block>
                 </li>
                 <!--스크랩 탭 오픈 버튼-->
-                <li>
-                    <button class="nav-link" id="scrap-tab" data-bs-toggle="tab" data-bs-target="#scrap" type="button" role="tab" aria-controls="scrap" aria-selected="true">스크랩</button>
+                <li class="nav-item">
+                    <th:block th:if="${selectedTab.equals('scrap')}">
+                        <a th:href="'/mypage/scrap'" class="nav-link active">스크랩</a>
+                    </th:block>
+                    <th:block th:unless="${selectedTab.equals('scrap')}">
+                        <a th:href="'/mypage/scrap'" class="nav-link">스크랩</a>
+                    </th:block>
+
                 </li>
                 <!--작성글 탭 오픈 버튼-->
-                <li>
-                    <button class="nav-link" id="post-tab" data-bs-toggle="tab" data-bs-target="#post" type="button" role="tab" aria-controls="post" aria-selected="true">작성글</button>
+                <li class="nav-item">
+                    <th:block th:if="${selectedTab.equals('post')}">
+                        <a th:href="'/mypage/post'" class="nav-link active">작성글</a>
+                    </th:block>
+                    <th:block th:unless="${selectedTab.equals('post')}">
+                        <a th:href="'/mypage/post'" class="nav-link">작성글</a>
+                    </th:block>
+
                 </li>
                 <!--작성댓글 탭 오픈 버튼-->
-                <li>
-                    <button class="nav-link" id="comment-tab" data-bs-toggle="tab" data-bs-target="#comment" type="button" role="tab" aria-controls="comment" aria-selected="true">작성댓글</button>
+                <li class="nav-item">
+                    <th:block th:if="${selectedTab.equals('comment')}">
+                        <a th:href="'/mypage/comment'" class="nav-link active">작성댓글</a>
+                    </th:block>
+                    <th:block th:unless="${selectedTab.equals('comment')}">
+                        <a th:href="'/mypage/comment'" class="nav-link">작성댓글</a>
+                    </th:block>
+                </li>
+                <!--내 알림목록 탭 오픈 버튼-->
+                <li class="nav-item">
+                    <th:block th:if="${selectedTab.equals('notification')}">
+                        <a th:href="'/mypage/notification'" class="nav-link active">내 알림목록</a>
+                    </th:block>
+                    <th:block th:unless="${selectedTab.equals('notification')}">
+                        <a th:href="'/mypage/notification'" class="nav-link">내 알림목록</a>
+                    </th:block>
+
                 </li>
             </ul>
             <!--실제 탭 리스트 정의-->
             <div class="tab-content" id="myTabContent">
                 <!--내정보 탭-->
-                <div class="tab-pane fade show active" id="myinfo" role="tabpanel" aria-labelledby="myinfo-tab">
+                <th:block th:if="${selectedTab.equals('myinfo')}">
                     <div th:replace="fragments/page/mypage/myinfo_panel.html :: myinfo_panel"></div>
-                </div>
+                </th:block>
                 <!--스크랩 탭-->
-                <div class="tab-pane fade" id="scrap" role="tabpanel" aria-labelledby="scrap-tab">
+                <th:block th:if="${selectedTab.equals('scrap')}">
                     <label>스크랩</label>
-                </div>
+                </th:block>
                 <!--작성글 탭-->
-                <div class="tab-pane fade" id="post" role="tabpanel" aria-labelledby="post-tab">
+                <th:block th:if="${selectedTab.equals('post')}">
                     <label>작성글</label>
-                </div>
+                </th:block>
                 <!--작성댓글 탭-->
-                <div class="tab-pane fade" id="comment" role="tabpanel" aria-labelledby="comment-tab">
+                <th:block th:if="${selectedTab.equals('comment')}">
                     <label>작성댓글</label>
-                </div>
+                </th:block>
+                <!--알림 탭-->
+                <th:block th:if="${selectedTab.equals('notification')}">
+                    <div th:replace="fragments/page/mypage/myinfo_notification.html :: myinfo_notification"></div>
+                </th:block>
             </div>
         </div>
     </th:block>

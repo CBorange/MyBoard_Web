@@ -33,11 +33,13 @@ function onSubmitComment(rootCommentID, isSubComment) {
     const writeCommentForm = document.querySelector(formID);
 
     const sendData = {
+        postWriterId: writeCommentForm.elements['postWriterID'].value,
         postId: writeCommentForm.elements['postID'].value,
         parentCommentId: rootCommentID,
         writerId: writeCommentForm.elements['writerID'].value,
         writerNickname: writeCommentForm.elements['writerNickname'].value,
         content: writeCommentForm.elements['content'].value,
+        isSubComment: isSubComment,
     };
     const url = makeURL('/comment');
 

@@ -129,6 +129,7 @@
                             <form class="ms-4" onsubmit="return false;" style="display:none;"
                               th:id="'subReplyForm_' + ${comment.getCommentData().getId()}">
                             <div class="d-flex flex-column">
+                                <input type="hidden" name="postWriterID" th:value="${postInfo.getWriterId()}">
                                 <input type="hidden" name="postID" th:value="${postInfo.getId()}">
                                 <input type="hidden" name="parentCommentID" th:value="${comment.getCommentData().getId()}">
                                 <input type="hidden" name="writerID" th:value="${userInfo.getUserId()}">
@@ -190,6 +191,7 @@
                 <th:block th:if="${userInfo != null}">
                     <form id="subReplyForm">
                         <div class="d-flex flex-column">
+                            <input type="hidden" name="postWriterID" th:value="${postInfo.getWriterId()}">
                             <input type="hidden" name="postID" th:value="${postInfo.getId()}">
                             <input type="hidden" name="writerID" th:value="${userInfo.getUserId()}">
                             <input type="hidden" name="writerNickname" th:value="${userInfo.getNickname()}">

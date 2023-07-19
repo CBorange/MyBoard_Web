@@ -22,23 +22,25 @@ public class CommentController {
 
     @PostMapping("/comment")
     public ResponseEntity submitComment(@RequestBody SubmitCommentData submitCommentData){
-        try {
-            Comment foundParentComment;
-            try{
-                foundParentComment = commentService.findCommentById(submitCommentData.getParentCommentId());
-            } catch (IllegalStateException e){
+        Comment foundParentComment;
+        try{
+            foundParentComment = commentService.findCommentById(submitCommentData.getParentCommentId());
+        } catch (IllegalStateException e){
+            if(submitCommentData.isSubComment()){
+                return ResponseEntity.badRequest().body(e.getMessage());
+            } else{
                 foundParentComment = null;
             }
-
-            Comment insertedComment = commentService.insertComment(submitCommentData.getPostId(),
-                    foundParentComment,
-                    submitCommentData.getWriterId(),
-                    submitCommentData.getWriterNickname(),
-                    submitCommentData.getContent());
-
-            return new ResponseEntity<String>(HttpStatus.OK);
-        } catch (IllegalStateException e){
-            return ResponseEntity.badRequest().body(e.getMessage());
         }
+
+        Comment insertedComment = commentService.insertComment(
+                submitCommentData.getPostId(),
+                submitCommentData.getPostWriterId(),
+                foundParentComment,
+                submitCommentData.getWriterId(),
+                submitCommentData.getWriterNickname(),
+                submitCommentData.getContent());
+
+        return new ResponseEntity<String>(HttpStatus.OK);
     }
 }
