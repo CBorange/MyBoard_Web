@@ -1,9 +1,6 @@
 package com.ltj.myboard.controller;
 
-import com.ltj.myboard.domain.Board;
-import com.ltj.myboard.domain.Post;
-import com.ltj.myboard.domain.PostDislikesHistory;
-import com.ltj.myboard.domain.PostLikesHistory;
+import com.ltj.myboard.domain.*;
 import com.ltj.myboard.dto.post.OrderedComment;
 import com.ltj.myboard.dto.post.SubmitPostData;
 import com.ltj.myboard.service.BoardService;
@@ -23,6 +20,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,7 +37,8 @@ public class PostController extends LayoutControllerBase {
 
     @GetMapping("/post/{id}")
     public String getPostPage(Model model, @PathVariable("id") int id,
-                                            @RequestParam(required = false, defaultValue = "1") int pageNumber){
+                                            @RequestParam(required = false, defaultValue = "1") int pageNumber,
+                                            @RequestParam(required = false) Integer focusCommentId){
         addLayoutModel_FragmentContent(model, "post.html", "post");
 
         // Post 정보 Model에 추가
@@ -62,7 +61,52 @@ public class PostController extends LayoutControllerBase {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         });
 
-        // Comment 정보 얻어냄
+        // 포커싱 하려는 댓글(주로 알림 체크에 해당) 있으면 해당 Comment가 존재하는 Page 탐색
+        // Root Comment 에서 해당하는 댓글 있는지 탐색, 있으면 페이지 넘버 변경
+        if(focusCommentId != null){
+            List<Comment> allRootComments = commentService.getAllRootCommentsInPost(id);
+
+            // 모든 Root 댓글 탐색
+            Iterator<Comment> rootIterator = allRootComments.iterator();
+            int searchPage = 1;
+            while(rootIterator.hasNext()){
+                boolean searchExit = false;
+
+                for(int i=0; i < MAX_VISIBLE_COMMENT_COUNT_INPAGE; ++i){
+                    if(rootIterator.hasNext()){
+                        // Root Comment 탐색
+                        Comment searchTarget = rootIterator.next();
+                        if(searchTarget.getId() == focusCommentId.intValue()){
+                            pageNumber = searchPage;
+                            searchExit = true;
+                            break;
+                        }
+
+                        // Root->Sub Comment 탐색
+                        List<Comment> subComments = searchTarget.getChildComments();
+                        if(subComments != null && subComments.stream().count() > 0){
+                            for(Comment searchSubTarget : subComments){
+                                if(searchSubTarget.getId() == focusCommentId.intValue()){
+                                    pageNumber = searchPage;
+                                    searchExit = true;
+                                    break;
+                                }
+                            }
+                            if(searchExit) break;
+                        }
+                    } else{
+                        searchExit = true;
+                        break;
+                    }
+                }
+
+                if(searchExit) break;
+                searchPage++;
+            }
+            model.addAttribute("focustCommentId", focusCommentId.intValue());
+        }
+
+        // 타겟 페이지 Comment 리스트 얻어냄
         Ref<Integer> totalPageRef = new Ref<>();
         List<OrderedComment> comments = commentService.findRootCommentInPost(foundPost.get().getId(),
                 PageRequest.of(pageNumber - 1,

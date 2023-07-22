@@ -104,7 +104,7 @@
 
                         </div>
                         <!--댓글 본문 내용-->
-                        <div class="ms-2">
+                        <div class="ms-2" th:id="${comment.getCommentData().getId()}">
                             <span style="white-space: pre-line" th:text="${comment.getCommentData().getContent()}"></span>
                         </div>
                         <div style="height: 20px;"></div>
@@ -118,7 +118,7 @@
                                     <span class="ms-2 me-2" th:text="${#dates.format(subComment.getCreatedDay(),'yyyy-MM-dd')}"></span>
                                 </div>
                                 <!--대댓글 본문 내용-->
-                                <div class="ms-2">
+                                <div class="ms-2" th:id="${subComment.getId()}">
                                     <span style="white-space: pre-line" th:text="${subComment.getContent()}"></span>
                                 </div>
                             </div>
@@ -205,5 +205,13 @@
                 </th:block>
             </div>
         </div>
+        <script th:inline="javascript">
+            <!--focus Comment 존재하면 해당 댓글 html 태그 찾아서 스크롤-->
+            var focusCommentExist = [[${focustCommentId != null}]];
+            if(focusCommentExist){
+                var focusCommentId = [[${focustCommentId}]];
+                document.getElementById(focusCommentId).scrollIntoView();
+            }
+        </script>
     </th:block>
 </html>

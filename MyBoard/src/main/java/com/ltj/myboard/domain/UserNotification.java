@@ -22,6 +22,12 @@ public class UserNotification {
 
     private String content;
 
+    @Column(name="content_id")
+    private int contentId;
+
+    @Column(name="content_type")
+    private String contentType;
+
     @Column(name = "\"read\"", nullable = false, columnDefinition = "TINYINT(1)")
     private boolean read;
 

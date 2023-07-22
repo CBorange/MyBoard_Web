@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class CommentService {
     private final CommentRepository commentRepository;
-    private final UserNotificationRepository userNotificationRepository;
+    private final UserService userService;
 
     public Comment findCommentById(int commentId){
         Optional<Comment> foundComment = commentRepository.findById(commentId);
@@ -58,6 +58,11 @@ public class CommentService {
         return ret;
     }
 
+    public List<Comment> getAllRootCommentsInPost(int postId){
+        List<Comment> rootComments = commentRepository.findAllByPostIdAndParentCommentIsNull(postId);
+        return rootComments;
+    }
+
     public long getCommentCountByPost(int postId){
         return commentRepository.countByPostId(postId);
     }
@@ -78,20 +83,11 @@ public class CommentService {
             commentRepository.save(newComment);
 
             // 알림 보내기
-            UserNotification newNoti = new UserNotification();
             if(parentComment == null){  // 신규 댓글 -> 게시글 작성자 한테 알림 보내기
-                newNoti.setSenderId(writerID);
-                newNoti.setUserId(postWriterId);
-                newNoti.setContent(UserNotiUtil.makeContentForComment(writerID, content));
+                userService.makeNotificationForComment(writerID, postWriterId, content, newComment.getId());
             } else{ // 대댓글 -> 원댓글 작성자 한테 알림 보내기
-                newNoti.setSenderId(writerID);
-                newNoti.setUserId(parentComment.getWriterId());
-                newNoti.setContent(UserNotiUtil.makeContentForSubComment(writerID, content));
+                userService.makeNotificationForSubComment(writerID, parentComment.getWriterId(), content, newComment.getId());
             }
-            newNoti.setRead(false);
-            newNoti.setCreatedDay(new Date());
-            newNoti.setModifyDay(new Date());
-            userNotificationRepository.save(newNoti);
 
             return newComment;
         } catch (Exception e){
