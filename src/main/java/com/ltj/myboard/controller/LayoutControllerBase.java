@@ -23,12 +23,15 @@ public class LayoutControllerBase {
     @Value("${spring.profiles.active}")
     private String activatedProfile;
 
+    @Value("${server.buildversion}")
+    private String buildVersion;
+
     @Autowired
     private BoardService boardService;
 
     @ModelAttribute("versionInfo")
     public VersionInfo versionInfo(){
-        VersionInfo versionInfo = new VersionInfo(activatedProfile, "");
+        VersionInfo versionInfo = new VersionInfo(activatedProfile, buildVersion);
         return versionInfo;
     }
 

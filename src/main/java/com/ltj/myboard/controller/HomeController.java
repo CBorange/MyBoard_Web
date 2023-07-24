@@ -21,6 +21,12 @@ public class HomeController extends LayoutControllerBase {
     private final BoardService boardService;
     private final PostService postService;
 
+    @GetMapping("/version")
+    public String versionInfoPage(Model model){
+        addLayoutModel_FragmentContent(model, "versioninfo.html", "versioninfo");
+        return LayoutViewPath;
+    }
+
     @GetMapping("/")
     public String home(Model model){
         addLayoutModel_FragmentContent(model,"home.html", "home");

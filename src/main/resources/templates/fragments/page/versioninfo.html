@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<th:block th:fragment="versioninfo">
+    <div class="mx-auto container-lg">
+        <!--상단 여백-->
+        <div style="height:100px;"></div>
+        <!-- 버전정보 표기 -->
+        <h2>
+            접속정보
+        </h2>
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                <th scope="col">구분</th>
+                <th scope="col">내용</th>
+            </tr>
+            </thead>
+            <tbody>
+                <!--아이디-->
+                <tr>
+                    <th scope="row">접속환경</th>
+                    <th><span th:text="${versionInfo.getDeployEnvironment()}"></span></th>
+                </tr>
+                <!--닉네임-->
+                <tr>
+                    <th scope="row">빌드버전</th>
+                    <th><span th:text="${versionInfo.getBuildVersion()}"></span></th>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</th:block>
+</html>
