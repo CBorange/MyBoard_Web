@@ -47,6 +47,9 @@ public class FtpController {
 
     @PostMapping("/userimage")
     public ResponseEntity<UserImageURL> uploadUserImage(@RequestParam MultipartFile upload){
+        log.info("FTPController ftpUserFileAccessUrl: " + ftpUserFileAccessUrl);
+        log.info("FTPController userFilePath: " + userFilePath);
+
         // 1. 파일 UUID Generate
         UUID uuid = UUID.randomUUID();
         String uuidAsString = uuid.toString();
