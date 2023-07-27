@@ -52,7 +52,7 @@ public class MyPageController extends LayoutControllerBase{
         if(pageCount == 0)
             pageCount = 1;
         if(pageNumber > pageCount)
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, pageNumber + " page is out of bound");
+            throw new IllegalArgumentException(pageNumber + " page is out of bound");
 
         // 모델 추가
         model.addAttribute("notifications", notis);

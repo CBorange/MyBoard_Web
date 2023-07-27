@@ -10,10 +10,13 @@ function onSubmitChange(){
     const resultArea = document.querySelector('#resultArea');
     const resultMsg = document.querySelector('#resultMsg');
 
-    var tokenInfo = getCSRFToken();
     var headers = new Headers();
     headers.append('Content-Type', 'application/json');
-    headers.append(tokenInfo.header, tokenInfo.token);
+
+    var tokenInfo = getCSRFToken();
+    if(tokenInfo != null){
+        headers.append(tokenInfo.header, tokenInfo.token);
+    }
 
     const url = makeURL('/changepassword');
     fetch(url, {
@@ -24,7 +27,10 @@ function onSubmitChange(){
     .then((response) => {
         console.log('onSubmitChange POST API 전송결과 : ', response);
         resultMsg.style.color = "green";
-        if(response.status == 400){
+        if(response.ok){
+            resultArea.style.visibility = "visible";
+            resultMsg.innerText = msg;
+        }else{
             response.text().then(errorMsg => {
                 msg = errorMsg;
                 resultMsg.style.color = "red";
@@ -33,9 +39,6 @@ function onSubmitChange(){
                 resultArea.style.visibility = "visible";
                 resultMsg.innerText = msg;
             })
-        }else{
-            resultArea.style.visibility = "visible";
-            resultMsg.innerText = msg;
         }
     })
     .catch((error) => {

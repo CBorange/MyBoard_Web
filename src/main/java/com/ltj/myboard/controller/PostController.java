@@ -20,6 +20,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -42,24 +43,16 @@ public class PostController extends LayoutControllerBase {
         addLayoutModel_FragmentContent(model, "post.html", "post");
 
         // Post 정보 Model에 추가
-        Optional<Post> foundPost = postService.findPostByID(id);
-        foundPost.ifPresentOrElse((post) -> {
-            model.addAttribute("postInfo", foundPost.get());
-        }, () -> {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
-        });
+        Post foundPost = postService.findPostByID(id);
+        model.addAttribute("postInfo", foundPost);
 
         // 추천/비추천 개수
-        model.addAttribute("likesCount", foundPost.get().getLikesHistories().stream().count());
-        model.addAttribute("dislikesCount", foundPost.get().getDislikesHistories().stream().count());
+        model.addAttribute("likesCount", foundPost.getLikesHistories().stream().count());
+        model.addAttribute("dislikesCount", foundPost.getDislikesHistories().stream().count());
 
         // Board 정보 Model에 추가
-        Optional<Board> foundBoard = boardService.findBoardByID(foundPost.get().getBoardId());
-        foundBoard.ifPresentOrElse((board) -> {
-            model.addAttribute("boardInfo", foundBoard.get());
-        }, () -> {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
-        });
+        Board foundBoard = boardService.findBoardByID(foundPost.getBoardId());
+        model.addAttribute("boardInfo", foundBoard);
 
         // 포커싱 하려는 댓글(주로 알림 체크에 해당) 있으면 해당 Comment가 존재하는 Page 탐색
         // Root Comment 에서 해당하는 댓글 있는지 탐색, 있으면 페이지 넘버 변경
@@ -108,7 +101,7 @@ public class PostController extends LayoutControllerBase {
 
         // 타겟 페이지 Comment 리스트 얻어냄
         Ref<Integer> totalPageRef = new Ref<>();
-        List<OrderedComment> comments = commentService.findRootCommentInPost(foundPost.get().getId(),
+        List<OrderedComment> comments = commentService.findRootCommentInPost(foundPost.getId(),
                 PageRequest.of(pageNumber - 1,
                                 MAX_VISIBLE_COMMENT_COUNT_INPAGE,
                                 Sort.by(Sort.Direction.ASC, "createdDay")),
@@ -120,7 +113,7 @@ public class PostController extends LayoutControllerBase {
         if(pageCount == 0)
             pageCount = 1;
         if(pageNumber > pageCount)
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, pageNumber + " page is out of bound");
+            throw new IllegalArgumentException(pageNumber + " page is out of bound");
 
         // 현재 페이지의 세션 구하기
         int curSession = Paginator.getCurSessionByCurPage(pageNumber, MAX_VISIBLE_PAGE_COUNT_INSESSION);
@@ -141,31 +134,19 @@ public class PostController extends LayoutControllerBase {
     }
 
     @PostMapping("/post")
-    public ResponseEntity submitPost(@RequestBody SubmitPostData submitPostData) {
-        try {
-            Post insertedPost = postService.submitPostProcess(submitPostData);
-            String redirectURL = String.format("/post/%d", insertedPost.getId());
+    public ResponseEntity submitPost(@RequestBody SubmitPostData submitPostData) throws IOException {
+        Post insertedPost = postService.submitPostProcess(submitPostData);
+        String redirectURL = String.format("/post/%d", insertedPost.getId());
 
-            HttpHeaders headers = new HttpHeaders();
-            headers.add("Location", redirectURL);
-            return new ResponseEntity<String>(headers, HttpStatus.SEE_OTHER);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            e.printStackTrace();
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
-        }
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Location", redirectURL);
+        return new ResponseEntity<String>(headers, HttpStatus.SEE_OTHER);
     }
 
     @DeleteMapping("/post/{id}")
     public ResponseEntity deletePost(@PathVariable("id") int id){
-        try{
-            int deleteCount = postService.deletePostProcess(id);
-            return new ResponseEntity(deleteCount, HttpStatus.OK);
-        } catch (Exception e){
-            log.error(e.getMessage());
-            e.printStackTrace();
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
-        }
+        postService.deletePostProcess(id);
+        return new ResponseEntity(HttpStatus.OK);
     }
 
     @GetMapping("/writepostform/{id}")
@@ -174,12 +155,8 @@ public class PostController extends LayoutControllerBase {
         addLayoutModel_FragmentContent(model, "writepostform.html", "writepostform");
 
         // Board 정보 Model에 추가
-        Optional<Board> foundBoard = boardService.findBoardByID(boardID);
-        foundBoard.ifPresentOrElse((board) -> {
-            model.addAttribute("boardInfo", foundBoard.get());
-        }, () -> {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
-        });
+        Board foundBoard = boardService.findBoardByID(boardID);
+        model.addAttribute("boardInfo", foundBoard);
 
         // id로 수정인지 신규 글쓰기인지 판단, id가 0보다 작은 값이면 신규 글쓰기
         // id가 0보다 크다면 기존 게시글 수정으로 처리
@@ -195,12 +172,8 @@ public class PostController extends LayoutControllerBase {
             model.addAttribute("editMode", "modify");
 
             // post 정보 get
-            Optional<Post> foundPost = postService.findPostByID(id);
-            foundPost.ifPresentOrElse((post) -> {
-                model.addAttribute("postInfo", foundPost.get());
-            }, () -> {
-                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
-            });
+            Post foundPost = postService.findPostByID(id);
+            model.addAttribute("postInfo", foundPost);
         }
 
         return LayoutViewPath;
@@ -208,41 +181,25 @@ public class PostController extends LayoutControllerBase {
 
     @PostMapping("/post/{id}/like")
     public ResponseEntity applyLikePost(@PathVariable("id") int id, @RequestParam("userId") String userId){
-        try{
-            PostLikesHistory history = postService.applyLikePost(id, userId);
-            return new ResponseEntity(history, HttpStatus.OK);
-        }catch (IllegalStateException e){
-            return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
+        PostLikesHistory history = postService.applyLikePost(id, userId);
+        return new ResponseEntity(history, HttpStatus.OK);
     }
 
     @DeleteMapping("/post/{id}/like")
     public ResponseEntity deleteLikePost(@PathVariable("id") int id, @RequestParam("userId") String userId){
-        try{
-            int ret = postService.deleteLikePost(id, userId);
-            return new ResponseEntity(ret, HttpStatus.NO_CONTENT);
-        }catch (IllegalStateException e){
-            return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
+        int ret = postService.deleteLikePost(id, userId);
+        return new ResponseEntity(ret, HttpStatus.NO_CONTENT);
     }
 
     @PostMapping("/post/{id}/dislike")
     public ResponseEntity applyDislikePost(@PathVariable("id") int id, @RequestParam("userId") String userId){
-        try{
-            PostDislikesHistory history = postService.applyDislikePost(id, userId);
-            return new ResponseEntity(history, HttpStatus.OK);
-        } catch (IllegalStateException e){
-            return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
+        PostDislikesHistory history = postService.applyDislikePost(id, userId);
+        return new ResponseEntity(history, HttpStatus.OK);
     }
 
     @DeleteMapping("/post/{id}/dislike")
     public ResponseEntity deleteDislikePost(@PathVariable("id") int id, @RequestParam("userId") String userId){
-        try{
-            int ret = postService.deleteDislikePost(id, userId);
-            return new ResponseEntity(ret, HttpStatus.NO_CONTENT);
-        } catch (IllegalStateException e){
-            return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
+        int ret = postService.deleteDislikePost(id, userId);
+        return new ResponseEntity(ret, HttpStatus.NO_CONTENT);
     }
 }

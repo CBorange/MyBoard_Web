@@ -45,7 +45,7 @@ public class Board {
     @JoinColumn(name = "parent_board_id", referencedColumnName = "id", nullable = true)
     private Board parentBoard = null;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "parentBoard")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "parentBoard", cascade = CascadeType.REMOVE)
     @OrderBy("sort_order")
     private List<Board> childBoards;
 }

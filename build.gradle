@@ -23,13 +23,14 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.boot:spring-boot-starter-aop:3.1.2'
 	implementation 'io.jsonwebtoken:jjwt:0.9.1'
 	// log사용을 위해 lombok 다운, lombok은 각종 편의성 annotation(생성자 자동 생성, getter/setter 자동생성 등)을 제공하고
 	// 추가로 slf4j와 함께 logback을 설치하여 로그 기능을 사용할 수 있도록 해준다.
 	implementation ('org.projectlombok:lombok:1.18.24')
 
 	// lombok annotation이 컴파일 단계에서 인식되도록 설정한다 ex) lombok annotation 으로 getter를 만들면 다른 객체에서 getter를 호출할 때 ide에서
-	// 인식하고 오류로 인식하지 않는다.
+	// 인식하여 오류로 취급하지 않는다.
 	annotationProcessor('org.projectlombok:lombok')
 
 	runtimeOnly 'mysql:mysql-connector-java'

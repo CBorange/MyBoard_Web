@@ -43,10 +43,13 @@ function onSubmitComment(rootCommentID, isSubComment) {
     };
     const url = makeURL('/comment');
 
-    var tokenInfo = getCSRFToken();
     var headers = new Headers();
     headers.append('Content-Type', 'application/json');
-    headers.append(tokenInfo.header, tokenInfo.token);
+
+    var tokenInfo = getCSRFToken();
+    if(tokenInfo != null){
+        headers.append(tokenInfo.header, tokenInfo.token);
+    }
 
     fetch(url, {
         method: 'POST',
@@ -65,9 +68,11 @@ function onSubmitComment(rootCommentID, isSubComment) {
 
 // 게시글 삭제 request 전송
 function onClickDeletePost(boardID, postID) {
-    var tokenInfo = getCSRFToken();
     var headers = new Headers();
-    headers.append(tokenInfo.header, tokenInfo.token);
+    var tokenInfo = getCSRFToken();
+    if(tokenInfo != null){
+        headers.append(tokenInfo.header, tokenInfo.token);
+    }
 
     const url = makeURL('/post/' + postID);
     fetch(url, {
@@ -75,9 +80,11 @@ function onClickDeletePost(boardID, postID) {
         headers: headers,
     })
     .then((response) => {
-        console.log('onClickDeletePost 성공 : ', response);
-        // 게시판으로 redirect
-        window.location.href = "/board/" + boardID;
+        if(response.ok){
+            console.log('onClickDeletePost 성공 : ', response);
+            // 게시판으로 redirect
+            window.location.href = "/board/" + boardID;
+        }
     })
     .catch((error) => {
         console.log('onClickDeletePost 실패 : ', error);
@@ -91,10 +98,13 @@ function onClickLike(postId, userId){
         return;
     }
 
-    var tokenInfo = getCSRFToken();
     var headers = new Headers();
     headers.append('Content-Type', 'application/x-www-form-urlencoded');
-    headers.append(tokenInfo.header, tokenInfo.token);
+
+    var tokenInfo = getCSRFToken();
+    if(tokenInfo != null){
+        headers.append(tokenInfo.header, tokenInfo.token);
+    }
 
     const url = makeURL('/post/' + postId + '/like');
     fetch(url,{
@@ -103,18 +113,29 @@ function onClickLike(postId, userId){
         body: 'userId=' + userId
     })
     .then((response) => {
-        if(response.status == 400){
+        if(!response.ok){
             response.text()
                 .then((text) => {
                     alert(text);
                 })
         }
+
         // refresh
         window.location.reload();
     })
     .catch((error) => {
         console.log('onClickLike 실패 : ', error);
+
+        response.text()
+            .then((text) => {
+                alert(text);
+            })
+
+        // refresh
+        window.location.reload();
     })
+
+
 }
 
 // 게시글 비추천 request 전송
@@ -124,10 +145,13 @@ function onClickDislike(postId, userId){
         return;
     }
 
-    var tokenInfo = getCSRFToken();
     var headers = new Headers();
     headers.append('Content-Type', 'application/x-www-form-urlencoded');
-    headers.append(tokenInfo.header, tokenInfo.token);
+
+    var tokenInfo = getCSRFToken();
+    if(tokenInfo != null){
+        headers.append(tokenInfo.header, tokenInfo.token);
+    }
 
     const url = makeURL('/post/' + postId + '/dislike');
     fetch(url,{
@@ -136,7 +160,7 @@ function onClickDislike(postId, userId){
         body: 'userId=' + userId
     })
     .then((response) => {
-        if(response.status == 400){
+        if(!response.ok){
             response.text()
                 .then((text) => {
                     alert(text);

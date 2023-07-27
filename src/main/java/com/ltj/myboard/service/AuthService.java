@@ -19,6 +19,8 @@ import org.springframework.stereotype.Service;
 import javax.swing.text.html.Option;
 
 import java.util.Date;
+import java.util.MissingResourceException;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import static org.apache.logging.log4j.ThreadContext.isEmpty;
@@ -33,7 +35,12 @@ public class AuthService {
 
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
-    // 토큰 생성
+
+    /**
+     * 토큰 생성
+     * @deprecated JWT Token 인증 사용안함
+     */
+    @Deprecated
     public TokenResponseDTO generateAccessToken(AuthDTO req){
         // AuthenticationManager를 실행하면 ProviderManager에서 등록된 AuthenticationProvider 중
         // 인증처리가 가능한 AuthenticationProvider로 인증을 진행하고 Authentication 객체를 반환해준다.
@@ -53,17 +60,21 @@ public class AuthService {
         return token;
     }
 
-    // 유효한 사용자 인지 검사한다(DB에 등록된 사용자가 맞는지 로그인 해봄)
-    public Optional<User> validateUser(String userId, String userPassword){
+    /**
+     * 유효한 사용자 인지 검사한다.<br/>
+     * DB에 조회해보고 Password가 일치하는지 대조한다
+     * @return 유효한 로그인 이라면 유저정보 반환, 아니면 null 반환
+     * */
+    public User validateUser(String userId, String userPassword){
         Optional<User> foundUser = userRepository.findById(userId);
         if(foundUser.isEmpty())
-            return foundUser;   // null
+            return null;
 
         User user = foundUser.get();
         if(passwordEncoder.matches(userPassword, user.getPassword()))
-            return foundUser;
+            return user;
         else
-            return Optional.empty();
+            return null;
     }
 
     public User registerUser(AuthDTO request) {
@@ -75,7 +86,12 @@ public class AuthService {
         newUser.setRegisterDay(new Date());
 
         // 회원가입 시 기본 등급은 유저
-        UserGrade defaultGrade = userGradeRepository.findByGrade(UserGradeLevel.User.getValue()).orElseThrow();
+        UserGrade defaultGrade = userGradeRepository.findByGrade(UserGradeLevel.User.getValue()).orElseThrow(
+            () -> {
+                String msg = String.format("registUser 오류발생, 유저 등급 값[%d]에 해당하는 유저 등급 데이터가 존재하지 않음",
+                        UserGradeLevel.User.getValue());
+                throw new NoSuchElementException(msg);
+            });
         newUser.setUserGrade(defaultGrade);
         userRepository.save(newUser);
 
@@ -83,8 +99,17 @@ public class AuthService {
     }
 
     public User changePassword(AuthDTO request) {
-        User existUser = validateUser(request.getUserID(), request.getPassword())
-                .orElseThrow(() -> new IllegalStateException(""));
+        User existUser = validateUser(request.getUserID(), request.getPassword());
+        if(existUser == null){
+            // 로깅용 msg
+            String logMsg = String.format("유저 ID[%s], 비밀번호[%s]에 해당하는 유저를 찾을 수 없음, 비밀번호 변경 실패",
+                    request.getUserID(), request.getPassword());
+            log.info(logMsg);
+
+            // Exception Throw 용 msg
+            String exceptionMsg = String.format("[%s]의 비밀번호가 틀렸습니다.", request.getUserID());
+            throw new NoSuchElementException(exceptionMsg);
+        }
         existUser.setPassword(passwordEncoder.encode(request.getAfterPassword()));
 
         userRepository.save(existUser);

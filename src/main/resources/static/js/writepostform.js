@@ -10,10 +10,14 @@ let loadedContentImages = new Array();
 function init(editMode, content){
     this.editMode = editMode;
 
+    var headers = {};
+
     var tokenInfo = getCSRFToken();
-    const headers = {
-        [tokenInfo.header]: tokenInfo.token,
-    };
+    if(tokenInfo != null){
+        headers = {
+            [tokenInfo.header]: tokenInfo.token,
+        };
+    }
 
     // ClassicEditor 기본 설정
     ClassicEditor
@@ -178,10 +182,13 @@ function onSubmitPost(submitState) {
 
     const url = makeURL('/post');
 
-    var tokenInfo = getCSRFToken();
     var headers = new Headers();
     headers.append('Content-Type', 'application/json');
-    headers.append(tokenInfo.header, tokenInfo.token);
+
+    var tokenInfo = getCSRFToken();
+    if(tokenInfo != null){
+        headers.append(tokenInfo.header, tokenInfo.token);
+    }
 
     fetch(url, {
         method: 'POST',
@@ -203,9 +210,12 @@ function onSubmitPost(submitState) {
 function sendFTPDeleteImage(targetImageFileName){
     const url = makeURL('/ftp/userimage/' + targetImageFileName);
 
-    var tokenInfo = getCSRFToken();
     var headers = new Headers();
-    headers.append(tokenInfo.header, tokenInfo.token);
+
+    var tokenInfo = getCSRFToken();
+    if(tokenInfo != null){
+        headers.append(tokenInfo.header, tokenInfo.token);
+    }
 
     fetch(url, {
         method: 'DELETE',

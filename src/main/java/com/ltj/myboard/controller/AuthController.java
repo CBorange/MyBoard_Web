@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -31,7 +32,7 @@ public class AuthController extends LayoutControllerBase {
 
     // 로그인 페이지 반환, login post api는 spring security form login 자체적으로 제공한다.
     @GetMapping("/login")
-    public String loginPage(HttpServletRequest request, Model model) {
+    public String loginPage(Model model, HttpServletRequest request) {
         // 로그인 페이지 이동 전 마지막 페이지 caching
         String referrer = request.getHeader("Referer");
         request.getSession().setAttribute("prevPage", referrer);
@@ -88,45 +89,20 @@ public class AuthController extends LayoutControllerBase {
     @PostMapping("/register")
     @ResponseBody
     public ResponseEntity register(@RequestBody AuthDTO request){
-        try
-        {
-            User newUser = authService.registerUser(request);
-
-            return new ResponseEntity<User>(newUser, HttpStatus.CREATED);
-        }catch (Exception e){
-            log.error(e.getMessage());
-            e.printStackTrace();
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
-        }
+        User newUser = authService.registerUser(request);
+        return new ResponseEntity<User>(newUser, HttpStatus.CREATED);
     }
 
     // 비밀번호 변경 기능 실행
     @PostMapping("/changepassword")
     public ResponseEntity changePassword(@RequestBody AuthDTO request){
-        try
-        {
-            if(request.getPassword().equals(request.getAfterPassword())){
-                String msg = "현재 비밀번호와 변경 후 비밀번호가 동일합니다.";
-                log.info(msg);
-
-                return ResponseEntity.badRequest().body(msg);
-            }
-            User changedUser = authService.changePassword(request);
-            return new ResponseEntity<User>(changedUser, HttpStatus.OK);
-        }catch (IllegalStateException e){
-            String msg = "아이디 또는 비밀번호가 일치하지 않습니다.";
+        if(request.getPassword().equals(request.getAfterPassword())){
+            String msg = "현재 비밀번호와 변경 후 비밀번호가 동일합니다.";
             log.info(msg);
-            return ResponseEntity.badRequest().body(msg);
-        }catch (Exception e){
-            log.error(e.getMessage());
-            e.printStackTrace();
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
-        }
-    }
 
-    // test
-    @PostMapping("/apitest")
-    public ResponseEntity sslTest(){
-        return ResponseEntity.ok().body("success");
+            throw new IllegalArgumentException(msg);
+        }
+        User changedUser = authService.changePassword(request);
+        return new ResponseEntity<User>(changedUser, HttpStatus.OK);
     }
 }

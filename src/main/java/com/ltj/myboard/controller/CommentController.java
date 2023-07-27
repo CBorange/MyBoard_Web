@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.sql.SQLException;
+import java.util.NoSuchElementException;
 
 @Controller
 @RequiredArgsConstructor
@@ -25,9 +26,9 @@ public class CommentController {
         Comment foundParentComment;
         try{
             foundParentComment = commentService.findCommentById(submitCommentData.getParentCommentId());
-        } catch (IllegalStateException e){
+        } catch (NoSuchElementException e){
             if(submitCommentData.isSubComment()){
-                return ResponseEntity.badRequest().body(e.getMessage());
+                throw new NoSuchElementException(e.getMessage());
             } else{
                 foundParentComment = null;
             }

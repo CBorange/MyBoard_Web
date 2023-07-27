@@ -3,13 +3,18 @@ import com.ltj.myboard.domain.Board;
 import com.ltj.myboard.dto.post.FilteredPost;
 import com.ltj.myboard.service.BoardService;
 import com.ltj.myboard.service.PostService;
+import com.ltj.myboard.service.TestService;
 import com.ltj.myboard.util.Ref;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.*;
 
@@ -18,6 +23,7 @@ import java.util.*;
 @Slf4j
 public class HomeController extends LayoutControllerBase {
 
+    private final TestService testService;
     private final BoardService boardService;
     private final PostService postService;
 
@@ -76,6 +82,18 @@ public class HomeController extends LayoutControllerBase {
 
         return LayoutViewPath;
     }
+
+/*    @GetMapping("/test")
+    public ResponseEntity test(){
+        testService.DoTest();
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/test")
+    public ResponseEntity test2(){
+        return ResponseEntity.badRequest().body("Test2 Error");
+        //throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Test2 Error");
+    }*/
 
     @GetMapping("/invalid")
     public String invalideSessionPage(Model model) {

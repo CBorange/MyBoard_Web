@@ -7,7 +7,7 @@
         <script src="/js/bootstrap/bootstrap.bundle.js"></script>
 
         <!--CSRF token, User 로그인시에 meta 데이터에 포함합니다.-->
-        <th:block th:if="${userInfo != null}">
+        <th:block th:if="${userInfo != null && _csrf != null}">
             <meta name="_csrf" th:content="${_csrf.token}">
             <meta name="_csrf_header" th:content="${_csrf.headerName}">
         </th:block>

@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -41,7 +42,7 @@ public class UserService implements UserDetailsService {
 
     public UserNotification getNotificationById(int notificationId){
         UserNotification found = userNotificationRepository.findById(notificationId).orElseThrow(() -> {
-            throw new IllegalStateException("cannot find " + notificationId + "Notification");
+            throw new NoSuchElementException("cannot find " + notificationId + "Notification");
         });
 
         return found;
@@ -59,6 +60,9 @@ public class UserService implements UserDetailsService {
     }
 
     public UserNotification makeNotificationForComment(String senderId, String senderNickname, String userId, String content, int contentId){
+        if(senderId.equals(userId)){
+            return null;    // 알림을 발생시킨 유저와 알림을 받는 유저가 동일하면 알림을 생성하지 않는다.
+        }
         UserNotification newNoti = new UserNotification();
         newNoti.setSenderId(senderId);
         newNoti.setSenderNickname(senderNickname);
@@ -74,6 +78,9 @@ public class UserService implements UserDetailsService {
     }
 
     public UserNotification makeNotificationForSubComment(String senderId, String senderNickname, String userId, String content, int contentId){
+        if(senderId.equals(userId)){
+            return null;    // 알림을 발생시킨 유저와 알림을 받는 유저가 동일하면 알림을 생성하지 않는다.
+        }
         UserNotification newNoti = new UserNotification();
         newNoti.setSenderId(senderId);
         newNoti.setSenderNickname(senderNickname);
@@ -89,6 +96,9 @@ public class UserService implements UserDetailsService {
     }
 
     public UserNotification makeNotificationForLike(String senderId, String senderNickname, String userId, String content, int contentId){
+        if(senderId.equals(userId)){
+            return null;    // 알림을 발생시킨 유저와 알림을 받는 유저가 동일하면 알림을 생성하지 않는다.
+        }
         UserNotification newNoti = new UserNotification();
         newNoti.setSenderId(senderId);
         newNoti.setSenderNickname(senderNickname);
@@ -104,6 +114,9 @@ public class UserService implements UserDetailsService {
     }
 
     public UserNotification makeNotificationForDisLike(String senderId, String senderNickname, String userId, String content, int contentId){
+        if(senderId.equals(userId)){
+            return null;    // 알림을 발생시킨 유저와 알림을 받는 유저가 동일하면 알림을 생성하지 않는다.
+        }
         UserNotification newNoti = new UserNotification();
         newNoti.setSenderId(senderId);
         newNoti.setSenderNickname(senderNickname);
@@ -121,7 +134,9 @@ public class UserService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User found = userRepository.findById(username)
-                .orElseThrow(() -> new UsernameNotFoundException("등록되지 않은 사용자 입니다."));
+                .orElseThrow(() -> {
+                    throw new UsernameNotFoundException("등록되지 않은 사용자 입니다.");
+                });
         return new UserDetailsImpl(found);
     }
 }

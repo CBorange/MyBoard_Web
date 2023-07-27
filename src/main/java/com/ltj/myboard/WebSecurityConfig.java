@@ -77,6 +77,7 @@ public class WebSecurityConfig {
         http.formLogin((form) -> form
                     .loginPage("/login")
                     .successHandler(myAuthenticationSuccessHandler)
+                    .failureHandler(myAuthenticationFailureHandler)
                     .permitAll()
                 )
                 .logout((logout) -> logout
@@ -97,6 +98,10 @@ public class WebSecurityConfig {
                 .maximumSessions(1)// 최대 세션 수
                 .maxSessionsPreventsLogin(true); // 다중 로그인 허용여부(max Session 넘어서 로그인 하면 튕겨내는지)
                 //.expiredUrl("/expired");
+
+        // test
+        http.csrf().disable();
+
         return http.build();
     }
 

@@ -41,7 +41,7 @@ public class PostServiceTest {
     @Test
     public void 게시글조회(){
         int postId = 167;
-        Post foundPost =  postService.findPostByID(postId).orElseThrow();
+        Post foundPost =  postService.findPostByID(postId);
 
         long cnt = foundPost.getComments().stream().count();
     }

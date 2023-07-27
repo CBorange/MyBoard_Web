@@ -33,20 +33,15 @@ public class FtpController {
         value = "/userimage",
         produces = MediaType.IMAGE_JPEG_VALUE
     )
-    public ResponseEntity<byte[]> getUserImage(@RequestParam(value = "filename") String fileName){
-        try{
-            log.info("try getUserImage.filename : " + fileName);
-            byte[] data = ftpService.getFile(userFilePath, fileName);
-            log.info("file size : " + data.length);
-            return new ResponseEntity<byte[]>(data, HttpStatus.OK);
-        }catch (Exception e){
-            log.error("FtpController getUserImage 오류발생 : " + e.getMessage());
-            return new ResponseEntity<byte[]>(new byte[]{}, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ResponseEntity<byte[]> getUserImage(@RequestParam(value = "filename") String fileName) throws IOException {
+        log.info("try getUserImage.filename : " + fileName);
+        byte[] data = ftpService.getFile(userFilePath, fileName);
+        log.info("file size : " + data.length);
+        return new ResponseEntity<byte[]>(data, HttpStatus.OK);
     }
 
     @PostMapping("/userimage")
-    public ResponseEntity<UserImageURL> uploadUserImage(@RequestParam MultipartFile upload){
+    public ResponseEntity<UserImageURL> uploadUserImage(@RequestParam MultipartFile upload) throws IOException {
         log.info("FTPController ftpUserFileAccessUrl: " + ftpUserFileAccessUrl);
         log.info("FTPController userFilePath: " + userFilePath);
 
@@ -57,12 +52,12 @@ public class FtpController {
         // 2. 파일 byte Get
         byte[] bytes = null;
         try{
-
              bytes = upload.getBytes();
             log.info("FTPController 업로드 이미지 byte 크기: " + bytes.length);
         } catch (IOException e){
-            log.error("UserFile Upload Failed: " + upload.getName());
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+            String msg = String.format("Sended UserFile Byte Data get failed: %s, error msg : %s", upload.getName(), e.getMessage());
+            log.error(msg);
+            throw new IllegalStateException(msg);
         }
 
         // 3. FTP 업로드
@@ -72,12 +67,7 @@ public class FtpController {
         log.info("FTPController 업로드 이미지 fullFileName: " + fullFileName);
         log.info("FTPController 업로드 이미지 fileExtension: " + fileExtension);
         log.info("FTPController 업로드 이미지 uploadFileName: " + uploadFileName);
-        try{
-            ftpService.uploadFile(userFilePath, uploadFileName, bytes);
-        } catch (Exception e){
-            log.error("FtpController uploadUserImage 오류발생 : " + e.getMessage());
-            return new ResponseEntity<UserImageURL>(new UserImageURL(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        ftpService.uploadFile(userFilePath, uploadFileName, bytes);
 
         // 4. 업로드 경로 반환
         UserImageURL userImageURL = new UserImageURL();
@@ -89,15 +79,9 @@ public class FtpController {
     }
 
     @DeleteMapping("/userimage/{fileName}")
-    public ResponseEntity deleteUserImage(@PathVariable("fileName") String fileName){
+    public ResponseEntity deleteUserImage(@PathVariable("fileName") String fileName) throws IOException {
         // FTP 파일 제거
-        try{
-            ftpService.deleteFile(userFilePath, fileName);
-        } catch (Exception e){
-            log.error("FtpController deleteUserImage 오류발생 : " + e.getMessage());
-            return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-
+        ftpService.deleteFile(userFilePath, fileName);
         return new ResponseEntity(HttpStatus.OK);
     }
 }

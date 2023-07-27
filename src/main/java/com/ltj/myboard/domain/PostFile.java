@@ -14,7 +14,7 @@ public class PostFile {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name="post_id")
+    @Column(name="post_id", nullable = false)
     private int postId;
 
     @Column(name="file_id")

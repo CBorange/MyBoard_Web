@@ -7,10 +7,12 @@ import com.ltj.myboard.util.Paginator;
 import com.ltj.myboard.util.Ref;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.MethodParameter;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -39,10 +41,8 @@ public class BoardController extends LayoutControllerBase {
         log.info("board request");
 
         // Board 정보 Model에 추가
-        Optional<Board> foundBoard = boardService.findBoardByID(id);
-        foundBoard.ifPresent((board) -> {
-            model.addAttribute("boardInfo", foundBoard.get());
-        });
+        Board foundBoard = boardService.findBoardByID(id);
+        model.addAttribute("boardInfo", foundBoard);
 
         // 검색조건 처리
         String searchConditions[] = {null, null, null}; // title, content, nickname 순
@@ -61,7 +61,7 @@ public class BoardController extends LayoutControllerBase {
         if(pageCount == 0)
             pageCount = 1;
         if(pageNumber > pageCount)
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, pageNumber + " page is out of bound");
+            throw new IllegalArgumentException(pageNumber + " page is out of bound");
 
         // 현재 페이지의 세션 구하기
         int curSession = Paginator.getCurSessionByCurPage(pageNumber, MAX_VISIBLE_PAGE_COUNT_INSESSION);
@@ -106,7 +106,7 @@ public class BoardController extends LayoutControllerBase {
         if(pageCount == 0)
             pageCount = 1;
         if(pageNumber > pageCount)
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, pageNumber + " page is out of bound");
+            throw new IllegalArgumentException(pageNumber + " page is out of bound");
 
         // 현재 페이지의 세션 구하기
         int curSession = Paginator.getCurSessionByCurPage(pageNumber, MAX_VISIBLE_PAGE_COUNT_INSESSION);

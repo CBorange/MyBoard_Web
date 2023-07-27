@@ -6,10 +6,7 @@ import com.ltj.myboard.dto.post.ApplyLikeData;
 import com.ltj.myboard.dto.post.FilteredPost;
 import com.ltj.myboard.dto.post.PostFileDelta;
 import com.ltj.myboard.dto.post.SubmitPostData;
-import com.ltj.myboard.repository.PostDislikesHistoryRepository;
-import com.ltj.myboard.repository.PostFileRepository;
-import com.ltj.myboard.repository.PostLikesHistoryRepository;
-import com.ltj.myboard.repository.PostRepository;
+import com.ltj.myboard.repository.*;
 import com.ltj.myboard.util.Ref;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,10 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -37,6 +31,7 @@ public class PostService{
     private final FtpService ftpService;
 
     private final PostRepository postRepository;
+    private final CommentRepository commentRepository;
     private final PostLikesHistoryRepository postLikesHistoryRepository;
     private final PostDislikesHistoryRepository postDislikesHistoryRepository;
 
@@ -44,8 +39,14 @@ public class PostService{
 
     private final UserService userService;
 
-    public Optional<Post> findPostByID(int postID) {
-        return postRepository.findById(postID);
+    public Post findPostByID(int postID) {
+        return postRepository.findById(postID).orElseThrow(
+            () -> {
+                String msg = String.format("Post Id [%d]에 해당하는 Post 데이터를 찾을 수 없습니다.", postID);
+                log.info(msg);
+                throw new NoSuchElementException(msg);
+            }
+        );
     }
 
     public long getLikesCount(int postId){
@@ -158,42 +159,30 @@ public class PostService{
     }
 
     private Post insertPost(String title, String content, int boardID, String writerID, String writerNickname) {
-        try{
-            Post newPost = new Post();
-            newPost.setTitle(title);
-            newPost.setContent(content);
-            newPost.setBoardId(boardID);
-            newPost.setWriterId(writerID);
-            newPost.setWriterNickname(writerNickname);
-            newPost.setCreatedDay(new Date());
-            newPost.setModifyDay(new Date());
+        Post newPost = new Post();
+        newPost.setTitle(title);
+        newPost.setContent(content);
+        newPost.setBoardId(boardID);
+        newPost.setWriterId(writerID);
+        newPost.setWriterNickname(writerNickname);
+        newPost.setCreatedDay(new Date());
+        newPost.setModifyDay(new Date());
 
-            postRepository.save(newPost);
-            return newPost;
-        }catch (Exception e){
-            log.error("insertPost Error, " + e.getMessage());
-            throw new IllegalStateException("insertPost Error" + e.getMessage());
-        }
+        postRepository.save(newPost);
+        return newPost;
     }
 
     private Post updatePost(String title, String content, int postID, String writerID, String writerNickname){
-        try{
-            Post foundPost = postRepository.findById(postID).orElseThrow(() -> {
-                log.error("updatePost Error occured " + postID + "doesn't exist");
-                throw new IllegalStateException("updatePost Error occured " + postID + "doesn't exist");
-            });
-            foundPost.setTitle(title);
-            foundPost.setContent(content);
-            foundPost.setWriterId(writerID);
-            foundPost.setWriterNickname(writerNickname);
-            foundPost.setModifyDay(new Date());
+        Post foundPost = findPostByID(postID);
 
-            postRepository.save(foundPost);
-            return foundPost;
-        } catch (Exception e){
-            log.error("updatePost Error, " + e.getMessage());
-            throw new IllegalStateException("updatePost Error" + e.getMessage());
-        }
+        foundPost.setTitle(title);
+        foundPost.setContent(content);
+        foundPost.setWriterId(writerID);
+        foundPost.setWriterNickname(writerNickname);
+        foundPost.setModifyDay(new Date());
+
+        postRepository.save(foundPost);
+        return foundPost;
     }
 
     private PostFile submitPostFile(int postID, PostFileDelta fileDelta) throws IOException {
@@ -218,7 +207,7 @@ public class PostService{
             }
             return null;
         } else{
-            throw new IllegalStateException("PostService : submitPostFile Error, PostFileDelta의 State가 Insert 또는 Delete 가 아닙니다. 현재 State: " +
+            throw new IllegalArgumentException("PostService : submitPostFile Error, PostFileDelta의 State가 Insert 또는 Delete 가 아닙니다. 현재 State: " +
                     fileDelta.getState());
         }
     }
@@ -243,11 +232,9 @@ public class PostService{
         postLikesHistoryRepository.save(newHistory);
 
         // 알림 보내기
-        Post post = postRepository.findById(postId).orElseThrow(() -> {
-            return new IllegalStateException(String.format("cannot found post for make notification when add post like history [post id : %d]", postId));
-        });
+        Post post = findPostByID(postId);
         User user = userService.findUserByID(userId).orElseThrow(() -> {
-            return new IllegalStateException(String.format("cannot found sender user for make notification when add post like history [user id : %d]", userId));
+            throw new NoSuchElementException(String.format("cannot found sender user for make notification when add post like history [user id : %d]", userId));
         });
 
         userService.makeNotificationForLike(userId, user.getNickname(), post.getWriterId(), post.getTitle(), postId);
@@ -257,7 +244,7 @@ public class PostService{
 
     public int deleteLikePost(int postId, String userId){
         PostLikesHistory history = postLikesHistoryRepository.findByPostIdAndUserId(postId, userId)
-                .orElseThrow(() -> new IllegalStateException(postId + "/" + userId + " like history not found"));
+                .orElseThrow(() -> new NoSuchElementException(postId + "/" + userId + " like history not found"));
 
         postLikesHistoryRepository.delete(history);
         return 1;
@@ -282,11 +269,9 @@ public class PostService{
         postDislikesHistoryRepository.save(newHistory);
 
         // 알림 보내기
-        Post post = postRepository.findById(postId).orElseThrow(() -> {
-            return new IllegalStateException(String.format("cannot found post for make notification when add post like history [post id : %d]", postId));
-        });
+        Post post = findPostByID(postId);
         User user = userService.findUserByID(userId).orElseThrow(() -> {
-            return new IllegalStateException(String.format("cannot found sender user for make notification when add post like history [user id : %d]", userId));
+            return new NoSuchElementException(String.format("cannot found sender user for make notification when add post like history [user id : %d]", userId));
         });
 
         userService.makeNotificationForDisLike(userId, user.getNickname(), post.getWriterId(), post.getTitle(), postId);
@@ -296,7 +281,7 @@ public class PostService{
 
     public int deleteDislikePost(int postId, String userId){
         PostDislikesHistory history = postDislikesHistoryRepository.findByPostIdAndUserId(postId, userId)
-                .orElseThrow(() -> new IllegalStateException(postId + "/" + userId + " like history not found"));
+                .orElseThrow(() -> new NoSuchElementException(postId + "/" + userId + " like history not found"));
 
         postDislikesHistoryRepository.delete(history);
         return 1;
@@ -304,19 +289,21 @@ public class PostService{
 
     //region DeletePost
     @Transactional
-    public int deletePostProcess(int postID){
-        int deleteCount = deletePost(postID);
-        return deleteCount;
+    public void deletePostProcess(int postID){
+        Post targetPost = findPostByID(postID);
+        //clearCommentsOnPost(targetPost);
+        deletePost(targetPost);
     }
 
-    private int deletePost(int postID) {
-        try{
-            postRepository.deleteById(postID);
-            return 1;
-        }catch (Exception e){
-            log.error("deletePost Error, " + e.getMessage());
-            throw new IllegalStateException("deletePost Error" + e.getMessage());
-        }
+    private void clearCommentsOnPost(Post target){
+        // Comment 연관관계 삭제
+        List<Comment> comments = target.getComments();
+        comments.clear();
+        postRepository.save(target);
+    }
+
+    private void deletePost(Post target) {
+        postRepository.delete(target);
     }
     //endregion
 }

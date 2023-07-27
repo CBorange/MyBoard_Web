@@ -68,7 +68,7 @@ public class FtpService {
                 int replyCode = ftpClient.getReplyCode();
                 String replyMessage = ftpClient.getReplyString();
 
-                throw new IllegalStateException("FTPService -> setFileType 실패 오류코드: " + replyCode+ "," + replyMessage);
+                throw new Exception("FTPService -> setFileType 실패 오류코드: " + replyCode+ "," + replyMessage);
             }
 
             // 파일 읽어오기
@@ -84,11 +84,11 @@ public class FtpService {
                 int replyCode = ftpClient.getReplyCode();
                 String replyMessage = ftpClient.getReplyString();
                 log.error("FTP 파일찾는 중 오류발생 파일명: " + fileName + ", replyCode: " + replyCode + ", replyMsg: " + replyMessage);
-                throw new IllegalStateException("FTP 파일찾는 중 오류발생 파일명: " + fileName + ", replyCode: " + replyCode + ", replyMsg: " + replyMessage);
+                throw new Exception("FTP 파일찾는 중 오류발생 파일명: " + fileName + ", replyCode: " + replyCode + ", replyMsg: " + replyMessage);
             }
         } catch (Exception e) {
-            log.error("FTP 파일읽기 알 수 없는 오류발생: " + e.getMessage());
-            throw new IllegalStateException("FTP 파일읽기 알 수 없는 오류발생: " + e.getMessage());
+            log.error(e.getMessage());
+            throw new IllegalStateException(e.getMessage());
         } finally {
             // FTP Client 해제
             ftpClient.logout();

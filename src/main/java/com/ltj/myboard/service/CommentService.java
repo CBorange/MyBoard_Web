@@ -15,10 +15,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -31,7 +28,7 @@ public class CommentService {
     public Comment findCommentById(int commentId){
         Optional<Comment> foundComment = commentRepository.findById(commentId);
         Comment found = foundComment.orElseThrow(() -> {
-            throw new IllegalStateException("cannot find " + commentId + "Comment");
+            throw new NoSuchElementException("cannot find " + commentId + "Comment");
         });
         return found;
     }
@@ -69,31 +66,25 @@ public class CommentService {
 
     @Transactional
     public Comment insertComment( int postID, String postWriterId, Comment parentComment, String writerID, String writerNickname, String content) {
-        try {
-            // 댓글 작성
-            Comment newComment = new Comment();
-            newComment.setPostId(postID);
-            newComment.setParentComment(parentComment);
-            newComment.setWriterId(writerID);
-            newComment.setWriterNickname(writerNickname);
-            newComment.setContent(content);
-            newComment.setCreatedDay(new Date());
-            newComment.setModifyDay(new Date());
+        // 댓글 작성
+        Comment newComment = new Comment();
+        newComment.setPostId(postID);
+        newComment.setParentComment(parentComment);
+        newComment.setWriterId(writerID);
+        newComment.setWriterNickname(writerNickname);
+        newComment.setContent(content);
+        newComment.setCreatedDay(new Date());
+        newComment.setModifyDay(new Date());
 
-            commentRepository.save(newComment);
+        commentRepository.save(newComment);
 
-            // 알림 보내기
-            if(parentComment == null){  // 신규 댓글 -> 게시글 작성자 한테 알림 보내기
-                userService.makeNotificationForComment(writerID, writerNickname, postWriterId, content, newComment.getId());
-            } else{ // 대댓글 -> 원댓글 작성자 한테 알림 보내기
-                userService.makeNotificationForSubComment(writerID, writerNickname, parentComment.getWriterId(), content, newComment.getId());
-            }
-
-            return newComment;
-        } catch (Exception e){
-            String msg = "CommentService : insertComment Error " + e.getMessage();
-            log.error(msg);
-            throw new IllegalStateException(msg);
+        // 알림 보내기
+        if(parentComment == null){  // 신규 댓글 -> 게시글 작성자 한테 알림 보내기
+            userService.makeNotificationForComment(writerID, writerNickname, postWriterId, content, newComment.getId());
+        } else{ // 대댓글 -> 원댓글 작성자 한테 알림 보내기
+            userService.makeNotificationForSubComment(writerID, writerNickname, parentComment.getWriterId(), content, newComment.getId());
         }
+
+        return newComment;
     }
 }
