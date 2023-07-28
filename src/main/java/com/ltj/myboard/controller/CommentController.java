@@ -2,8 +2,6 @@ package com.ltj.myboard.controller;
 
 import com.ltj.myboard.domain.Comment;
 import com.ltj.myboard.domain.CommentActivityHistory;
-import com.ltj.myboard.domain.PostDislikesHistory;
-import com.ltj.myboard.domain.PostLikesHistory;
 import com.ltj.myboard.dto.comment.SubmitCommentData;
 import com.ltj.myboard.service.CommentService;
 import lombok.RequiredArgsConstructor;

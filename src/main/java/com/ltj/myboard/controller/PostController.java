@@ -47,8 +47,8 @@ public class PostController extends LayoutControllerBase {
         model.addAttribute("postInfo", foundPost);
 
         // 추천/비추천 개수
-        model.addAttribute("likesCount", foundPost.getLikesHistories().stream().count());
-        model.addAttribute("dislikesCount", foundPost.getDislikesHistories().stream().count());
+        model.addAttribute("likesCount", foundPost.getLikesCount());
+        model.addAttribute("dislikesCount", foundPost.getDislikesCount());
 
         // Board 정보 Model에 추가
         Board foundBoard = boardService.findBoardByID(foundPost.getBoardId());
@@ -181,25 +181,25 @@ public class PostController extends LayoutControllerBase {
 
     @PostMapping("/post/{id}/like")
     public ResponseEntity applyLikePost(@PathVariable("id") int id, @RequestParam("userId") String userId){
-        PostLikesHistory history = postService.applyLikePost(id, userId);
+        PostActivityHistory history = postService.applyLike(id, userId);
         return new ResponseEntity(history, HttpStatus.CREATED);
     }
 
     @DeleteMapping("/post/{id}/like")
     public ResponseEntity deleteLikePost(@PathVariable("id") int id, @RequestParam("userId") String userId){
-        int ret = postService.deleteLikePost(id, userId);
+        int ret = postService.deleteLike(id, userId);
         return new ResponseEntity(ret, HttpStatus.NO_CONTENT);
     }
 
     @PostMapping("/post/{id}/dislike")
     public ResponseEntity applyDislikePost(@PathVariable("id") int id, @RequestParam("userId") String userId){
-        PostDislikesHistory history = postService.applyDislikePost(id, userId);
+        PostActivityHistory history = postService.applyDislike(id, userId);
         return new ResponseEntity(history, HttpStatus.CREATED);
     }
 
     @DeleteMapping("/post/{id}/dislike")
     public ResponseEntity deleteDislikePost(@PathVariable("id") int id, @RequestParam("userId") String userId){
-        int ret = postService.deleteDislikePost(id, userId);
+        int ret = postService.deleteDislike(id, userId);
         return new ResponseEntity(ret, HttpStatus.NO_CONTENT);
     }
 }

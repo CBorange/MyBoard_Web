@@ -6,6 +6,7 @@ import com.ltj.myboard.dto.post.ApplyLikeData;
 import com.ltj.myboard.dto.post.FilteredPost;
 import com.ltj.myboard.dto.post.PostFileDelta;
 import com.ltj.myboard.dto.post.SubmitPostData;
+import com.ltj.myboard.model.ActivityHistoryTypes;
 import com.ltj.myboard.repository.*;
 import com.ltj.myboard.util.Ref;
 import lombok.RequiredArgsConstructor;
@@ -32,8 +33,7 @@ public class PostService{
 
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
-    private final PostLikesHistoryRepository postLikesHistoryRepository;
-    private final PostDislikesHistoryRepository postDislikesHistoryRepository;
+    private final PostActivityHistoryRepository postActivityHistoryRepository;
 
     private final PostFileRepository postFileRepository;
 
@@ -47,14 +47,6 @@ public class PostService{
                 throw new NoSuchElementException(msg);
             }
         );
-    }
-
-    public long getLikesCount(int postId){
-        return postLikesHistoryRepository.countByPostId(postId);
-    }
-
-    public long getDislikesCount(int postId){
-        return postDislikesHistoryRepository.countByPostId(postId);
     }
 
     public List<FilteredPost> getLastestPost(int boardID, int resultLimit){
@@ -90,7 +82,11 @@ public class PostService{
             FilteredPost newFilteredPost = new FilteredPost();
             newFilteredPost.setOrderedPostNo(idx + 1);
             newFilteredPost.setCommentCount(post.getComments().stream().count());
-            newFilteredPost.setLikeCount(post.getLikesHistories().stream().count());
+
+            // 추천 기록 조회
+            List<PostActivityHistory> likesHistory = postActivityHistoryRepository.findAllByTypeAndPostId(ActivityHistoryTypes.Like.getValue(), post.getId());
+            newFilteredPost.setLikeCount(likesHistory.stream().count());
+
             newFilteredPost.setPostData(post);
 
             ret.add(newFilteredPost);
@@ -102,7 +98,12 @@ public class PostService{
 
     public List<FilteredPost> findPost_Best(String title, String content, String nickname,
                                                  PageRequest pageRequest, Ref<Integer> totalPageCntRet) {
-        Page<Post> queryRet = postRepository.findBestsByCondition(title, content, nickname, pageRequest);
+        // 베스트 게시글을 조회 할 때 post_activity_history 테이블에 추천 기록이 1개 이상인 Post만 획득한다.
+        // 이 때 '추천' 기록인지 판단하는 type 값은 서버 쪽 enum class와 DB의 activity_type 테이블에서 이중으로
+        // 검증한다. 즉, enum class의 값과 DB의 값이 같아야만 동작한다(어느 한쪽이 달라지면 오류 발생)
+        // 그래서 쿼리 실행할 때에도 enum class 기준으로 값을 넘겨줘야 한다
+        Page<Post> queryRet = postRepository.findBestsByCondition(title, content, nickname,
+                ActivityHistoryTypes.Like.getValue(), pageRequest);
         List<Post> retList = queryRet.getContent();
         totalPageCntRet.setValue(queryRet.getTotalPages());
 
@@ -113,7 +114,11 @@ public class PostService{
             FilteredPost newFilteredPost = new FilteredPost();
             newFilteredPost.setOrderedPostNo(idx + 1);
             newFilteredPost.setCommentCount(post.getComments().stream().count());
-            newFilteredPost.setLikeCount(post.getLikesHistories().stream().count());
+
+            // 추천 기록 조회
+            List<PostActivityHistory> likesHistory = postActivityHistoryRepository.findAllByTypeAndPostId(ActivityHistoryTypes.Like.getValue(), post.getId());
+            newFilteredPost.setLikeCount(likesHistory.stream().count());
+
             newFilteredPost.setPostData(post);
 
             ret.add(newFilteredPost);
@@ -135,7 +140,11 @@ public class PostService{
             FilteredPost newFilteredPost = new FilteredPost();
             newFilteredPost.setOrderedPostNo(idx + 1);
             newFilteredPost.setCommentCount(post.getComments().stream().count());
-            newFilteredPost.setLikeCount(post.getLikesHistories().stream().count());
+
+            // 추천 기록 조회
+            List<PostActivityHistory> likesHistory = postActivityHistoryRepository.findAllByTypeAndPostId(ActivityHistoryTypes.Like.getValue(), post.getId());
+            newFilteredPost.setLikeCount(likesHistory.stream().count());
+
             newFilteredPost.setPostData(post);
 
             ret.add(newFilteredPost);
@@ -236,22 +245,25 @@ public class PostService{
     //endregion
 
     @Transactional
-    public PostLikesHistory applyLikePost(int postId, String userId) {
-        long likeCountOnThis = postLikesHistoryRepository.countByPostIdAndUserId(postId, userId);
+    public PostActivityHistory applyLike(int postId, String userId) {
+        long likeCountOnThis = postActivityHistoryRepository.countByTypeAndPostIdAndUserId(
+                ActivityHistoryTypes.Like.getValue(), postId, userId);
         if(likeCountOnThis > 0){
             throw new IllegalStateException("이미 추천하였습니다.");
         }
-        long dislikeCountOnThis = postDislikesHistoryRepository.countByPostIdAndUserId(postId, userId);
+        long dislikeCountOnThis = postActivityHistoryRepository.countByTypeAndPostIdAndUserId(
+                ActivityHistoryTypes.Dislike.getValue(), postId, userId);
         if(dislikeCountOnThis > 0){
             throw new IllegalStateException("이미 비추천하였습니다. 추천 또는 비추천은 한번만 할 수 있습니다.");
         }
 
-        PostLikesHistory newHistory = new PostLikesHistory();
+        PostActivityHistory newHistory = new PostActivityHistory();
+        newHistory.setType(ActivityHistoryTypes.Like.getValue());
         newHistory.setPostId(postId);
         newHistory.setUserId(userId);
         newHistory.setCreatedDay(new Date());
 
-        postLikesHistoryRepository.save(newHistory);
+        postActivityHistoryRepository.save(newHistory);
 
         // 알림 보내기
         Post post = findPostByID(postId);
@@ -264,36 +276,41 @@ public class PostService{
         return newHistory;
     }
 
-    public int deleteLikePost(int postId, String userId){
-        PostLikesHistory history = postLikesHistoryRepository.findByPostIdAndUserId(postId, userId)
+    public int deleteLike(int postId, String userId){
+        PostActivityHistory history = postActivityHistoryRepository.findByTypeAndPostIdAndUserId(
+                ActivityHistoryTypes.Like.getValue(), postId, userId)
                 .orElseThrow(() -> new NoSuchElementException(postId + "/" + userId + " like history not found"));
 
-        postLikesHistoryRepository.delete(history);
+        postActivityHistoryRepository.delete(history);
         return 1;
     }
 
     @Transactional
-    public PostDislikesHistory applyDislikePost(int postId, String userId){
-        long dislikeCountOnThis = postDislikesHistoryRepository.countByPostIdAndUserId(postId, userId);
+    public PostActivityHistory applyDislike(int postId, String userId){
+        long dislikeCountOnThis = postActivityHistoryRepository.countByTypeAndPostIdAndUserId(
+                ActivityHistoryTypes.Dislike.getValue(), postId, userId);
         if(dislikeCountOnThis > 0){
             throw new IllegalStateException("이미 비추천하였습니다.");
         }
-        long likeCountOnThis = postLikesHistoryRepository.countByPostIdAndUserId(postId, userId);
+
+        long likeCountOnThis = postActivityHistoryRepository.countByTypeAndPostIdAndUserId(
+                ActivityHistoryTypes.Like.getValue(), postId, userId);
         if(likeCountOnThis > 0){
             throw new IllegalStateException("이미 추천하였습니다. 추천 또는 비추천은 한번만 할 수 있습니다.");
         }
 
-        PostDislikesHistory newHistory = new PostDislikesHistory();
+        PostActivityHistory newHistory = new PostActivityHistory();
+        newHistory.setType(ActivityHistoryTypes.Dislike.getValue());
         newHistory.setPostId(postId);
         newHistory.setUserId(userId);
         newHistory.setCreatedDay(new Date());
 
-        postDislikesHistoryRepository.save(newHistory);
+        postActivityHistoryRepository.save(newHistory);
 
         // 알림 보내기
         Post post = findPostByID(postId);
         User user = userService.findUserByID(userId).orElseThrow(() -> {
-            return new NoSuchElementException(String.format("cannot found sender user for make notification when add post like history [user id : %d]", userId));
+            return new NoSuchElementException(String.format("cannot found sender user for make notification when add post dislike history [user id : %d]", userId));
         });
 
         userService.makeNotificationForDisLike(userId, user.getNickname(), post.getWriterId(), post.getTitle(), postId);
@@ -301,11 +318,12 @@ public class PostService{
         return newHistory;
     }
 
-    public int deleteDislikePost(int postId, String userId){
-        PostDislikesHistory history = postDislikesHistoryRepository.findByPostIdAndUserId(postId, userId)
-                .orElseThrow(() -> new NoSuchElementException(postId + "/" + userId + " like history not found"));
+    public int deleteDislike(int postId, String userId){
+        PostActivityHistory history = postActivityHistoryRepository.findByTypeAndPostIdAndUserId(
+                ActivityHistoryTypes.Dislike.getValue(), postId, userId)
+                .orElseThrow(() -> new NoSuchElementException(postId + "/" + userId + " dislike history not found"));
 
-        postDislikesHistoryRepository.delete(history);
+        postActivityHistoryRepository.delete(history);
         return 1;
     }
 

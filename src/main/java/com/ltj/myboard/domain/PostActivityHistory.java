@@ -7,11 +7,11 @@ import lombok.ToString;
 import javax.persistence.*;
 import java.util.Date;
 
-@Entity(name = "post_likes_history")
+@Entity(name = "post_activity_history")
 @Getter
 @Setter
 @ToString
-public class PostLikesHistory {
+public class PostActivityHistory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -27,4 +27,6 @@ public class PostLikesHistory {
 
     @Column(name="modify_day")
     private Date modifyDay;
+
+    private int type;
 }

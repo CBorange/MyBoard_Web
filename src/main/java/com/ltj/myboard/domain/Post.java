@@ -1,4 +1,5 @@
 package com.ltj.myboard.domain;
+import com.ltj.myboard.model.ActivityHistoryTypes;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -40,12 +41,7 @@ public class Post {
     // Comment Entities와 같은 조건으로 처리
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "post_id", insertable = false, updatable = false)
-    private List<PostLikesHistory> likesHistories;
-
-    // Comment Entities와 같은 조건으로 처리
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "post_id", insertable = false, updatable = false)
-    private List<PostDislikesHistory> dislikesHistories;
+    private List<PostActivityHistory> activityHistories;
 
     @Column(name="created_day")
     private Date createdDay;
@@ -68,4 +64,16 @@ public class Post {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "post_id", insertable = false, updatable = false)
     private List<Comment> comments;
+
+    public long getLikesCount(){
+        long count = activityHistories.stream()
+                .filter(history -> history.getType() == ActivityHistoryTypes.Like.getValue()).count();
+        return count;
+    }
+
+    public long getDislikesCount(){
+        long count = activityHistories.stream()
+                .filter(history -> history.getType() == ActivityHistoryTypes.Dislike.getValue()).count();
+        return count;
+    }
 }
