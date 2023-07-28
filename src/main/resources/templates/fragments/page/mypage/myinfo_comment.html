@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<th:block th:fragment="myinfo_comment">
+    <link rel="stylesheet" href="/css/mypage/mypage_comment.css">
+    <script src="/js/myinfo/comment.js"></script>
+    <h2>작성댓글 목록</h2>
+    <!--알림 데이터 메인 테이블-->
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th class="text-center table_column_no" scope="col">번호</th>
+            <th class="text-center table_column_title" scope="col">내용</th>
+            <th class="text-center table_column_date" scope="col">날짜</th>
+        </tr>
+        </thead>
+        <tbody>
+        <th:block th:each="comment : ${orderedCommentList}">
+            <tr>
+                <td class="text-center">
+                    <span th:text="${comment.getOrderedCommentNo()}"></span>
+                </td>
+                <td class="table_row_title">
+                    <a th:href="'/post/' + ${comment.getCommentData().getPostId()} + '?focusCommentId=' + ${comment.getCommentData().getId()}">
+                        <span class="title_span" th:text="${comment.getCommentData().getContent()}"></span>
+                    </a>
+                </td>
+                <td class="text-center"><span th:text="${#dates.format(comment.getCommentData().getCreatedDay(),'yyyy-MM-dd')}"></span></td>
+            </tr>
+        </th:block>
+        </tbody>
+    </table>
+
+    <!--알림 데이터 메인 테이블 / 하단 페이지 제어 및 버튼 구분선-->
+    <hr/>
+    <!--하단 페이지 제어 버튼-->
+    <div class="d-flex justify-content-center mt-auto">
+        <nav aria-label="Page navigation example">
+            <ul class="pagination">
+                <!--이전 페이지로 이동 버튼, 현재 페이지가 1이 아닌 경우에만 표시-->
+                <th:block th:unless="${curPageNo == 1}">
+                    <li class="page-item">
+                        <a class="page-link" th:onclick="searchComment([[${curPageNo - 1}]])">
+                            <span><</span>
+                        </a>
+                    </li>
+                </th:block>
+                <!--페이지 번호 버튼-->
+                <th:block th:each="pageNo : ${#numbers.sequence(startPageNoInCurSession, endPageNoInCurSession)}">
+                    <th:block th:if="${pageNo == curPageNo}">
+                        <li class="page-item active">
+                            <a class="page-link" th:onclick="searchComment([[${pageNo}]])">
+                                <span th:text="${pageNo}"></span>
+                            </a>
+                        </li>
+                    </th:block>
+                    <th:block th:unless="${pageNo == curPageNo}">
+                        <li class="page-item">
+                            <a class="page-link" th:onclick="searchComment([[${pageNo}]])">
+                                <span th:text="${pageNo}"></span>
+                            </a>
+                        </li>
+                    </th:block>
+                </th:block>
+                <!--다음 페이지로 이동 버튼, 현재 페이지번호가 페이지 개수 와 같지 않은 경우에만 표시-->
+                <th:block th:unless="${curPageNo == pageCount}">
+                    <li class="page-item">
+                        <a class="page-link" th:onclick="searchComment([[${curPageNo + 1}]])">
+                            <span>></span>
+                        </a>
+                    </li>
+                </th:block>
+            </ul>
+        </nav>
+    </div>
+</th:block>
+</html>

@@ -68,6 +68,10 @@ function onSubmitComment(rootCommentID, isSubComment) {
 
 // 게시글 삭제 request 전송
 function onClickDeletePost(boardID, postID) {
+    var isOk = confirm("정말로 게시글을 삭제하시겠습니까?");
+    if(!isOk) 
+        return;
+
     var headers = new Headers();
     var tokenInfo = getCSRFToken();
     if(tokenInfo != null){
@@ -171,5 +175,88 @@ function onClickDislike(postId, userId){
     })
     .catch((error) => {
         console.log('onClickDislike 실패 : ', error);
+    })
+}
+
+// 댓글 추천 request 전송
+function onClickCommentLike(commentId, userId){
+    if(userId == null) {
+        alert("댓글을 추천할 수 없습니다. 먼저 로그인 해주세요.");
+        return;
+    }
+
+    var headers = new Headers();
+    headers.append('Content-Type', 'application/x-www-form-urlencoded');
+
+    var tokenInfo = getCSRFToken();
+    if(tokenInfo != null){
+        headers.append(tokenInfo.header, tokenInfo.token);
+    }
+
+    const url = makeURL('/comment/' + commentId + '/like');
+    fetch(url,{
+        method: 'POST',
+        headers: headers,
+        body: 'userId=' + userId
+    })
+    .then((response) => {
+        if(!response.ok){
+            response.text()
+                .then((text) => {
+                    alert(text);
+                })
+        }
+
+        // refresh
+        window.location.reload();
+    })
+    .catch((error) => {
+        console.log('onClickCommentLike 실패 : ', error);
+
+        response.text()
+            .then((text) => {
+                alert(text);
+            })
+
+        // refresh
+        window.location.reload();
+    })
+
+
+}
+
+// 댓글 비추천 request 전송
+function onClickCommentDislike(commentId, userId){
+    if(userId == null) {
+        alert("댓글을 비추천할 수 없습니다. 먼저 로그인 해주세요.");
+        return;
+    }
+
+    var headers = new Headers();
+    headers.append('Content-Type', 'application/x-www-form-urlencoded');
+
+    var tokenInfo = getCSRFToken();
+    if(tokenInfo != null){
+        headers.append(tokenInfo.header, tokenInfo.token);
+    }
+
+    const url = makeURL('/comment/' + commentId + '/dislike');
+    fetch(url,{
+        method: 'POST',
+        headers: headers,
+        body: 'userId=' + userId
+    })
+    .then((response) => {
+        if(!response.ok){
+            response.text()
+                .then((text) => {
+                    alert(text);
+                })
+        }
+        // refresh
+        window.location.reload();
+    })
+    .catch((error) => {
+        console.log('onClickCommentDislike 실패 : ', error);
     })
 }

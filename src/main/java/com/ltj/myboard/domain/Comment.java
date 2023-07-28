@@ -1,10 +1,12 @@
 package com.ltj.myboard.domain;
+import com.ltj.myboard.model.ActivityHistoryTypes;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity(name = "comment")
 @Getter
@@ -27,12 +29,6 @@ public class Comment {
     @Column(columnDefinition = "LONGTEXT")
     private String content;
 
-    @Column(name = "good_count")
-    private int goodCount;
-
-    @Column(name = "bad_count")
-    private int badCount;
-
     @Column(name = "created_day")
     private Date createdDay;
 
@@ -54,4 +50,20 @@ public class Comment {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "parentComment", cascade = CascadeType.REMOVE)
     @OrderBy("created_day")
     private List<Comment> childComments;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "comment_id", insertable = false, updatable = false)
+    private List<CommentActivityHistory> activityHistories;
+
+    public long getLikesCount(){
+        long count = activityHistories.stream()
+                .filter(history -> history.getType() == ActivityHistoryTypes.Like.getValue()).count();
+        return count;
+    }
+
+    public long getDislikesCount(){
+        long count = activityHistories.stream()
+                .filter(history -> history.getType() == ActivityHistoryTypes.Dislike.getValue()).count();
+        return count;
+    }
 }

@@ -13,5 +13,7 @@ import lombok.ToString;
 @ToString
 public class OrderedComment {
     private int OrderedCommentNo;
+    private long likesCount;
+    private long dislikesCount;
     private Comment CommentData;
 }

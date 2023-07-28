@@ -10,7 +10,7 @@ function searchPost(boardId, pageNumber){
 
    var protocol = window.location.protocol;
    var domain = window.location.host;
-   var path = '/board/' + boardId + '?searchType=' + searchType + '&' + "searchValue=" + searchValue;
+   var path = '/board/' + boardId + '?pageNumber=' + pageNumber + '&searchType=' + searchType + "&searchValue=" + searchValue;
    var completeURL = protocol + '//' + domain + path;
 
    window.location.href = completeURL;

@@ -100,7 +100,7 @@ public class WebSecurityConfig {
                 //.expiredUrl("/expired");
 
         // test
-        http.csrf().disable();
+        //http.csrf().disable();
 
         return http.build();
     }

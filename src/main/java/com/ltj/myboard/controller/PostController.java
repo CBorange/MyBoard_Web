@@ -146,7 +146,7 @@ public class PostController extends LayoutControllerBase {
     @DeleteMapping("/post/{id}")
     public ResponseEntity deletePost(@PathVariable("id") int id){
         postService.deletePostProcess(id);
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
     @GetMapping("/writepostform/{id}")
@@ -182,7 +182,7 @@ public class PostController extends LayoutControllerBase {
     @PostMapping("/post/{id}/like")
     public ResponseEntity applyLikePost(@PathVariable("id") int id, @RequestParam("userId") String userId){
         PostLikesHistory history = postService.applyLikePost(id, userId);
-        return new ResponseEntity(history, HttpStatus.OK);
+        return new ResponseEntity(history, HttpStatus.CREATED);
     }
 
     @DeleteMapping("/post/{id}/like")
@@ -194,7 +194,7 @@ public class PostController extends LayoutControllerBase {
     @PostMapping("/post/{id}/dislike")
     public ResponseEntity applyDislikePost(@PathVariable("id") int id, @RequestParam("userId") String userId){
         PostDislikesHistory history = postService.applyDislikePost(id, userId);
-        return new ResponseEntity(history, HttpStatus.OK);
+        return new ResponseEntity(history, HttpStatus.CREATED);
     }
 
     @DeleteMapping("/post/{id}/dislike")

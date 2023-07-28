@@ -34,8 +34,8 @@
                         <img src="/img/link2.png" style="width: 20px; height: 20px;"/>
                         <a class="ms-1 text-postlink" href="./" id="postLink"></a>
                     </div>
-                    <!--게시글 수정 form-->
-                    <th:block th:if="${userInfo != null && postInfo.getWriterId() == userInfo.getUserId()}">
+                    <th:block th:if="${userInfo != null}">
+                        <!--게시글 제어 드롭다운 form-->
                         <div class="mt-2 mb-5 ms-auto me-1">
                             <div class="dropdown">
                                 <!--메뉴 toggle 버튼-->
@@ -44,18 +44,27 @@
                                         aria-expanded="false">
                                     <img src="/img/menu.png" style="width: 35px; height: 35px;">
                                 </button>
+
                                 <!--드랍다운 메뉴-->
                                 <ul class="dropdown-menu" style="min-width: inherit;" aria-labelledby="modifyMenubutton">
-                                    <li>
-                                        <a class="dropdown-item"
-                                                th:href="${'/writepostform/' + postInfo.getId() + '?boardID=' + boardInfo.getId()}">수정</a>
-                                        <button class="dropdown-item"
-                                                th:boardID="${boardInfo.getId()}"
-                                                th:postID="${postInfo.getId()}"
-                                                th:onclick="onClickDeletePost(this.getAttribute('boardID'),
+                                    <th:block th:if="${postInfo.getWriterId() == userInfo.getUserId()}">
+                                        <li>
+                                            <a class="dropdown-item"
+                                               th:href="${'/writepostform/' + postInfo.getId() + '?boardID=' + boardInfo.getId()}">수정</a>
+                                        </li>
+                                        <li>
+                                            <button class="dropdown-item"
+                                                    th:boardID="${boardInfo.getId()}"
+                                                    th:postID="${postInfo.getId()}"
+                                                    th:onclick="onClickDeletePost(this.getAttribute('boardID'),
                                                 this.getAttribute('postID'))">삭제</button>
+                                        </li>
+                                    </th:block>
+                                    <li>
+                                        <a class="dropdown-item">스크랩</a>
                                     </li>
                                 </ul>
+
                             </div>
                         </div>
                     </th:block>
@@ -90,8 +99,18 @@
                     <th:block th:each="comment : ${orderedCommentList}">
                         <!--댓글 작성자, 추천/비추천, 작성일, 대댓글 입력 form 표시-->
                         <div class="d-flex flex-row" style="min-height: 30px; background-color:#c1c7c7; border-radius: 5px / 5px;">
+                            <!--작성자-->
                             <span class="ms-2" th:text="${comment.getCommentData().getWriterNickname()}"></span>
-                            <span class="ms-auto">작성일: </span>
+                            <!--추천-->
+                            <button class="btn btn-outline-primary btn-sm ms-auto"
+                                    th:onclick="onClickCommentLike([[${comment.getCommentData().getId()}]], [[${userInfo != null ? userInfo.getUserId() : null}]])">추천</button>
+                            <span class="ms-2" th:text="${comment.getLikesCount()}"></span>
+                            <!--비추천-->
+                            <button class="btn btn-outline-danger btn-sm ms-2"
+                                    th:onclick="onClickCommentDislike([[${comment.getCommentData().getId()}]], [[${userInfo != null ? userInfo.getUserId() : null}]])">비추천</button>
+                            <span class="ms-2" th:text="${comment.getDislikesCount()}"></span>
+                            <!--작성일-->
+                            <span class="ms-3">작성일: </span>
                             <span class="ms-2 me-2" th:text="${#dates.format(comment.getCommentData().getCreatedDay(),'yyyy-MM-dd')}"></span>
                             <!--대댓글 작성 버튼-->
                             <th:block th:if="${userInfo != null}">
@@ -113,8 +132,18 @@
                             <div class="ms-4">
                                 <!--대댓글 작성자 표시-->
                                 <div class="d-flex flex-row" style="min-height: 30px; background-color:#c1c7c7; border-radius: 5px / 5px;">
+                                    <!--작성자-->
                                     <span class="ms-2" th:text="${subComment.getWriterNickname()}"></span>
-                                    <span class="ms-auto">작성일: </span>
+                                    <!--추천-->
+                                    <button class="btn btn-outline-primary btn-sm ms-auto"
+                                            th:onclick="onClickCommentLike([[${subComment.getId()}]], [[${userInfo != null ? userInfo.getUserId() : null}]])">추천</button>
+                                    <span class="ms-2" th:text="${subComment.getLikesCount()}"></span>
+                                    <!--비추천-->
+                                    <button class="btn btn-outline-danger btn-sm ms-2"
+                                            th:onclick="onClickCommentDislike([[${subComment.getId()}]], [[${userInfo != null ? userInfo.getUserId() : null}]])">비추천</button>
+                                    <span class="ms-2" th:text="${subComment.getDislikesCount()}"></span>
+                                    <!--작성일-->
+                                    <span class="ms-3">작성일: </span>
                                     <span class="ms-2 me-2" th:text="${#dates.format(subComment.getCreatedDay(),'yyyy-MM-dd')}"></span>
                                 </div>
                                 <!--대댓글 본문 내용-->

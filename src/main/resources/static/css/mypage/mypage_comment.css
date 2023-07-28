@@ -6,29 +6,22 @@
     color: black;
 }
 @media (min-width: 550px) {
-    .table_column_title{
-        width: 50%;
-    }
-    .table_column_writer{
+    .table_column_no{
         width: 10%;
     }
-    .table_column_good{
-        width: 20%;
-        text-align: center;
+    .table_column_title{
+        width: 70%;
     }
     .table_column_date{
         width: 20%;
     }
 }
 @media (max-width: 551px) {
-    .table_column_title{
-        width: 50%;
-    }
-    .table_column_writer{
+    .table_column_no{
         width: 10%;
     }
-    .table_column_good{
-        width: 20%;
+    .table_column_title{
+        width: 70%;
     }
     .table_column_date{
         width: 20%;

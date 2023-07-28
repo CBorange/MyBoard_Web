@@ -123,6 +123,28 @@ public class PostService{
         return ret;
     }
 
+    public List<FilteredPost> findPostByWriterId(String writerId, PageRequest pageRequest, Ref<Integer> totalPageCntRet){
+        Page<Post> queryRet = postRepository.findAllByWriterId(writerId, pageRequest);
+        List<Post> retList = queryRet.getContent();
+        totalPageCntRet.setValue(queryRet.getTotalPages());
+
+        List<FilteredPost> ret = new ArrayList<>();
+
+        int idx =0;
+        for (Post post : retList){
+            FilteredPost newFilteredPost = new FilteredPost();
+            newFilteredPost.setOrderedPostNo(idx + 1);
+            newFilteredPost.setCommentCount(post.getComments().stream().count());
+            newFilteredPost.setLikeCount(post.getLikesHistories().stream().count());
+            newFilteredPost.setPostData(post);
+
+            ret.add(newFilteredPost);
+            idx++;
+        }
+
+        return ret;
+    }
+
     //region SubmitPost(Insert, Update)
     @Transactional
     public Post submitPostProcess(SubmitPostData submitPostData) throws IOException {

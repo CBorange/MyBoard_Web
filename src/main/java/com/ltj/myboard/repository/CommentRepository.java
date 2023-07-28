@@ -1,5 +1,6 @@
 package com.ltj.myboard.repository;
 import com.ltj.myboard.domain.Comment;
+import com.ltj.myboard.domain.Post;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -15,4 +16,6 @@ public interface CommentRepository extends JpaRepository<Comment, Integer> {
     Optional<Comment> findById(int commentID);
     Page<Comment> findAllByPostIdAndParentCommentIsNull(int postId, Pageable pageable);
     List<Comment> findAllByPostIdAndParentCommentIsNull(int postId);
+
+    Page<Comment> findAllByWriterId(String writerId, Pageable pageable);
 }

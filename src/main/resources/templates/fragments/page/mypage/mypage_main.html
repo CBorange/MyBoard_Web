@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
     <th:block th:fragment="mypage_main">
-        <link rel="stylesheet" href="/css/mypage_main.css">
+        <link rel="stylesheet" href="/css/mypage/mypage_main.css">
         <div class="mx-auto container-lg" style="background-color: #F5F5F5;">
             <!--마이페이지 탭 패널-->
             <ul class="nav nav-tabs" id="myTab" role="tablist">
@@ -67,11 +67,11 @@
                 </th:block>
                 <!--작성글 탭-->
                 <th:block th:if="${selectedTab.equals('post')}">
-                    <label>작성글</label>
+                    <div th:replace="fragments/page/mypage/myinfo_post.html :: myinfo_post"></div>
                 </th:block>
                 <!--작성댓글 탭-->
                 <th:block th:if="${selectedTab.equals('comment')}">
-                    <label>작성댓글</label>
+                    <div th:replace="fragments/page/mypage/myinfo_comment.html :: myinfo_comment"></div>
                 </th:block>
                 <!--알림 탭-->
                 <th:block th:if="${selectedTab.equals('notification')}">
