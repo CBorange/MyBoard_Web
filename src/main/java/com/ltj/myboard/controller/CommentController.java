@@ -45,6 +45,18 @@ public class CommentController {
         return new ResponseEntity<String>(HttpStatus.CREATED);
     }
 
+    @DeleteMapping("/comment/{id}")
+    public ResponseEntity deleteComment(@PathVariable("id") int commentId){
+        commentService.deleteComment(commentId);
+        return new ResponseEntity(HttpStatus.NO_CONTENT);
+    }
+
+    @PostMapping("/comment/{id}/content")
+    public ResponseEntity modifyComment(@PathVariable("id") int commentId, @RequestParam("newContent") String newContent){
+        commentService.modifyCommentContent(commentId, newContent);
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
     @PostMapping("/comment/{id}/like")
     public ResponseEntity applyLikeComment(@PathVariable("id") int id, @RequestParam("userId") String userId){
         CommentActivityHistory history = commentService.applyLike(id, userId);

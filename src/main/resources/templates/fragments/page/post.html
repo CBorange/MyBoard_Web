@@ -34,8 +34,8 @@
                         <img src="/img/link2.png" style="width: 20px; height: 20px;"/>
                         <a class="ms-1 text-postlink" href="./" id="postLink"></a>
                     </div>
+                    <!--게시글 제어 드롭다운 form-->
                     <th:block th:if="${userInfo != null}">
-                        <!--게시글 제어 드롭다운 form-->
                         <div class="mt-2 mb-5 ms-auto me-1">
                             <div class="dropdown">
                                 <!--메뉴 toggle 버튼-->
@@ -97,43 +97,139 @@
                 <!--댓글 내용 영역-->
                 <div class="d-flex flex-column">
                     <th:block th:each="comment : ${orderedCommentList}">
-                        <!--댓글 작성자, 추천/비추천, 작성일, 대댓글 입력 form 표시-->
-                        <div class="d-flex flex-row" style="min-height: 30px; background-color:#c1c7c7; border-radius: 5px / 5px;">
-                            <!--작성자-->
-                            <span class="ms-2" th:text="${comment.getCommentData().getWriterNickname()}"></span>
-                            <!--추천-->
-                            <button class="btn btn-outline-primary btn-sm ms-auto"
-                                    th:onclick="onClickCommentLike([[${comment.getCommentData().getId()}]], [[${userInfo != null ? userInfo.getUserId() : null}]])">추천</button>
-                            <span class="ms-2" th:text="${comment.getLikesCount()}"></span>
-                            <!--비추천-->
-                            <button class="btn btn-outline-danger btn-sm ms-2"
-                                    th:onclick="onClickCommentDislike([[${comment.getCommentData().getId()}]], [[${userInfo != null ? userInfo.getUserId() : null}]])">비추천</button>
-                            <span class="ms-2" th:text="${comment.getDislikesCount()}"></span>
-                            <!--작성일-->
-                            <span class="ms-3">작성일: </span>
-                            <span class="ms-2 me-2" th:text="${#dates.format(comment.getCommentData().getCreatedDay(),'yyyy-MM-dd')}"></span>
-                            <!--대댓글 작성 버튼-->
-                            <th:block th:if="${userInfo != null}">
-                                <button class="btn btn-secondary btn-sm" id="showReplyFormBtn"
-                                        th:commentID="${comment.getCommentData().getId()}"
-                                        th:onclick="onClickShowReplyForm(this.getAttribute('commentID'))"
-                                        th:text="댓글..">
-                                </button>
-                            </th:block>
+                        <!--댓글 표시영역-->
+                        <div th:id="'comment_' + ${comment.getCommentData().getId()}">
+                            <!--댓글 작성자, 작성일-->
+                            <div class="d-flex flex-row" style="min-height: 30px; background-color:#c1c7c7; border-radius: 5px / 5px;">
+                                <!--작성자-->
+                                <span class="ms-2" th:text="${comment.getCommentData().getWriterNickname()}"></span>
+                                <!--작성일-->
+                                <span class="ms-auto">작성일: </span>
+                                <span class="ms-2 me-2" th:text="${#dates.format(comment.getCommentData().getCreatedDay(),'yyyy-MM-dd')}"></span>
+                                <!--댓글 제어 드롭다운 form-->
+                                <th:block th:if="${userInfo != null && comment.getCommentData().getWriterId() == userInfo.getUserId()}">
+                                    <div class="ms-2">
+                                        <div class="dropdown">
+                                            <!--메뉴 toggle 버튼-->
+                                            <button style="background-color:transparent; border: transparent;"
+                                                    id="modifyCommentbutton" data-bs-toggle="dropdown" data-bs-display="static"
+                                                    aria-expanded="false">
+                                                <img src="/img/three-small-square.png" style="width: 20px; height: 20px;">
+                                            </button>
 
+                                            <!--드랍다운 메뉴-->
+                                            <ul class="dropdown-menu" style="min-width: inherit;" aria-labelledby="modifyCommentbutton">
+                                                <li>
+                                                    <button class="dropdown-item"
+                                                            th:commentID="${comment.getCommentData().getId()}"
+                                                            th:onclick="onClickShowModifyCommentForm(this.getAttribute('commentID'))">
+                                                        수정
+                                                    </button>
+                                                    <button class="dropdown-item"
+                                                            th:commentID="${comment.getCommentData().getId()}"
+                                                            th:onclick="onClickDeleteComment(this.getAttribute('commentID'))">
+                                                        삭제
+                                                    </button>
+                                                </li>
+                                            </ul>
+
+                                        </div>
+                                    </div>
+                                </th:block>
+                            </div>
+                            <!--댓글 본문 내용-->
+                            <div class="ms-2" th:id="${comment.getCommentData().getId()}">
+                                <span style="white-space: pre-line" th:text="${comment.getCommentData().getContent()}"></span>
+                            </div>
+                            <!--댓글 제어 패널(추천/비추천, 대댓글 Form 버튼, 댓글 메뉴 버튼-->
+                            <div class="d-flex flex-row" style="min-height: 30px;">
+                                <!--추천-->
+                                <button class="btn btn-outline-primary btn-sm ms-auto"
+                                        th:onclick="onClickCommentLike([[${comment.getCommentData().getId()}]], [[${userInfo != null ? userInfo.getUserId() : null}]])">추천</button>
+                                <span class="ms-2" th:text="${comment.getLikesCount()}"></span>
+                                <!--비추천-->
+                                <button class="btn btn-outline-danger btn-sm ms-2"
+                                        th:onclick="onClickCommentDislike([[${comment.getCommentData().getId()}]], [[${userInfo != null ? userInfo.getUserId() : null}]])">비추천</button>
+                                <span class="ms-2" th:text="${comment.getDislikesCount()}"></span>
+                                <!--대댓글 작성 버튼-->
+                                <th:block th:if="${userInfo != null}">
+                                    <button class="btn btn-secondary btn-sm ms-5"
+                                            th:commentID="${comment.getCommentData().getId()}"
+                                            th:onclick="onClickShowReplyForm(this.getAttribute('commentID'))"
+                                            th:text="댓글..">
+                                    </button>
+                                </th:block>
+                            </div>
                         </div>
-                        <!--댓글 본문 내용-->
-                        <div class="ms-2" th:id="${comment.getCommentData().getId()}">
-                            <span style="white-space: pre-line" th:text="${comment.getCommentData().getContent()}"></span>
-                        </div>
+                        <!--댓글 수정 Form-->
+                        <th:block th:if="${userInfo != null}">
+                            <form class="ms-4" onsubmit="return false;" style="display:none;"
+                                  th:id="'modifyCommentForm_' + ${comment.getCommentData().getId()}">
+                                <div class="d-flex flex-column">
+                                    <textarea th:id="'modifyCommentForm_TextArea_' + ${comment.getCommentData().getId()}"
+                                              name="content" class="form-control" style="min-height:80px;"
+                                              th:text="${comment.getCommentData().getContent()}"></textarea>
+                                    <div class="my-2 d-flex flex-row-reverse">
+                                        <input type="button" class="btn btn-info" value="수정"
+                                               th:commentID="${comment.getCommentData().getId()}"
+                                               th:onclick="onModifyComment(this.getAttribute('commentID'))">
+
+                                        <input type="button" class="btn btn-secondary me-2" value="취소"
+                                               th:commentID="${comment.getCommentData().getId()}"
+                                               th:onclick="onClickShowModifyCommentForm(this.getAttribute('commentID'))">
+                                    </div>
+                                </div>
+                            </form>
+                        </th:block>
+                        <!--다음 댓글과의 영역 분리-->
                         <div style="height: 20px;"></div>
                         <!--대댓글 영역-->
                         <th:block th:each="subComment : ${comment.getCommentData().getChildComments()}">
-                            <div class="ms-4">
-                                <!--대댓글 작성자 표시-->
+                            <div th:id="'comment_' + ${subComment.getId()}" class="ms-5">
+                                <!--대댓글 작성자, 작성일-->
                                 <div class="d-flex flex-row" style="min-height: 30px; background-color:#c1c7c7; border-radius: 5px / 5px;">
                                     <!--작성자-->
                                     <span class="ms-2" th:text="${subComment.getWriterNickname()}"></span>
+                                    <!--작성일-->
+                                    <span class="ms-auto">작성일: </span>
+                                    <span class="ms-2 me-2" th:text="${#dates.format(subComment.getCreatedDay(),'yyyy-MM-dd')}"></span>
+                                    <!--댓글 제어 드롭다운 form-->
+                                    <th:block th:if="${userInfo != null && comment.getCommentData().getWriterId() == userInfo.getUserId()}">
+                                        <div class="ms-2">
+                                            <div class="dropdown">
+                                                <!--메뉴 toggle 버튼-->
+                                                <button style="background-color:transparent; border: transparent;"
+                                                        id="modifySubCommentbutton" data-bs-toggle="dropdown" data-bs-display="static"
+                                                        aria-expanded="false">
+                                                    <img src="/img/three-small-square.png" style="width: 20px; height: 20px;">
+                                                </button>
+
+                                                <!--드랍다운 메뉴-->
+                                                <ul class="dropdown-menu" style="min-width: inherit;" aria-labelledby="modifySubCommentbutton">
+                                                    <li>
+                                                        <button class="dropdown-item"
+                                                                th:commentID="${subComment.getId()}"
+                                                                th:onclick="onClickShowModifyCommentForm(this.getAttribute('commentID'))">
+                                                            수정
+                                                        </button>
+                                                        <button class="dropdown-item"
+                                                                th:commentID="${subComment.getId()}"
+                                                                th:onclick="onClickDeleteComment(this.getAttribute('commentID'))">
+                                                            삭제
+                                                        </button>
+                                                    </li>
+                                                </ul>
+
+                                            </div>
+                                        </div>
+                                    </th:block>
+                                </div>
+                                <!--대댓글 본문 내용-->
+                                <div class="ms-2" th:id="${subComment.getId()}">
+                                    <span style="white-space: pre-line" th:text="${subComment.getContent()}"></span>
+                                </div>
+                                <!--대댓글 제어 패널(추천/비추천, 대댓글 Form 버튼, 댓글 메뉴 버튼-->
+                                <div class="d-flex flex-row" style="min-height: 30px;">
                                     <!--추천-->
                                     <button class="btn btn-outline-primary btn-sm ms-auto"
                                             th:onclick="onClickCommentLike([[${subComment.getId()}]], [[${userInfo != null ? userInfo.getUserId() : null}]])">추천</button>
@@ -142,35 +238,57 @@
                                     <button class="btn btn-outline-danger btn-sm ms-2"
                                             th:onclick="onClickCommentDislike([[${subComment.getId()}]], [[${userInfo != null ? userInfo.getUserId() : null}]])">비추천</button>
                                     <span class="ms-2" th:text="${subComment.getDislikesCount()}"></span>
-                                    <!--작성일-->
-                                    <span class="ms-3">작성일: </span>
-                                    <span class="ms-2 me-2" th:text="${#dates.format(subComment.getCreatedDay(),'yyyy-MM-dd')}"></span>
-                                </div>
-                                <!--대댓글 본문 내용-->
-                                <div class="ms-2" th:id="${subComment.getId()}">
-                                    <span style="white-space: pre-line" th:text="${subComment.getContent()}"></span>
+                                    <!--대댓글 작성 버튼-->
+                                    <!--대댓글 위치에서도 원댓글의 대댓글 작성 Form을 On/Off 시킬 수 있다.-->
+                                    <th:block th:if="${userInfo != null}">
+                                        <button class="btn btn-secondary btn-sm ms-5"
+                                                th:commentID="${comment.getCommentData().getId()}"
+                                                th:onclick="onClickShowReplyForm(this.getAttribute('commentID'))"
+                                                th:text="댓글..">
+                                        </button>
+                                    </th:block>
                                 </div>
                             </div>
+                            <!--대댓글 수정 Form-->
+                            <th:block th:if="${userInfo != null}">
+                                <form class="ms-4" onsubmit="return false;" style="display:none;"
+                                      th:id="'modifyCommentForm_' + ${subComment.getId()}">
+                                    <div class="d-flex flex-column">
+                                    <textarea th:id="'modifyCommentForm_TextArea_' + ${subComment.getId()}"
+                                              name="content" class="form-control" style="min-height:80px;"
+                                              th:text="${subComment.getContent()}"></textarea>
+                                        <div class="my-2 d-flex flex-row-reverse">
+                                            <input type="button" class="btn btn-info" value="수정"
+                                                   th:commentID="${subComment.getId()}"
+                                                   th:onclick="onModifyComment(this.getAttribute('commentID'))">
+
+                                            <input type="button" class="btn btn-secondary me-2" value="취소"
+                                                   th:commentID="${subComment.getId()}"
+                                                   th:onclick="onClickShowModifyCommentForm(this.getAttribute('commentID'))">
+                                        </div>
+                                    </div>
+                                </form>
+                            </th:block>
                             <div style="height: 20px;"></div>
                         </th:block>
                         <!--대댓글 작성 Form-->
                         <th:block th:if="${userInfo != null}">
                             <form class="ms-4" onsubmit="return false;" style="display:none;"
                               th:id="'subReplyForm_' + ${comment.getCommentData().getId()}">
-                            <div class="d-flex flex-column">
-                                <input type="hidden" name="postWriterID" th:value="${postInfo.getWriterId()}">
-                                <input type="hidden" name="postID" th:value="${postInfo.getId()}">
-                                <input type="hidden" name="parentCommentID" th:value="${comment.getCommentData().getId()}">
-                                <input type="hidden" name="writerID" th:value="${userInfo.getUserId()}">
-                                <input type="hidden" name="writerNickname" th:value="${userInfo.getNickname()}">
-                                <textarea name="content" class="form-control" style="min-height:80px;"></textarea>
-                                <div class="my-2 d-flex flex-row-reverse">
-                                    <input type="button" class="btn btn-info" value="등록"
-                                        th:rootCommentID="${comment.getCommentData().getId()}"
-                                        th:onclick="onSubmitComment(this.getAttribute('rootCommentID'), true)">
+                                <div class="d-flex flex-column">
+                                    <input type="hidden" name="postWriterID" th:value="${postInfo.getWriterId()}">
+                                    <input type="hidden" name="postID" th:value="${postInfo.getId()}">
+                                    <input type="hidden" name="parentCommentID" th:value="${comment.getCommentData().getId()}">
+                                    <input type="hidden" name="writerID" th:value="${userInfo.getUserId()}">
+                                    <input type="hidden" name="writerNickname" th:value="${userInfo.getNickname()}">
+                                    <textarea name="content" class="form-control" style="min-height:80px;"></textarea>
+                                    <div class="my-2 d-flex flex-row-reverse">
+                                        <input type="button" class="btn btn-info" value="등록"
+                                            th:rootCommentID="${comment.getCommentData().getId()}"
+                                            th:onclick="onSubmitComment(this.getAttribute('rootCommentID'), true)">
+                                    </div>
                                 </div>
-                            </div>
-                        </form>
+                            </form>
                         </th:block>
                     </th:block>
                 </div>

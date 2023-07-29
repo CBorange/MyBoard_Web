@@ -129,6 +129,19 @@ public class CommentService {
         return newComment;
     }
 
+    public void deleteComment(int commentId){
+        commentRepository.deleteById(commentId);
+    }
+
+    public void modifyCommentContent(int commentId, String newContent){
+        Comment foundComment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new NoSuchElementException("cannot find " + commentId + " comment"));
+        foundComment.setContent(newContent);
+        foundComment.setModifyDay(new Date());
+
+        commentRepository.save(foundComment);
+    }
+
     /**
      * 댓글 추천 적용*/
     public CommentActivityHistory applyLike(int commentId, String userId){

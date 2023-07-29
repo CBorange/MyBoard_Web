@@ -16,6 +16,50 @@ window.onload = function(){
     }
 }
 
+// 댓글 수정 form toggle
+function onClickShowModifyCommentForm(id){
+    var commentBody = document.getElementById("comment_" + id);
+    var modifyCommentForm = document.getElementById("modifyCommentForm_" + id);
+
+    if(modifyCommentForm.style.display == "none"){
+        commentBody.style.display = "none";
+        modifyCommentForm.style.display = "block";
+    }
+    else{
+        commentBody.style.display = "block";
+        modifyCommentForm.style.display = "none";
+    }
+}
+
+// 댓글 수정 request 전송
+function onModifyComment(commentId){
+    var textareaElement = document.getElementById("modifyCommentForm_TextArea_" + commentId);
+    var newContent = textareaElement.value;
+
+    const url = makeURL("/comment/" + commentId + "/content");
+
+    var headers = new Headers();
+    headers.append('Content-Type', 'application/x-www-form-urlencoded');
+
+    var tokenInfo = getCSRFToken();
+    if(tokenInfo != null){
+        headers.append(tokenInfo.header, tokenInfo.token);
+    }
+
+    fetch(url, {
+        method: 'POST',
+        headers: headers,
+        body: 'newContent=' + newContent
+    })
+    .then((response) => {
+        console.log('onModifyComment 성공 : ', response);
+        window.location.reload();
+    })
+    .catch((error) => {
+        console.log('onModifyComment 실패 : ', error);
+    })
+}
+
 // 대댓글 작성 form toggle
 function onClickShowReplyForm(id){
     var subReplyForm = document.getElementById("subReplyForm_" + id);
@@ -63,6 +107,36 @@ function onSubmitComment(rootCommentID, isSubComment) {
     })
     .catch((error) => {
         console.log('onSubmitComment 실패 : ', error);
+    })
+}
+
+// 댓글 삭제 Request 전송
+function onClickDeleteComment(commentId){
+    var isOk = confirm("정말로 댓글을 삭제하시겠습니까?");
+    if(!isOk)
+        return;
+
+    var headers = new Headers();
+    var tokenInfo = getCSRFToken();
+    if(tokenInfo != null){
+        headers.append(tokenInfo.header, tokenInfo.token);
+    }
+
+    const url = makeURL('/comment/' + commentId);
+    fetch(url, {
+        method: 'DELETE',
+        headers: headers,
+    })
+    .then((response) => {
+        if(response.ok){
+            console.log('onClickDeleteComment 성공 : ', response);
+
+            // 게시글 reload
+            window.location.reload();
+        }
+    })
+    .catch((error) => {
+        console.log('onClickDeleteComment 실패 : ', error);
     })
 }
 

@@ -47,7 +47,7 @@ public class Comment {
     // mappedBy는 mapping 되는 객체(여기서는 자식 Comment)에서 참조하는 부모객체의 field명을 의미한다.
     // 이 case에서 childComments 리스트의 원소 Comment의 parentComment field는 부모 Comment를 가르키고 있으므로
     // mappedBy는 parentComment가 되어야 한다.
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "parentComment", cascade = CascadeType.REMOVE)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "parentComment", cascade = CascadeType.ALL)
     @OrderBy("created_day")
     private List<Comment> childComments;
 
