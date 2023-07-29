@@ -49,8 +49,10 @@ public class MyAuthenticationSuccessHandler implements AuthenticationSuccessHand
 
                 session.removeAttribute("prevPage");
                 response.sendRedirect(redirectURL);
+                log.info("login success, redirect to " + redirectURL);
             }
         } else{
+            log.info("login success, redirect to " + "/");
             response.sendRedirect("/");
         }
     }

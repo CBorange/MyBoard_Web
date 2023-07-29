@@ -3,6 +3,7 @@ import com.ltj.myboard.model.JwtAuthenticationFilter;
 import com.ltj.myboard.model.JwtTokenProvider;
 import com.ltj.myboard.service.MyAuthenticationFailureHandler;
 import com.ltj.myboard.service.MyAuthenticationSuccessHandler;
+import com.ltj.myboard.service.MyLogoutSuccessHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,6 +30,8 @@ public class WebSecurityConfig {
     MyAuthenticationSuccessHandler myAuthenticationSuccessHandler;
     @Autowired
     MyAuthenticationFailureHandler myAuthenticationFailureHandler;
+    @Autowired
+    MyLogoutSuccessHandler myLogoutSuccessHandler;
     @Autowired
     JwtTokenProvider jwtTokenProvider;
 
@@ -82,6 +85,7 @@ public class WebSecurityConfig {
                 )
                 .logout((logout) -> logout
                         .logoutUrl("/logout")
+                        .logoutSuccessHandler(myLogoutSuccessHandler)
                         .deleteCookies("JSESSIONID")
                         .permitAll());
 
