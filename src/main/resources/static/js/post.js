@@ -334,3 +334,41 @@ function onClickCommentDislike(commentId, userId){
         console.log('onClickCommentDislike 실패 : ', error);
     })
 }
+
+// 게시글 스크랩
+function onClickSaveScrap(postId, userId){
+var headers = new Headers();
+    // 스크랩 메모 textarea값 획득
+    var remark = document.getElementById('scrap_remark_textarea').value;
+
+    headers.append('Content-Type', 'application/x-www-form-urlencoded');
+
+    var tokenInfo = getCSRFToken();
+    if(tokenInfo != null){
+        headers.append(tokenInfo.header, tokenInfo.token);
+    }
+
+    const url = makeURL('/post/' + postId + '/scrap');
+    fetch(url,{
+        method: 'POST',
+        headers: headers,
+        body: 'userId=' + userId + '&remark=' + remark
+    })
+    .then((response) => {
+        if(!response.ok){
+            response.text()
+                .then((text) => {
+                    alert(text);
+                })
+        } else{
+            alert("스크랩 되었습니다.");
+        }
+        // refresh
+        window.location.reload();
+    })
+    .catch((error) => {
+        console.log('onClickSaveScrap 실패 : ', error);
+        alert(error);
+    })
+}
+

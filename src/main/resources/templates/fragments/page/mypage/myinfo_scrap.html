@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<th:block th:fragment="myinfo_scrap">
+    <link rel="stylesheet" href="/css/mypage/mypage_scrap.css">
+    <script src="/js/myinfo/scrap.js"></script>
+    <h2>스크랩 목록</h2>
+    <!--알림 데이터 메인 테이블-->
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th class="text-center table_column_no" scope="col">번호</th>
+            <th class="text-center table_column_title" scope="col">제목</th>
+            <th class="text-center table_column_remark" scope="col">메모</th>
+            <th class="text-center table_column_date" scope="col">날짜</th>
+            <th class="table_column_delete"></th>
+        </tr>
+        </thead>
+        <tbody>
+        <th:block th:each="scrap : ${orderedPostScrapList}">
+            <tr>
+                <td class="text-center">
+                    <span th:text="${scrap.getOrderedScrapNo()}"></span>
+                </td>
+                <td class="table_row_title">
+                    <a th:href="'/post/' + ${scrap.getScrapData().getPost().getId()}">
+                        <span th:text="${scrap.getScrapData().getPost().getTitle()}"></span>
+                    </a>
+                </td>
+                <td class="table_row_remark">
+                    <button type="button" class="btn btn-link" th:onclick="onClickShowScrapModal(
+                    [[${scrap.getScrapData().getId()}]], [[${scrap.getScrapData().getRemark()}]],
+                    [[${scrap.getScrapData().getPost().getId()}]], [[${scrap.getScrapData().getPost().getTitle()}]])">
+                        <span th:text="${scrap.getScrapData().getRemark()}"></span>
+                    </button>
+                </td>
+                <td class="text-center"><span th:text="${#dates.format(scrap.getScrapData().getCreatedDay(),'yyyy-MM-dd')}"></span></td>
+                <td><button type="button" class="btn-close" aria-label="Close" th:onclick="onClickDeleteScrap([[${scrap.getScrapData().getId()}]])"></button></td>
+            </tr>
+        </th:block>
+        </tbody>
+    </table>
+
+    <!--알림 데이터 메인 테이블 / 하단 페이지 제어 및 버튼 구분선-->
+    <hr/>
+    <!--하단 페이지 제어 버튼-->
+    <div class="d-flex justify-content-center mt-auto">
+        <nav aria-label="Page navigation example">
+            <ul class="pagination">
+                <!--이전 페이지로 이동 버튼, 현재 페이지가 1이 아닌 경우에만 표시-->
+                <th:block th:unless="${curPageNo == 1}">
+                    <li class="page-item">
+                        <a class="page-link" th:onclick="searchScrap([[${curPageNo - 1}]])">
+                            <span><</span>
+                        </a>
+                    </li>
+                </th:block>
+                <!--페이지 번호 버튼-->
+                <th:block th:each="pageNo : ${#numbers.sequence(startPageNoInCurSession, endPageNoInCurSession)}">
+                    <th:block th:if="${pageNo == curPageNo}">
+                        <li class="page-item active">
+                            <a class="page-link" th:onclick="searchScrap([[${pageNo}]])">
+                                <span th:text="${pageNo}"></span>
+                            </a>
+                        </li>
+                    </th:block>
+                    <th:block th:unless="${pageNo == curPageNo}">
+                        <li class="page-item">
+                            <a class="page-link" th:onclick="searchScrap([[${pageNo}]])">
+                                <span th:text="${pageNo}"></span>
+                            </a>
+                        </li>
+                    </th:block>
+                </th:block>
+                <!--다음 페이지로 이동 버튼, 현재 페이지번호가 페이지 개수 와 같지 않은 경우에만 표시-->
+                <th:block th:unless="${curPageNo == pageCount}">
+                    <li class="page-item">
+                        <a class="page-link" th:onclick="searchScrap([[${curPageNo + 1}]])">
+                            <span>></span>
+                        </a>
+                    </li>
+                </th:block>
+            </ul>
+        </nav>
+    </div>
+    <!--스크랩 수정 Modal-->
+    <div class="modal fade" id="scrapModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title" id="scrapModalLabel">스크랩 수정</h2>
+                </div>
+                <div class="modal-body">
+                    <div class="d-flex flex-column">
+                        <!--게시글 제목-->
+                        <h4>게시글 제목</h4>
+                        <p id="scrapmodal_post_title"></p>
+                        <!--여백-->
+                        <div style="min-height:20px;"></div>
+                        <!--메모-->
+                        <h4>메모</h4>
+                        <p style="color:gray">게시물 스크랩에 대한 메모를 입력하세요..</p>
+                        <textarea id="scrap_remark_textarea" style="min-height:150px;"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                    <button type="button" class="btn btn-primary" th:onclick="onClickModifyScrap([[${userInfo.getUserId()}]])">적용</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</th:block>
+</html>

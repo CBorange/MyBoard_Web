@@ -202,4 +202,25 @@ public class PostController extends LayoutControllerBase {
         int ret = postService.deleteDislike(id, userId);
         return new ResponseEntity(ret, HttpStatus.NO_CONTENT);
     }
+
+    @PostMapping("/post/{id}/scrap")
+    public ResponseEntity makePostScrap(@PathVariable("id") int id,
+                                        @RequestParam("userId") String userId,
+                                        @RequestParam("remark") String remark){
+        PostScrap ret = postService.makePostScrap(id, userId, remark);
+        return new ResponseEntity(ret, HttpStatus.CREATED);
+    }
+
+    @DeleteMapping("/post/scrap/{id}")
+    public ResponseEntity removePostScrap(@PathVariable("id") int id){
+        postService.deletePostScrap(id);
+        return new ResponseEntity(HttpStatus.NO_CONTENT);
+    }
+
+    @PostMapping("/post/scrap/{id}")
+    public ResponseEntity modifyPostScrap(@PathVariable("id") int id,
+                                          @RequestParam("newRemark") String newRemark){
+        postService.modifyPostScrap(id, newRemark);
+        return new ResponseEntity(HttpStatus.OK);
+    }
 }

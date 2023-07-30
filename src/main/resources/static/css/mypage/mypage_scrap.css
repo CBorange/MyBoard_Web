@@ -1,0 +1,23 @@
+.table_row_title > a {
+    text-decoration: none;
+}
+.table_row_remark > button{
+    text-decoration: none;
+    padding: 0;
+}
+
+.table_column_no{
+    width: 10%;
+}
+.table_column_title{
+    width: 35%;
+}
+.table_column_remark{
+    width: 35%;
+}
+.table_column_date{
+    width: 15%;
+}
+.table_column_delete{
+    width: 5%;
+}

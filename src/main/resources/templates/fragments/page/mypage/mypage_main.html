@@ -63,7 +63,7 @@
                 </th:block>
                 <!--스크랩 탭-->
                 <th:block th:if="${selectedTab.equals('scrap')}">
-                    <label>스크랩</label>
+                    <div th:replace="fragments/page/mypage/myinfo_scrap.html :: myinfo_scrap"></div>
                 </th:block>
                 <!--작성글 탭-->
                 <th:block th:if="${selectedTab.equals('post')}">

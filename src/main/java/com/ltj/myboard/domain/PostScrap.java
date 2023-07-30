@@ -15,14 +15,18 @@ public class PostScrap {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name="post_id", nullable = false)
-    private int postId;
-
     @Column(name="user_id")
     private String userId;
 
     @Column(name="created_day")
     private Date createdDay;
 
+    @Column(name="modify_day")
+    private Date modifyDay;
+
     private String remark;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "post_id", referencedColumnName = "id", nullable = false)
+    private Post post = null;
 }

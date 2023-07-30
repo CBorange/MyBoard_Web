@@ -1,8 +1,10 @@
 package com.ltj.myboard.controller;
+import com.ltj.myboard.domain.PostScrap;
 import com.ltj.myboard.domain.UserNotification;
 import com.ltj.myboard.dto.mypage.MyInfo;
 import com.ltj.myboard.dto.post.FilteredPost;
 import com.ltj.myboard.dto.post.OrderedComment;
+import com.ltj.myboard.dto.post.OrderedPostScrap;
 import com.ltj.myboard.service.CommentService;
 import com.ltj.myboard.service.PostService;
 import com.ltj.myboard.service.UserService;
@@ -17,6 +19,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -27,13 +30,8 @@ public class MyPageController extends LayoutControllerBase{
     private final PostService postService;
     private final CommentService commentService;
 
-    // 게시글
-    private final int MAX_VISIBLE_POST_COUNT_INPAGE = 15;
-    private final int MAX_VISIBLE_POST_PAGE_COUNT_INSESSION = 9;
-
-    // 댓글
-    private final int MAX_VISIBLE_COMMENT_COUNT_INPAGE = 15;
-    private final int MAX_VISIBLE_COMMENT_PAGE_COUNT_INSESSION = 9;
+    private final int MAX_VISIBLE_DATA_COUNT_INPAGE = 15;
+    private final int MAX_VISIBLE_PAGE_COUNT_INSESSION = 9;
 
     // 알림
     private final int NOTIFICATION_MAX_VISIBLE_IN_PAGE = 15;
@@ -87,7 +85,7 @@ public class MyPageController extends LayoutControllerBase{
 
         // 작성 게시글 리스트 Select
         List<FilteredPost> postList = postService.findPostByWriterId(userInfo.getUserId(),
-                PageRequest.of(pageNumber - 1, MAX_VISIBLE_POST_COUNT_INPAGE), totalPageRef);
+                PageRequest.of(pageNumber - 1, MAX_VISIBLE_DATA_COUNT_INPAGE), totalPageRef);
 
         // 페이지 개수 구하기
         int pageCount = totalPageRef.getValue();
@@ -97,9 +95,9 @@ public class MyPageController extends LayoutControllerBase{
             throw new IllegalArgumentException(pageNumber + " page is out of bound");
 
         // 현재 페이지의 세션 구하기
-        int curSession = Paginator.getCurSessionByCurPage(pageNumber, MAX_VISIBLE_POST_PAGE_COUNT_INSESSION);
-        int endPageNoInCurSession = curSession * MAX_VISIBLE_POST_PAGE_COUNT_INSESSION;
-        int startPageNoInCurSession = endPageNoInCurSession - (MAX_VISIBLE_POST_PAGE_COUNT_INSESSION - 1);
+        int curSession = Paginator.getCurSessionByCurPage(pageNumber, MAX_VISIBLE_PAGE_COUNT_INSESSION);
+        int endPageNoInCurSession = curSession * MAX_VISIBLE_PAGE_COUNT_INSESSION;
+        int startPageNoInCurSession = endPageNoInCurSession - (MAX_VISIBLE_PAGE_COUNT_INSESSION - 1);
         if(pageCount < endPageNoInCurSession) endPageNoInCurSession = pageCount;
 
         // 모델 추가
@@ -121,9 +119,9 @@ public class MyPageController extends LayoutControllerBase{
         Ref<Integer> totalPageRef = new Ref<>();
         MyInfo userInfo = (MyInfo)model.getAttribute("userInfo");
 
-        // 작성 게시글 리스트 Select
+        // 작성 댓글 리스트 Select
         List<OrderedComment> commentList = commentService.findCommentByWriterId(userInfo.getUserId(),
-                PageRequest.of(pageNumber - 1, MAX_VISIBLE_COMMENT_COUNT_INPAGE), totalPageRef);
+                PageRequest.of(pageNumber - 1, MAX_VISIBLE_DATA_COUNT_INPAGE), totalPageRef);
 
         // 페이지 개수 구하기
         int pageCount = totalPageRef.getValue();
@@ -133,13 +131,50 @@ public class MyPageController extends LayoutControllerBase{
             throw new IllegalArgumentException(pageNumber + " page is out of bound");
 
         // 현재 페이지의 세션 구하기
-        int curSession = Paginator.getCurSessionByCurPage(pageNumber, MAX_VISIBLE_COMMENT_PAGE_COUNT_INSESSION);
-        int endPageNoInCurSession = curSession * MAX_VISIBLE_COMMENT_PAGE_COUNT_INSESSION;
-        int startPageNoInCurSession = endPageNoInCurSession - (MAX_VISIBLE_COMMENT_PAGE_COUNT_INSESSION - 1);
+        int curSession = Paginator.getCurSessionByCurPage(pageNumber, MAX_VISIBLE_PAGE_COUNT_INSESSION);
+        int endPageNoInCurSession = curSession * MAX_VISIBLE_PAGE_COUNT_INSESSION;
+        int startPageNoInCurSession = endPageNoInCurSession - (MAX_VISIBLE_PAGE_COUNT_INSESSION - 1);
         if(pageCount < endPageNoInCurSession) endPageNoInCurSession = pageCount;
 
         // 모델 추가
         model.addAttribute("orderedCommentList", commentList);
+        model.addAttribute("curPageNo", pageNumber);
+        model.addAttribute("endPageNoInCurSession", endPageNoInCurSession);
+        model.addAttribute("startPageNoInCurSession", startPageNoInCurSession);
+        model.addAttribute("pageCount", pageCount);
+
+        return LayoutViewPath;
+    }
+
+    @GetMapping("/mypage/scrap")
+    public String MyPage_Scrap(Model model,
+                               @RequestParam(required = false, defaultValue = "1")int pageNumber){
+        addLayoutModel_FragmentContent(model,"mypage/mypage_main.html","mypage_main");
+
+        model.addAttribute("selectedTab", "scrap");
+
+        Ref<Integer> totalPageRef = new Ref<>();
+        MyInfo userInfo = (MyInfo)model.getAttribute("userInfo");
+
+        // 포스트 리스트 Select
+        List<OrderedPostScrap> ret = postService.findAllScrapByUser(userInfo.getUserId(),
+                PageRequest.of(pageNumber - 1, MAX_VISIBLE_DATA_COUNT_INPAGE), totalPageRef);
+
+        // 페이지 개수 구하기
+        int pageCount = totalPageRef.getValue();
+        if(pageCount == 0)
+            pageCount = 1;
+        if(pageNumber > pageCount)
+            throw new IllegalArgumentException(pageNumber + " page is out of bound");
+
+        // 현재 페이지의 세션 구하기
+        int curSession = Paginator.getCurSessionByCurPage(pageNumber, MAX_VISIBLE_PAGE_COUNT_INSESSION);
+        int endPageNoInCurSession = curSession * MAX_VISIBLE_PAGE_COUNT_INSESSION;
+        int startPageNoInCurSession = endPageNoInCurSession - (MAX_VISIBLE_PAGE_COUNT_INSESSION - 1);
+        if(pageCount < endPageNoInCurSession) endPageNoInCurSession = pageCount;
+
+        // 모델 추가
+        model.addAttribute("orderedPostScrapList", ret);
         model.addAttribute("curPageNo", pageNumber);
         model.addAttribute("endPageNoInCurSession", endPageNoInCurSession);
         model.addAttribute("startPageNoInCurSession", startPageNoInCurSession);

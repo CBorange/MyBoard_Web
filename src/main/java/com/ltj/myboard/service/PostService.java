@@ -2,10 +2,7 @@ package com.ltj.myboard.service;
 
 
 import com.ltj.myboard.domain.*;
-import com.ltj.myboard.dto.post.ApplyLikeData;
-import com.ltj.myboard.dto.post.FilteredPost;
-import com.ltj.myboard.dto.post.PostFileDelta;
-import com.ltj.myboard.dto.post.SubmitPostData;
+import com.ltj.myboard.dto.post.*;
 import com.ltj.myboard.model.ActivityHistoryTypes;
 import com.ltj.myboard.repository.*;
 import com.ltj.myboard.util.Ref;
@@ -34,6 +31,7 @@ public class PostService{
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
     private final PostActivityHistoryRepository postActivityHistoryRepository;
+    private final PostScrapRepository postScrapRepository;
 
     private final PostFileRepository postFileRepository;
 
@@ -346,4 +344,56 @@ public class PostService{
         postRepository.delete(target);
     }
     //endregion
+
+    public List<OrderedPostScrap> findAllScrapByUser(String userId, PageRequest pageRequest, Ref<Integer> totalPageCntRet){
+        Page<PostScrap> scraps = postScrapRepository.findAllByUserId(userId, pageRequest);
+        List<PostScrap> retList = scraps.getContent();
+        totalPageCntRet.setValue(scraps.getTotalPages());
+
+        List<OrderedPostScrap> ret = new ArrayList<>();
+
+        int idx = 0;
+        for(PostScrap scrap : retList){
+            OrderedPostScrap newOrderedScrap = new OrderedPostScrap();
+            newOrderedScrap.setOrderedScrapNo(idx + 1);
+            newOrderedScrap.setScrapData(scrap);
+
+            ret.add(newOrderedScrap);
+            idx++;
+        }
+
+        return ret;
+    }
+
+    public PostScrap makePostScrap(int postId, String userId, String remark){
+        // 이미 스크랩 했는지 확인
+        long scrapCount = postScrapRepository.countByPostIdAndUserId(postId, userId);
+        if(scrapCount > 0){
+            throw new IllegalStateException("이미 스크랩되었습니다.");
+        }
+
+        PostScrap newScrap = new PostScrap();
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new NoSuchElementException("cannot found post data " + postId));
+        newScrap.setPost(post);
+        newScrap.setUserId(userId);
+        newScrap.setRemark(remark);
+        newScrap.setCreatedDay(new Date());
+
+        postScrapRepository.save(newScrap);
+        return newScrap;
+    }
+
+    public void deletePostScrap(int scrapId){
+        postScrapRepository.deleteById(scrapId);
+    }
+
+    public void modifyPostScrap(int scrapId, String newRemark){
+        PostScrap foundScrap = postScrapRepository.findById(scrapId)
+                .orElseThrow(() -> new NoSuchElementException("cannot found srcrap " + scrapId));
+        foundScrap.setRemark(newRemark);
+        foundScrap.setModifyDay(new Date());
+
+        postScrapRepository.save(foundScrap);
+    }
 }

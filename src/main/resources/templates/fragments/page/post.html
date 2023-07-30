@@ -10,7 +10,8 @@
                 <div style="height: 70px;"></div>
                 <!--게시판 타이틀 표기-->
                 <h3 class="my-5">
-                    <span class="text-title" th:text="${boardInfo.getName()}"></span>
+                    <a class="text-title" th:text="${boardInfo.getName()}"
+                        th:href="'/board/' + ${boardInfo.getId()}"></a>
                 </h3>
                 <div style="height: 30px;"></div>
                 <!--게시글 타이틀 표기-->
@@ -61,7 +62,7 @@
                                         </li>
                                     </th:block>
                                     <li>
-                                        <a class="dropdown-item">스크랩</a>
+                                        <button class="dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#scrapModal">스크랩</button>
                                     </li>
                                 </ul>
 
@@ -352,6 +353,36 @@
                 </th:block>
             </div>
         </div>
+        <!--스크랩 모달-->
+        <div class="modal fade" id="scrapModal" tabindex="-1" role="dialog" aria-labelledby="scrapModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2 class="modal-title" id="scrapModalLabel">스크랩</h2>
+                    </div>
+                    <div class="modal-body">
+                        <div class="d-flex flex-column">
+                            <!--게시글 제목-->
+                            <h4>게시글 제목</h4>
+                            <p th:text="${postInfo.getTitle()}"></p>
+                            <!--여백-->
+                            <div style="min-height:20px;"></div>
+                            <!--메모-->
+                            <h4>메모</h4>
+                            <p style="color:gray">게시물 스크랩에 대한 메모를 입력하세요..</p>
+                            <textarea id="scrap_remark_textarea" style="min-height:150px;"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                        <th:block th:if="${userInfo != null}">
+                            <button type="button" class="btn btn-primary" th:onclick="onClickSaveScrap([[${postInfo.getId()}]], [[${userInfo.getUserId()}]])">저장</button>
+                        </th:block>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--댓글 포커스 로직-->
         <script th:inline="javascript">
             <!--focus Comment 존재하면 해당 댓글 html 태그 찾아서 스크롤-->
             var focusCommentExist = [[${focustCommentId != null}]];

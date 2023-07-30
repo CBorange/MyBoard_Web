@@ -33,6 +33,8 @@
 
     .text-title{
         font-weight: bold;
+        text-decoration: none;
+        color: black;
     }
 
     .writerinfo-div{
@@ -70,6 +72,8 @@
 
     .text-title{
         font-weight: bold;
+        text-decoration: none;
+        color: black;
     }
 
     .writerinfo-div{
