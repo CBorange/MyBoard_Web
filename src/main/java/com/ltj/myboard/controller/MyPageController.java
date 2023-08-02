@@ -1,5 +1,6 @@
 package com.ltj.myboard.controller;
 import com.ltj.myboard.domain.PostScrap;
+import com.ltj.myboard.domain.User;
 import com.ltj.myboard.domain.UserNotification;
 import com.ltj.myboard.dto.mypage.MyInfo;
 import com.ltj.myboard.dto.post.FilteredPost;
@@ -16,6 +17,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -36,11 +38,31 @@ public class MyPageController extends LayoutControllerBase{
     // 알림
     private final int NOTIFICATION_MAX_VISIBLE_IN_PAGE = 15;
 
+    private boolean addModel_TargetUserInfo(Model model, String userId){
+        // 대상유저 ID가 없는 경우(현재 로그인된 유저 정보 조회)
+        if(userId == null || userId.isBlank())
+            return false;
+
+        // 현재 로그인된 유저와 대상유저가 같을 경우
+        MyInfo userInfo = (MyInfo)model.getAttribute("userInfo");
+        if(userInfo.getUserId().equals(userId))
+            return false;
+
+        User user = userService.findUserByID(userId);
+        MyInfo response = new MyInfo();
+        response.setNickname(user.getNickname());
+        response.setRegisterDay(user.getRegisterDay().toString());
+
+        model.addAttribute("targetUserInfo", response);
+        return true;
+    }
+
     @GetMapping("/mypage/myinfo")
-    public String MyPage_MyInfo(Model model){
+    public String MyPage_MyInfo(Model model, @RequestParam(required = false) String userId){
         addLayoutModel_FragmentContent(model,"mypage/mypage_main.html","mypage_main");
 
         model.addAttribute("selectedTab", "myinfo");
+        addModel_TargetUserInfo(model, userId);
 
         return LayoutViewPath;
     }
@@ -117,6 +139,7 @@ public class MyPageController extends LayoutControllerBase{
         model.addAttribute("selectedTab", "comment");
 
         Ref<Integer> totalPageRef = new Ref<>();
+
         MyInfo userInfo = (MyInfo)model.getAttribute("userInfo");
 
         // 작성 댓글 리스트 Select
@@ -154,6 +177,7 @@ public class MyPageController extends LayoutControllerBase{
         model.addAttribute("selectedTab", "scrap");
 
         Ref<Integer> totalPageRef = new Ref<>();
+
         MyInfo userInfo = (MyInfo)model.getAttribute("userInfo");
 
         // 포스트 리스트 Select

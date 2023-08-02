@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <th:block th:fragment="userinfo_contextmenu(boardId, userId, userName)">
+        <script src="/js/widget/userinfo_contextmenu.js"></script>
+        <div class="dropdown">
+            <a data-bs-toggle="dropdown" data-bs-display="static"
+                    id="userinfo-dropdown" aria-expanded="false"
+                    role="button" style="text-decoration: none; color:black"
+                    th:text="${userName}">
+            </a>
+            <!--드랍다운 메뉴-->
+            <ul class="dropdown-menu" style="min-width: inherit;" aria-labelledby="userinfo-dropdown">
+                <a class="dropdown-item"
+                        th:href="'/mypage/myinfo?userId=' + ${userId}">유저정보</a>
+                <a class="dropdown-item"
+                        th:href="'/board/' + ${boardId} + '?searchType=nickname&searchValue=' + ${userName}">작성글보기</a>
+            </ul>
+        </div>
+    </th:block>
+</html>

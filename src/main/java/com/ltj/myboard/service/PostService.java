@@ -265,9 +265,7 @@ public class PostService{
 
         // 알림 보내기
         Post post = findPostByID(postId);
-        User user = userService.findUserByID(userId).orElseThrow(() -> {
-            throw new NoSuchElementException(String.format("cannot found sender user for make notification when add post like history [user id : %d]", userId));
-        });
+        User user = userService.findUserByID(userId);
 
         userService.makeNotificationForLike(userId, user.getNickname(), post.getWriterId(), post.getTitle(), postId);
 
@@ -307,9 +305,7 @@ public class PostService{
 
         // 알림 보내기
         Post post = findPostByID(postId);
-        User user = userService.findUserByID(userId).orElseThrow(() -> {
-            return new NoSuchElementException(String.format("cannot found sender user for make notification when add post dislike history [user id : %d]", userId));
-        });
+        User user = userService.findUserByID(userId);
 
         userService.makeNotificationForDisLike(userId, user.getNickname(), post.getWriterId(), post.getTitle(), postId);
 

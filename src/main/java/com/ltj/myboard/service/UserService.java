@@ -27,9 +27,11 @@ public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final UserNotificationRepository userNotificationRepository;
 
-    public Optional<User> findUserByID(String ID)
+    public User findUserByID(String ID)
     {
-        return userRepository.findById(ID);
+        User user = userRepository.findById(ID)
+                .orElseThrow(() -> new NoSuchElementException("cannot found userInformation by " + ID));
+        return user;
     }
 
     public List<UserNotification> getUserNotifications(String userId, PageRequest pageRequest, Ref<Integer> totalPageRef){

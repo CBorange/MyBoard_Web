@@ -23,7 +23,8 @@
                 <div class="d-flex flex-row align-items-center writerinfo-div">
                     <!--작성자 이름-->
                     <img src="/img/user.png" style="width: 20px; height: 20px;"/>
-                    <span class="ms-1" th:text="${postInfo.getWriterNickname()}"></span>
+                    <th:block th:replace="fragments/widget/userinfo_contextmenu.html :: userinfo_contextmenu
+                    (${boardInfo.getId()}, ${postInfo.getWriterId()}, ${postInfo.getWriterNickname()})"/>
                     <!--작성 일자-->
                     <img class="ms-3" src="/img/calendar.png" style="width: 20px; height: 20px;"/>
                     <span class="ms-1" th:text="${#dates.format(postInfo.getCreatedDay(), 'yyyy-MM-dd')}"></span>
@@ -103,7 +104,11 @@
                             <!--댓글 작성자, 작성일-->
                             <div class="d-flex flex-row" style="min-height: 30px; background-color:#c1c7c7; border-radius: 5px / 5px;">
                                 <!--작성자-->
-                                <span class="ms-2" th:text="${comment.getCommentData().getWriterNickname()}"></span>
+                                <div class="ms-2">
+                                    <th:block th:replace="fragments/widget/userinfo_contextmenu.html :: userinfo_contextmenu
+                                                (${boardInfo.getId()}, ${comment.getCommentData().getWriterId()},
+                                                 ${comment.getCommentData().getWriterNickname()})"/>
+                                </div>
                                 <!--작성일-->
                                 <span class="ms-auto">작성일: </span>
                                 <span class="ms-2 me-2" th:text="${#dates.format(comment.getCommentData().getCreatedDay(),'yyyy-MM-dd')}"></span>
@@ -190,7 +195,11 @@
                                 <!--대댓글 작성자, 작성일-->
                                 <div class="d-flex flex-row" style="min-height: 30px; background-color:#c1c7c7; border-radius: 5px / 5px;">
                                     <!--작성자-->
-                                    <span class="ms-2" th:text="${subComment.getWriterNickname()}"></span>
+                                    <div class="ms-2">
+                                        <th:block th:replace="fragments/widget/userinfo_contextmenu.html :: userinfo_contextmenu
+                                                (${boardInfo.getId()}, ${subComment.getWriterId()},
+                                                 ${subComment.getWriterNickname()})"/>
+                                    </div>
                                     <!--작성일-->
                                     <span class="ms-auto">작성일: </span>
                                     <span class="ms-2 me-2" th:text="${#dates.format(subComment.getCreatedDay(),'yyyy-MM-dd')}"></span>

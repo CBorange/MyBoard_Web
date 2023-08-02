@@ -34,7 +34,11 @@
                                         </th:block>
                                     </a>
                                 </td>
-                                <td class="text-center"><span th:text="${filteredPost.getPostData().getWriterNickname()}"></span></td>
+                                <td class="text-center">
+                                    <th:block th:replace="fragments/widget/userinfo_contextmenu.html :: userinfo_contextmenu
+                                                (${boardInfo.getId()}, ${filteredPost.getPostData().getWriterId()},
+                                                 ${filteredPost.getPostData().getWriterNickname()})"/>
+                                </td>
                                 <td class="text-center"><span th:text="${filteredPost.getLikeCount()}"></span></td>
                                 <td class="text-center"><span th:text="${#dates.format(filteredPost.getPostData().getCreatedDay(),'yyyy-MM-dd')}"></span></td>
                             </tr>

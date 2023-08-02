@@ -15,67 +15,70 @@
                         <a th:href="'/mypage/myinfo'" class="nav-link">내정보</a>
                     </th:block>
                 </li>
-                <!--스크랩 탭 오픈 버튼-->
-                <li class="nav-item">
-                    <th:block th:if="${selectedTab.equals('scrap')}">
-                        <a th:href="'/mypage/scrap'" class="nav-link active">스크랩</a>
-                    </th:block>
-                    <th:block th:unless="${selectedTab.equals('scrap')}">
-                        <a th:href="'/mypage/scrap'" class="nav-link">스크랩</a>
-                    </th:block>
+                <!--특정 유저정보 조회시에는 내정보 탭만 사용함-->
+                <th:block th:if="${targetUserInfo == null}">
+                    <!--스크랩 탭 오픈 버튼-->
+                    <li class="nav-item">
+                        <th:block th:if="${selectedTab.equals('scrap')}">
+                            <a th:href="'/mypage/scrap'" class="nav-link active">스크랩</a>
+                        </th:block>
+                        <th:block th:unless="${selectedTab.equals('scrap')}">
+                            <a th:href="'/mypage/scrap'" class="nav-link">스크랩</a>
+                        </th:block>
 
-                </li>
-                <!--작성글 탭 오픈 버튼-->
-                <li class="nav-item">
-                    <th:block th:if="${selectedTab.equals('post')}">
-                        <a th:href="'/mypage/post'" class="nav-link active">작성글</a>
-                    </th:block>
-                    <th:block th:unless="${selectedTab.equals('post')}">
-                        <a th:href="'/mypage/post'" class="nav-link">작성글</a>
-                    </th:block>
+                    </li>
+                    <!--작성글 탭 오픈 버튼-->
+                    <li class="nav-item">
+                        <th:block th:if="${selectedTab.equals('post')}">
+                            <a th:href="'/mypage/post'" class="nav-link active">작성글</a>
+                        </th:block>
+                        <th:block th:unless="${selectedTab.equals('post')}">
+                            <a th:href="'/mypage/post'" class="nav-link">작성글</a>
+                        </th:block>
 
-                </li>
-                <!--작성댓글 탭 오픈 버튼-->
-                <li class="nav-item">
-                    <th:block th:if="${selectedTab.equals('comment')}">
-                        <a th:href="'/mypage/comment'" class="nav-link active">작성댓글</a>
-                    </th:block>
-                    <th:block th:unless="${selectedTab.equals('comment')}">
-                        <a th:href="'/mypage/comment'" class="nav-link">작성댓글</a>
-                    </th:block>
-                </li>
-                <!--내 알림목록 탭 오픈 버튼-->
-                <li class="nav-item">
-                    <th:block th:if="${selectedTab.equals('notification')}">
-                        <a th:href="'/mypage/notification'" class="nav-link active">내 알림목록</a>
-                    </th:block>
-                    <th:block th:unless="${selectedTab.equals('notification')}">
-                        <a th:href="'/mypage/notification'" class="nav-link">내 알림목록</a>
-                    </th:block>
+                    </li>
+                    <!--작성댓글 탭 오픈 버튼-->
+                    <li class="nav-item">
+                        <th:block th:if="${selectedTab.equals('comment')}">
+                            <a th:href="'/mypage/comment'" class="nav-link active">작성댓글</a>
+                        </th:block>
+                        <th:block th:unless="${selectedTab.equals('comment')}">
+                            <a th:href="'/mypage/comment'" class="nav-link">작성댓글</a>
+                        </th:block>
+                    </li>
+                    <!--내 알림목록 탭 오픈 버튼-->
+                    <li class="nav-item">
+                        <th:block th:if="${selectedTab.equals('notification')}">
+                            <a th:href="'/mypage/notification'" class="nav-link active">내 알림목록</a>
+                        </th:block>
+                        <th:block th:unless="${selectedTab.equals('notification')}">
+                            <a th:href="'/mypage/notification'" class="nav-link">내 알림목록</a>
+                        </th:block>
 
-                </li>
+                    </li>
+                </th:block>
             </ul>
             <!--실제 탭 리스트 정의-->
             <div class="tab-content" id="myTabContent">
                 <!--내정보 탭-->
                 <th:block th:if="${selectedTab.equals('myinfo')}">
-                    <div th:replace="fragments/page/mypage/myinfo_panel.html :: myinfo_panel"></div>
+                    <div th:replace="fragments/page/mypage/mypage_myinfo.html :: mypage_myinfo"></div>
                 </th:block>
                 <!--스크랩 탭-->
                 <th:block th:if="${selectedTab.equals('scrap')}">
-                    <div th:replace="fragments/page/mypage/myinfo_scrap.html :: myinfo_scrap"></div>
+                    <div th:replace="fragments/page/mypage/mypage_scrap.html :: mypage_scrap"></div>
                 </th:block>
                 <!--작성글 탭-->
                 <th:block th:if="${selectedTab.equals('post')}">
-                    <div th:replace="fragments/page/mypage/myinfo_post.html :: myinfo_post"></div>
+                    <div th:replace="fragments/page/mypage/mypage_post.html :: mypage_post"></div>
                 </th:block>
                 <!--작성댓글 탭-->
                 <th:block th:if="${selectedTab.equals('comment')}">
-                    <div th:replace="fragments/page/mypage/myinfo_comment.html :: myinfo_comment"></div>
+                    <div th:replace="fragments/page/mypage/mypage_comment.html :: mypage_comment"></div>
                 </th:block>
                 <!--알림 탭-->
                 <th:block th:if="${selectedTab.equals('notification')}">
-                    <div th:replace="fragments/page/mypage/myinfo_notification.html :: myinfo_notification"></div>
+                    <div th:replace="fragments/page/mypage/mypage_notification.html :: mypage_notification"></div>
                 </th:block>
             </div>
         </div>
