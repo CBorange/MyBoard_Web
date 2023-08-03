@@ -7,13 +7,73 @@
         <div class="collapse collapse-horizontal" id="collapseSidebar">
             <div class="d-flex flex-row vw-100">
                 <!--Sidebar 영역-->
-                <div class="vh-100 bg-secondary bg-gradient" style="width:250px">
+                <div class="vh-100 bg-secondary bg-gradient" style="width:300px">
                     <div class="d-flex flex-column">
                         <!--Section1 : 유저정보, 로그인/로그아웃 제어패널-->
-                        <div class="bg-dark" style="height:150px;">
+                        <div style="min-height:75px;">
+                            <!--로그인 정보 존재-->
+                            <th:block th:if="${userInfo != null}">
+                                <div class="bg-light" style="height: 75px; --bs-bg-opacity: .7; cursor: pointer;"
+                                     th:onclick="location.href='/mypage/myinfo'">
+                                    <!--유저정보 UI 배치-->
+                                    <div class="d-flex flex-row align-items-center mx-3" style="height: 75px;">
+                                        <!--유저 아이콘-->
+                                        <img src="/img/user2.png" style="width: 50px; height: 50px;">
+                                        <!--유저 정보-->
+                                        <div class="d-flex flex-column ms-4" style="height: 50px;">
+                                            <p class="my-auto">닉네임</p>
+                                            <p class="my-auto">example@test.com</p>
+                                        </div>
+                                        <!--화살표 아이콘-->
+                                        <img class="ms-auto" src="/img/right-chevron.png" style="width: 20px; height: 20px;">
+                                    </div>
+                                </div>
+                            </th:block>
+                            <!--로그인 되지 않음-->
+                            <th:block th:unless="${userInfo != null}">
+                                <div class="bg-light" style="height: 75px; --bs-bg-opacity: .7; cursor: pointer;"
+                                     onclick="location.href='/login'">
+                                    <!--로그인 안내 UI 배치-->
+                                    <div class="d-flex flex-row align-items-center mx-3" style="height: 75px;">
+                                        <!--물음표 아이콘-->
+                                        <img src="/img/question-mark.png" style="width: 35px; height: 35px;">
+                                        <!--로그인 안내-->
+                                        <div class="d-flex flex-column ms-2" style="height: 50px;">
+                                            <p class="my-auto">로그인</p>
+                                            <p class="my-auto" style="font-size: 13px;">로그인 또는 회원가입 해주세요</p>
+                                        </div>
+                                        <!--화살표 아이콘-->
+                                        <img class="ms-auto" src="/img/right-chevron.png" style="width: 20px; height: 20px;">
+                                    </div>
+                                </div>
+                            </th:block>
 
+                            <!--로그인 정보 존재할 경우에만 바로가기 패널 표시-->
+                            <th:block th:if="${userInfo != null}">
+                                <!--유저정보 바로가기 메뉴 패널-->
+                                <div class="bg-light" style="height: 75px; --bs-bg-opacity: .5">
+                                    <div class="d-flex flex-row justify-content-evenly align-items-center mx-1" style="height: 75px;">
+                                        <!--유저 아이콘-->
+                                        <div style="width:75px; text-align:center;">
+                                            <img src="/img/user2.png" style="width: 25px; height: 25px;">
+                                            <p class="my-auto">회원정보</p>
+                                        </div>
+                                        <!--유저 아이콘-->
+                                        <div style="width:75px; text-align:center;">
+                                            <img src="/img/text-file.png" style="width: 25px; height: 25px;">
+                                            <p class="my-auto">작성글</p>
+                                        </div>
+                                        <!--유저 아이콘-->
+                                        <div style="width:75px; text-align:center;">
+                                            <img src="/img/sign-out.png" style="width: 25px; height: 25px;">
+                                            <p class="my-auto">로그아웃</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </th:block>
                         </div>
                         <!--Section2 : 베스트 게시판(고정)-->
+                        <br>
                         <a class="navlinkitem mx-3" th:href="'/board/best'">
                             <span th:text="베스트"></span>
                         </a>
