@@ -1,12 +1,13 @@
 function onSubmitChange(){
-    const changePasswordForm = document.querySelector('#changePasswordForm');
+    const changeUserInfoForm = document.querySelector('#changeUserInfoForm');
     const sendData = {
-        userID : changePasswordForm.elements['username'].value,
-        password : changePasswordForm.elements['cur_password'].value,
-        afterPassword : changePasswordForm.elements['change_password'].value,
+        userID : changeUserInfoForm.elements['username'].value,
+        email : changeUserInfoForm.elements['email'].value,
+        password : changeUserInfoForm.elements['cur_password'].value,
+        afterPassword : changeUserInfoForm.elements['change_password'].value,
     };
 
-    let msg = '비밀번호 변경 성공';
+    let msg = '유저정보 변경 성공';
     const resultArea = document.querySelector('#resultArea');
     const resultMsg = document.querySelector('#resultMsg');
 
@@ -18,7 +19,7 @@ function onSubmitChange(){
         headers.append(tokenInfo.header, tokenInfo.token);
     }
 
-    const url = makeURL('/changepassword');
+    const url = makeURL('/changeuserinfo');
     fetch(url, {
         method: 'POST',
         headers: headers,

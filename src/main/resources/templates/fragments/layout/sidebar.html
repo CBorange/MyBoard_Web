@@ -2,6 +2,7 @@
 <html xmlns:th="http://thymeleaf.org">
 <div th:fragment="sidebar">
     <link rel="stylesheet" href="/css/sidebar.css">
+    <script src="/js/sidebar.js"></script>
     <!--화면을 덮는 Sidebar, 기존 영역보다 위에 출력된다.-->
     <div class="position-fixed top-0 start-0">
         <div class="collapse collapse-horizontal" id="collapseSidebar">
@@ -54,17 +55,20 @@
                                 <div class="bg-light" style="height: 75px; --bs-bg-opacity: .5">
                                     <div class="d-flex flex-row justify-content-evenly align-items-center mx-1" style="height: 75px;">
                                         <!--유저 아이콘-->
-                                        <div style="width:75px; text-align:center;">
+                                        <div style="width:75px; text-align:center; cursor: pointer;"
+                                            onclick="location.href='/mypage/myinfo'">
                                             <img src="/img/user2.png" style="width: 25px; height: 25px;">
                                             <p class="my-auto">회원정보</p>
                                         </div>
                                         <!--유저 아이콘-->
-                                        <div style="width:75px; text-align:center;">
+                                        <div style="width:75px; text-align:center; cursor: pointer;"
+                                             onclick="location.href='/mypage/post'">
                                             <img src="/img/text-file.png" style="width: 25px; height: 25px;">
                                             <p class="my-auto">작성글</p>
                                         </div>
                                         <!--유저 아이콘-->
-                                        <div style="width:75px; text-align:center;">
+                                        <div style="width:75px; text-align:center; cursor: pointer;"
+                                             onclick="onClickLogout()">
                                             <img src="/img/sign-out.png" style="width: 25px; height: 25px;">
                                             <p class="my-auto">로그아웃</p>
                                         </div>

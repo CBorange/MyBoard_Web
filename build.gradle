@@ -24,6 +24,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-aop'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'io.jsonwebtoken:jjwt:0.9.1'
 	// log사용을 위해 lombok 다운, lombok은 각종 편의성 annotation(생성자 자동 생성, getter/setter 자동생성 등)을 제공하고
 	// 추가로 slf4j와 함께 logback을 설치하여 로그 기능을 사용할 수 있도록 해준다.

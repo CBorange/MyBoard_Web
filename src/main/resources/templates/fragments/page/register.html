@@ -2,21 +2,24 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <th:block th:fragment="register">
     <div class="mx-auto container-lg top-div">
+        <!--여백-->
+        <div style="height:35px;"></div>
         <h1>유저 회원가입</h1>
         <form onsubmit="return false" id="registerForm">
-            <div>
-                <input type="text" name="email" placeholder="이메일주소">
+            <div class="d-flex flex-column">
+                <span style="font-weight: bold;">이메일주소</span>
+                <input type="text" name="email" style="width:200px;" placeholder="이메일주소">
+                <span style="font-weight: bold;">닉네임</span>
+                <input type="text" name="nickname" style="width:200px;" placeholder="닉네임"/>
+                <span style="font-weight: bold;">아이디</span>
+                <input type="text" name="username" style="width:200px;" placeholder="아이디"/>
+                <span style="font-weight: bold;">비밀번호</span>
+                <input type="password" name="password" style="width:200px;" placeholder="비밀번호"/>
             </div>
-            <div>
-                <input type="text" name="nickname" placeholder="닉네임"/>
-            </div>
-            <div>
-                <input type="text" name="username" placeholder="아이디"/>
-            </div>
-            <div>
-                <input type="password" name="password" placeholder="비밀번호"/>
-            </div>
-            <input type="button" value="회원가입" onclick="onSubmitRegister()"/>
+            <br/>
+            <button class="btn btn-info" type="button" onclick="onSubmitRegister()">
+                회원가입
+            </button>
         </form>
         <div id="resultArea" style="visibility: hidden;">
             <p id="resultMsg">회원가입 완료</p>

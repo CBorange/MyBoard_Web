@@ -1,7 +1,7 @@
 package com.ltj.myboard.service;
 import com.ltj.myboard.domain.User;
 import com.ltj.myboard.domain.UserGrade;
-import com.ltj.myboard.dto.auth.AuthDTO;
+import com.ltj.myboard.dto.auth.AuthPostDTO;
 import com.ltj.myboard.dto.auth.TokenResponseDTO;
 import com.ltj.myboard.model.JwtTokenProvider;
 import com.ltj.myboard.model.UserDetailsImpl;
@@ -16,14 +16,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.swing.text.html.Option;
-
 import java.util.Date;
-import java.util.MissingResourceException;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-
-import static org.apache.logging.log4j.ThreadContext.isEmpty;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -41,7 +36,7 @@ public class AuthService {
      * @deprecated JWT Token 인증 사용안함
      */
     @Deprecated
-    public TokenResponseDTO generateAccessToken(AuthDTO req){
+    public TokenResponseDTO generateAccessToken(AuthPostDTO req){
         // AuthenticationManager를 실행하면 ProviderManager에서 등록된 AuthenticationProvider 중
         // 인증처리가 가능한 AuthenticationProvider로 인증을 진행하고 Authentication 객체를 반환해준다.
         // SpringSecurity는 기본적으로 DaoAuthenticationProvider가 구현되어 있고
@@ -77,7 +72,7 @@ public class AuthService {
             return null;
     }
 
-    public User registerUser(AuthDTO request) {
+    public User registerUser(AuthPostDTO request) {
         User newUser = new User();
         newUser.setEmail(request.getEmail());
         newUser.setNickname(request.getNickname());
@@ -98,7 +93,7 @@ public class AuthService {
         return newUser;
     }
 
-    public User changePassword(AuthDTO request) {
+    public User changeUserInfo(AuthPostDTO request) {
         User existUser = validateUser(request.getUserID(), request.getPassword());
         if(existUser == null){
             // 로깅용 msg
@@ -110,6 +105,7 @@ public class AuthService {
             String exceptionMsg = String.format("[%s]의 비밀번호가 틀렸습니다.", request.getUserID());
             throw new NoSuchElementException(exceptionMsg);
         }
+
         existUser.setPassword(passwordEncoder.encode(request.getAfterPassword()));
 
         userRepository.save(existUser);

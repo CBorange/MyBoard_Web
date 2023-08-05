@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<th:block th:fragment="changeUserinfo">
+    <div class="mx-auto container-lg top-div">
+        <!--여백-->
+        <div style="height:35px;"></div>
+
+        <h1>유저정보 수정</h1>
+        <form onsubmit="return false" id="changeUserInfoForm">
+            <div class="d-flex flex-column">
+                <span style="font-weight: bold;">아이디</span>
+                <input type="text" name="username" style="width:200px;" th:value="${userInfo.getUserId()}" readonly placeholder="아이디"/>
+                <span style="font-weight: bold;">이메일</span>
+                <input type="text" name="email" style="width:200px;" th:value="${userInfo.getEmail()}" placeholder="이메일"/>
+                <span style="font-weight: bold;">현재 비밀번호</span>
+                <input type="password" name="cur_password" style="width:200px;" placeholder="현재 비밀번호"/>
+                <span style="font-weight: bold;">변경 후 비밀번호</span>
+                <input type="password" name="change_password" style="width:200px;" placeholder="변경 후 비밀번호"/>
+            </div>
+            <br/>
+            <button class="btn btn-info" type="button" onclick="onSubmitChange()">
+                수정사항 적용
+            </button>
+        </form>
+        <div id="resultArea" style="visibility: hidden;">
+            <p id="resultMsg">비밀번호 변경 성공</p>
+        </div>
+    </div>
+    <script src="/js/change-userinfo.js"></script>
+</th:block>
+</html>
