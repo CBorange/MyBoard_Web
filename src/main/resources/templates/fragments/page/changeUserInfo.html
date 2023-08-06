@@ -30,9 +30,12 @@
                 <br/>
 
                 <!--현재 비밀번호-->
-                <label class="form-label" for="curPassword">현재 비밀번호</label>
-                <input class="form-control" type="password" name="cur_password" style="width:300px;"
-                       placeholder="현재 비밀번호" id="curPassword"/>
+                <div>
+                    <label class="form-label" for="curPassword" style="display:block;">현재 비밀번호</label>
+                    <input class="form-control" type="password" name="cur_password" style="width:300px; display:inline;"
+                           placeholder="현재 비밀번호" id="curPassword"/>
+                    <img id="curPasswordEye" src="/img/eye-x.png" style="width:25px; height:25px;" onclick="onClickPasswordEye('#curPassword', '#curPasswordEye')"/>
+                </div>
                 <br/>
                 <!--비밀번호 수정 여부-->
                 <div class="form-check form-switch">
@@ -42,8 +45,9 @@
                 </div>
                 <!--변경 후 비밀번호-->
                 <div>
-                    <label class="form-label" for="afterPassword">변경 후 비밀번호</label>
-                    <input class="form-control" type="password" name="change_password" style="width:300px;" placeholder="변경 후 비밀번호" id="afterPassword" disabled/>
+                    <label class="form-label" for="afterPassword" style="display:block;">변경 후 비밀번호</label>
+                    <input class="form-control" type="password" name="change_password" style="width:300px; display:inline;" placeholder="변경 후 비밀번호" id="afterPassword" disabled/>
+                    <img id="afterPasswordEye" src="/img/eye-x.png" style="width:25px; height:25px;" onclick="onClickPasswordEye('#afterPassword', '#afterPasswordEye')"/>
                     <div class="valid-feedback">
                         유효한 비밀번호 입니다.
                     </div>

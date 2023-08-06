@@ -1,16 +1,48 @@
 /*Input Element에 유효성검사 추가*/
-
-// 변경 후 비밀번호
 var afterPasswordInput = document.querySelector('#afterPassword');
 afterPasswordInput.addEventListener("keyup", (e) => {
-    tryMatch_AfterPassword();
+    validation_AfterPassword();
+})
+var emailInput = document.querySelector('#userEmailInput');
+emailInput.addEventListener("keyup", (e) => {
+    validation_Email();
 })
 
-function tryMatch_AfterPassword(){
+// 이메일
+function validation_Email(){
+    var emailInput = document.querySelector('#userEmailInput');
+
+    const match = tryMatch_Email();
+
+    emailInput.classList.remove('is-valid');
+    emailInput.classList.remove('is-invalid');
+    // Valid
+    if(match){
+        emailInput.classList.add('is-valid');
+        // Invalid
+    } else {
+        emailInput.classList.add('is-invalid');
+    }
+}
+
+function tryMatch_Email(){
+    var emailInput = document.querySelector('#userEmailInput');
+    // 이메일 유효성 검사 Regex
+    const regexPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    const match = regexPattern.test(emailInput.value);
+    return match;
+}
+
+// 변경 후 비밀번호
+function validation_AfterPassword(){
+    // 비밀번호 수정 여부가 check일 경우에면 유효성 검사
+    var changePasswordCheckInput = document.querySelector('#changePasswordCheck');
+    if(!changePasswordCheckInput.checked)
+        return;
+
     var afterPasswordInput = document.querySelector('#afterPassword');
-    // 최소 8자 이상, 영문 및 숫자 포함 필수, 영문 대문자 또는 특수문자 1개이상 포함
-    const regexPattern = /^(?=.*[A-Z!@#$%^&*])[A-Za-z0-9!@#$%^&*]{8,}$/;
-    const match = regexPattern.test(afterPasswordInput.value);
+
+    const match = tryMatch_AfterPassword();
 
     afterPasswordInput.classList.remove('is-valid');
     afterPasswordInput.classList.remove('is-invalid');
@@ -23,8 +55,29 @@ function tryMatch_AfterPassword(){
     }
 }
 
+function tryMatch_AfterPassword(){
+    var afterPasswordInput = document.querySelector('#afterPassword');
+    // 비밀번호 유효성 검사 Regex
+    // 최소 8자 이상, 영문 및 숫자 포함 필수, 영문 대문자 또는 특수문자 1개이상 포함
+    const regexPattern = /^(?=.*[A-Z!@#$%^&*])[A-Za-z0-9!@#$%^&*]{8,}$/;
+    const match = regexPattern.test(afterPasswordInput.value);
+    return match;
+}
+
 function onSubmitChange(){
     const changeUserInfoForm = document.querySelector('#changeUserInfoForm');
+
+    // 유효성 검사
+    validation_Email();
+    validation_AfterPassword();
+    var inputList = document.querySelectorAll('#changeUserInfoForm input');
+    for(inputTag of inputList){
+        if(inputTag.classList.contains('is-invalid')){
+            alert('적용할 수 없습니다. 잘못된 부분을 수정한 후 다시 시도해주세요.');
+            return;
+        }
+    }
+
     const sendData = {
         userID : changeUserInfoForm.elements['username'].value,
         email : changeUserInfoForm.elements['email'].value,
@@ -87,6 +140,20 @@ function onChangedChangePassword(){
     afterPasswordInput.disabled = true;
     if(changePasswordCheckInput.checked){
         afterPasswordInput.disabled = false;
-        tryMatch_AfterPassword();
+        validation_AfterPassword();
+    }
+}
+
+function onClickPasswordEye(inputSelector, eyeImgSelector){
+    var passwordInput = document.querySelector(inputSelector);
+    var eyeImgTag = document.querySelector(eyeImgSelector);
+
+    if(passwordInput.getAttribute('type') == 'text'){
+        passwordInput.setAttribute('type', 'password');
+        eyeImgTag.setAttribute('src', '/img/eye-x.png');
+    }
+    else{
+        passwordInput.setAttribute('type', 'text');
+        eyeImgTag.setAttribute('src', '/img/eye.png');
     }
 }
