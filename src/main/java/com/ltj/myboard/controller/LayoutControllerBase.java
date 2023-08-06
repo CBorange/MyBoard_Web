@@ -18,6 +18,7 @@ import java.util.List;
 @Controller
 public class LayoutControllerBase {
 
+
     protected final String LayoutViewPath = "layout/default_layout.html";
 
     @Value("${spring.profiles.active}")

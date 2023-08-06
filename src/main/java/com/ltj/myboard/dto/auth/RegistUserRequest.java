@@ -9,7 +9,7 @@ import javax.validation.constraints.NotEmpty;
 @Getter
 @Setter
 @ToString
-public class AuthPostDTO {
+public class RegistUserRequest {
     @NotEmpty(message = "Email is required")
     private String email;
 
@@ -21,5 +21,4 @@ public class AuthPostDTO {
 
     @NotEmpty(message = "Password is required")
     private String password;
-    private String afterPassword;   // 비밀번호 변경 시 사용
 }

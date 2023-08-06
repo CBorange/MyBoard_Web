@@ -72,7 +72,7 @@ public class WebSecurityConfig {
             .antMatchers(HttpMethod.DELETE, "/ftp/**").authenticated()
             .antMatchers("/comment").authenticated()
             .antMatchers("/mypage/**").authenticated()
-            .antMatchers("/changepassword").authenticated()
+            .antMatchers("/changeuserinfo").authenticated()
             .antMatchers("/apitest").authenticated()
             .anyRequest().permitAll(); // 그 외 나머지 API는 권한 없어도 접근 가능
 

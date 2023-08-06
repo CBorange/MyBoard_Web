@@ -1,7 +1,8 @@
 package com.ltj.myboard.service;
 import com.ltj.myboard.domain.User;
 import com.ltj.myboard.domain.UserGrade;
-import com.ltj.myboard.dto.auth.AuthPostDTO;
+import com.ltj.myboard.dto.auth.ChangeUserInfoRequest;
+import com.ltj.myboard.dto.auth.RegistUserRequest;
 import com.ltj.myboard.dto.auth.TokenResponseDTO;
 import com.ltj.myboard.model.JwtTokenProvider;
 import com.ltj.myboard.model.UserDetailsImpl;
@@ -36,7 +37,7 @@ public class AuthService {
      * @deprecated JWT Token 인증 사용안함
      */
     @Deprecated
-    public TokenResponseDTO generateAccessToken(AuthPostDTO req){
+    public TokenResponseDTO generateAccessToken(ChangeUserInfoRequest req){
         // AuthenticationManager를 실행하면 ProviderManager에서 등록된 AuthenticationProvider 중
         // 인증처리가 가능한 AuthenticationProvider로 인증을 진행하고 Authentication 객체를 반환해준다.
         // SpringSecurity는 기본적으로 DaoAuthenticationProvider가 구현되어 있고
@@ -72,7 +73,7 @@ public class AuthService {
             return null;
     }
 
-    public User registerUser(AuthPostDTO request) {
+    public User registerUser(RegistUserRequest request) {
         User newUser = new User();
         newUser.setEmail(request.getEmail());
         newUser.setNickname(request.getNickname());
@@ -93,7 +94,7 @@ public class AuthService {
         return newUser;
     }
 
-    public User changeUserInfo(AuthPostDTO request) {
+    public User changeUserInfo(ChangeUserInfoRequest request) {
         User existUser = validateUser(request.getUserID(), request.getPassword());
         if(existUser == null){
             // 로깅용 msg
@@ -106,7 +107,17 @@ public class AuthService {
             throw new NoSuchElementException(exceptionMsg);
         }
 
-        existUser.setPassword(passwordEncoder.encode(request.getAfterPassword()));
+        /*비밀번호 유효성 검사*/
+        if(request.isChangePassword()){
+            if(request.getPassword().equals(request.getAfterPassword())){
+                String msg = "현재 비밀번호와 변경 후 비밀번호가 동일합니다.";
+                log.info(msg);
+
+                throw new IllegalArgumentException(msg);
+            }
+            existUser.setPassword(passwordEncoder.encode(request.getAfterPassword()));
+        }
+        existUser.setEmail(request.getEmail());
 
         userRepository.save(existUser);
         return existUser;

@@ -22,8 +22,9 @@
                                         <img src="/img/user2.png" style="width: 50px; height: 50px;">
                                         <!--유저 정보-->
                                         <div class="d-flex flex-column ms-4" style="height: 50px;">
-                                            <p class="my-auto">닉네임</p>
-                                            <p class="my-auto">example@test.com</p>
+                                            <p class="my-auto"
+                                               th:text="${userInfo.getNickname()}"></p>
+                                            <p class="my-auto" style="color:gray; font-size:14px;" th:text="${userInfo.getEmail()}"></p>
                                         </div>
                                         <!--화살표 아이콘-->
                                         <img class="ms-auto" src="/img/right-chevron.png" style="width: 20px; height: 20px;">

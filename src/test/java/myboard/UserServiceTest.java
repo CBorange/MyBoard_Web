@@ -15,9 +15,4 @@ public class UserServiceTest {
 
     @Autowired
     private UserService userService;
-
-    @Test
-    public void 유저획득_ByID(){
-        User findUser = userService.findUserByID("admin");
-    }
 }

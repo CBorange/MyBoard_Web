@@ -1,22 +1,25 @@
 package com.ltj.myboard.controller;
 import com.ltj.myboard.domain.User;
-import com.ltj.myboard.dto.auth.AuthPostDTO;
+import com.ltj.myboard.dto.auth.ChangeUserInfoRequest;
+import com.ltj.myboard.dto.auth.RegistUserRequest;
 import com.ltj.myboard.dto.auth.TokenResponseDTO;
 import com.ltj.myboard.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 @Controller
 @RequiredArgsConstructor
@@ -26,6 +29,7 @@ public class AuthController extends LayoutControllerBase {
     private String serverDomain;
 
     private final AuthService authService;
+    private final RestTemplate restTemplate;
 
     // 로그인 페이지 반환, login post api는 spring security form login 자체적으로 제공한다.
     @GetMapping("/login")
@@ -44,7 +48,7 @@ public class AuthController extends LayoutControllerBase {
     @Deprecated(since = "token 기반 인증 사용안함")
     @PostMapping("/login")
     @ResponseBody
-    public ResponseEntity login(HttpServletResponse response, @RequestBody AuthPostDTO loginReq){
+    public ResponseEntity login(HttpServletResponse response, @RequestBody ChangeUserInfoRequest loginReq){
         try{
             // 쿠키에 Jwt 토큰 담아서 반환
             TokenResponseDTO accessToken = authService.generateAccessToken(loginReq);
@@ -86,21 +90,26 @@ public class AuthController extends LayoutControllerBase {
     // 회원가입 기능 실행
     @PostMapping("/register")
     @ResponseBody
-    public ResponseEntity register(@RequestBody AuthPostDTO request){
+    public ResponseEntity register(@RequestBody RegistUserRequest request){
         User newUser = authService.registerUser(request);
         return new ResponseEntity<User>(newUser, HttpStatus.CREATED);
     }
 
     // 비밀번호 변경 기능 실행
     @PostMapping("/changeuserinfo")
-    public ResponseEntity changeUserInfo(@RequestBody AuthPostDTO request){
-        if(request.getPassword().equals(request.getAfterPassword())){
-            String msg = "현재 비밀번호와 변경 후 비밀번호가 동일합니다.";
-            log.info(msg);
+    public ResponseEntity changeUserInfo(Model model, HttpServletRequest request, @RequestBody ChangeUserInfoRequest requestDTO){
+        User changedUser = authService.changeUserInfo(requestDTO);
 
-            throw new IllegalArgumentException(msg);
+        // 수동으로 Logout 처리 실행
+        HttpSession session = request.getSession(false);
+        SecurityContextHolder.clearContext();
+        if(session != null) {
+            session.invalidate();
         }
-        User changedUser = authService.changeUserInfo(request);
+        for(Cookie cookie : request.getCookies()) {
+            cookie.setMaxAge(0);
+        }
+
         return new ResponseEntity<User>(changedUser, HttpStatus.OK);
     }
 }
