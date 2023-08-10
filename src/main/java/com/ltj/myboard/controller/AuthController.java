@@ -20,6 +20,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 
 @Controller
 @RequiredArgsConstructor
@@ -80,36 +81,17 @@ public class AuthController extends LayoutControllerBase {
         return LayoutViewPath;
     }
 
-    // 비밀번호 변경 페이지 반환
+    // 유저정보 수정 페이지 반환
     @GetMapping("/changeuserinfo")
     public String changeUserInfoPage(Model model){
         addLayoutModel_FragmentContent(model, "changeUserInfo.html", "changeUserinfo");
         return LayoutViewPath;
     }
 
-    // 회원가입 기능 실행
-    @PostMapping("/register")
-    @ResponseBody
-    public ResponseEntity register(@RequestBody RegistUserRequest request){
-        User newUser = authService.registerUser(request);
-        return new ResponseEntity<User>(newUser, HttpStatus.CREATED);
-    }
-
-    // 비밀번호 변경 기능 실행
-    @PostMapping("/changeuserinfo")
-    public ResponseEntity changeUserInfo(Model model, HttpServletRequest request, @RequestBody ChangeUserInfoRequest requestDTO){
-        User changedUser = authService.changeUserInfo(requestDTO);
-
-        // 수동으로 Logout 처리 실행
-        HttpSession session = request.getSession(false);
-        SecurityContextHolder.clearContext();
-        if(session != null) {
-            session.invalidate();
-        }
-        for(Cookie cookie : request.getCookies()) {
-            cookie.setMaxAge(0);
-        }
-
-        return new ResponseEntity<User>(changedUser, HttpStatus.OK);
+    // 비밀번호 변경 페이지 반환
+    @GetMapping("/changeuserpassword")
+    public String changeUserPasswordPage(Model model){
+        addLayoutModel_FragmentContent(model, "changeUserPassword.html", "changeUserPassword");
+        return LayoutViewPath;
     }
 }

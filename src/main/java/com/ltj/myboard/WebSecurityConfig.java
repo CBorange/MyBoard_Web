@@ -1,6 +1,7 @@
 package com.ltj.myboard;
 import com.ltj.myboard.model.JwtAuthenticationFilter;
 import com.ltj.myboard.model.JwtTokenProvider;
+import com.ltj.myboard.model.UserGradeLevel;
 import com.ltj.myboard.service.MyAuthenticationFailureHandler;
 import com.ltj.myboard.service.MyAuthenticationSuccessHandler;
 import com.ltj.myboard.service.MyLogoutSuccessHandler;
@@ -35,7 +36,7 @@ public class WebSecurityConfig {
     @Autowired
     JwtTokenProvider jwtTokenProvider;
 
-    // URL Route 시, Servlet Dispatcher 동작 전 Filter 단계에서 처리할 Spring Security Filter Bean 등록 및 설정
+    // URL Route 시, DispatcherServlet 동작 전 Filter 단계에서 처리할 Spring Security Filter Bean 등록 및 설정
     // Spring Security는 기본적으로 Cookie, Session을 사용하여 유저정보를 저장한다.
     // 기본적인 formLogin 사용 시 로그인 성공하면 cookie를 생성하고(set-cookie header 반환)
     // 세션관리자에서 유저 세션을 생성한다(cookie 정보로)
@@ -73,7 +74,10 @@ public class WebSecurityConfig {
             .antMatchers("/comment").authenticated()
             .antMatchers("/mypage/**").authenticated()
             .antMatchers("/changeuserinfo").authenticated()
+                .antMatchers("/changeuserpassword").authenticated()
             .antMatchers("/apitest").authenticated()
+            .antMatchers("/user/**").authenticated()
+            .antMatchers("/admin/**").hasAuthority("ROLE_" + UserGradeLevel.Admin.getValue())
             .anyRequest().permitAll(); // 그 외 나머지 API는 권한 없어도 접근 가능
 
         // Login 화면 설정
@@ -104,7 +108,7 @@ public class WebSecurityConfig {
                 //.expiredUrl("/expired");
 
         // test
-        //http.csrf().disable();
+        http.csrf().disable();
 
         return http.build();
     }

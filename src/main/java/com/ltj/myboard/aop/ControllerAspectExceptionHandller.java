@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -39,10 +40,19 @@ public class ControllerAspectExceptionHandller {
      * MethodArgumentNotValidException -> @Valid 400 Bad Request*/
     @ExceptionHandler
     protected ResponseEntity handleMethodArgumentNotValidException (MethodArgumentNotValidException e){
+        StringBuilder errorMessage = new StringBuilder("유효하지 않은 매개변수:\n");
+
+        for (FieldError error : e.getBindingResult().getFieldErrors()) {
+            errorMessage.append(error.getField())
+                    .append(": ")
+                    .append(error.getDefaultMessage())
+                    .append("\n");
+        }
+
         log.info("---------------------------------------------------------");
         log.info("API [400 Bad Request] 오류 발생: " + e.getMessage());
         log.info("---------------------------------------------------------");
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessage.toString());
     }
 
     /**

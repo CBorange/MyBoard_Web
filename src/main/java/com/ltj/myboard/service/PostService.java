@@ -36,6 +36,7 @@ public class PostService{
     private final PostFileRepository postFileRepository;
 
     private final UserService userService;
+    private final UserNotiService userNotiService;
 
     public Post findPostByID(int postID) {
         return postRepository.findById(postID).orElseThrow(
@@ -267,7 +268,7 @@ public class PostService{
         Post post = findPostByID(postId);
         User user = userService.findUserByID(userId);
 
-        userService.makeNotificationForLike(userId, user.getNickname(), post.getWriterId(), post.getTitle(), postId);
+        userNotiService.makeNotificationForLike(userId, user.getNickname(), post.getWriterId(), post.getTitle(), postId);
 
         return newHistory;
     }
@@ -307,7 +308,7 @@ public class PostService{
         Post post = findPostByID(postId);
         User user = userService.findUserByID(userId);
 
-        userService.makeNotificationForDisLike(userId, user.getNickname(), post.getWriterId(), post.getTitle(), postId);
+        userNotiService.makeNotificationForDisLike(userId, user.getNickname(), post.getWriterId(), post.getTitle(), postId);
 
         return newHistory;
     }

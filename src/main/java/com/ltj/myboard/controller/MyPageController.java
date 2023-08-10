@@ -8,6 +8,7 @@ import com.ltj.myboard.dto.post.OrderedComment;
 import com.ltj.myboard.dto.post.OrderedPostScrap;
 import com.ltj.myboard.service.CommentService;
 import com.ltj.myboard.service.PostService;
+import com.ltj.myboard.service.UserNotiService;
 import com.ltj.myboard.service.UserService;
 import com.ltj.myboard.util.Paginator;
 import com.ltj.myboard.util.Ref;
@@ -29,6 +30,7 @@ import java.util.List;
 @Slf4j
 public class MyPageController extends LayoutControllerBase{
     private final UserService userService;
+    private final UserNotiService userNotiService;
     private final PostService postService;
     private final CommentService commentService;
 
@@ -77,7 +79,7 @@ public class MyPageController extends LayoutControllerBase{
         MyInfo userInfo = (MyInfo)model.getAttribute("userInfo");
 
         // 알림 데이터 획득
-        List<UserNotification> notis = userService.getUserNotifications(userInfo.getUserId(),
+        List<UserNotification> notis = userNotiService.getUserNotifications(userInfo.getUserId(),
                 PageRequest.of(pageNumber - 1, NOTIFICATION_MAX_VISIBLE_IN_PAGE, Sort.by(Sort.Direction.DESC, "modifyDay")),
                 totalPageRef);
 

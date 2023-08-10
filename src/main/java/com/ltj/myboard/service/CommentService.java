@@ -27,6 +27,7 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final CommentActivityHistoryRepository commentActivityHistoryRepository;
     private final UserService userService;
+    private final UserNotiService userNotiService;
 
     public Comment findCommentById(int commentId){
         Optional<Comment> foundComment = commentRepository.findById(commentId);
@@ -121,9 +122,9 @@ public class CommentService {
 
         // 알림 보내기
         if(parentComment == null){  // 신규 댓글 -> 게시글 작성자 한테 알림 보내기
-            userService.makeNotificationForComment(writerID, writerNickname, postWriterId, content, newComment.getId());
+            userNotiService.makeNotificationForComment(writerID, writerNickname, postWriterId, content, newComment.getId());
         } else{ // 대댓글 -> 원댓글 작성자 한테 알림 보내기
-            userService.makeNotificationForSubComment(writerID, writerNickname, parentComment.getWriterId(), content, newComment.getId());
+            userNotiService.makeNotificationForSubComment(writerID, writerNickname, parentComment.getWriterId(), content, newComment.getId());
         }
 
         return newComment;

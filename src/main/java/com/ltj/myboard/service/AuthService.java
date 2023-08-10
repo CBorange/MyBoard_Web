@@ -2,6 +2,7 @@ package com.ltj.myboard.service;
 import com.ltj.myboard.domain.User;
 import com.ltj.myboard.domain.UserGrade;
 import com.ltj.myboard.dto.auth.ChangeUserInfoRequest;
+import com.ltj.myboard.dto.auth.ChangeUserPasswordRequest;
 import com.ltj.myboard.dto.auth.RegistUserRequest;
 import com.ltj.myboard.dto.auth.TokenResponseDTO;
 import com.ltj.myboard.model.JwtTokenProvider;
@@ -14,6 +15,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -44,7 +49,7 @@ public class AuthService {
         // 따라서 아래 구문을 실행하면 자동으로 UserDetialsService를 호출하여 DB에서 로그인 검증하여
         // 반환해준다.
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(req.getUserID(), req.getPassword())
+                new UsernamePasswordAuthenticationToken(req.getUserID(), req.getCurPassword())
         );
 
         return new TokenResponseDTO(createAccessToken(authentication), jwtTokenProvider.getTokenExpirationTime());
@@ -94,12 +99,26 @@ public class AuthService {
         return newUser;
     }
 
+    private boolean validateUserIsSame(String requestUserId){
+        SecurityContext context = SecurityContextHolder.getContext();
+        UserDetailsImpl userDetails = (UserDetailsImpl)context .getAuthentication().getPrincipal();
+        String curUserId = userDetails.getUsername();
+        if(!curUserId.equals(requestUserId)){
+            return false;
+        }
+        return true;
+    }
+
     public User changeUserInfo(ChangeUserInfoRequest request) {
-        User existUser = validateUser(request.getUserID(), request.getPassword());
+        // 현재 로그인된 유저와 아이디 비교하여 다를경우 Exception 발생
+        if(!validateUserIsSame(request.getUserID()))
+            throw new IllegalArgumentException("유저정보가 같지 않습니다.");
+
+        User existUser = validateUser(request.getUserID(), request.getCurPassword());
         if(existUser == null){
             // 로깅용 msg
-            String logMsg = String.format("유저 ID[%s], 비밀번호[%s]에 해당하는 유저를 찾을 수 없음, 비밀번호 변경 실패",
-                    request.getUserID(), request.getPassword());
+            String logMsg = String.format("유저 ID[%s], 비밀번호[%s]에 해당하는 유저를 찾을 수 없음, 유저정보 변경 실패",
+                    request.getUserID(), request.getCurPassword());
             log.info(logMsg);
 
             // Exception Throw 용 msg
@@ -107,19 +126,33 @@ public class AuthService {
             throw new NoSuchElementException(exceptionMsg);
         }
 
-        /*비밀번호 유효성 검사*/
-        if(request.isChangePassword()){
-            if(request.getPassword().equals(request.getAfterPassword())){
-                String msg = "현재 비밀번호와 변경 후 비밀번호가 동일합니다.";
-                log.info(msg);
-
-                throw new IllegalArgumentException(msg);
-            }
-            existUser.setPassword(passwordEncoder.encode(request.getAfterPassword()));
-        }
+        existUser.setNickname(request.getNickname());
         existUser.setEmail(request.getEmail());
 
         userRepository.save(existUser);
         return existUser;
+    }
+
+    public String changeUserPassword(ChangeUserPasswordRequest request){
+        // 현재 로그인된 유저와 아이디 비교하여 다를경우 Exception 발생
+        if(!validateUserIsSame(request.getUserId()))
+            throw new IllegalArgumentException("유저정보가 같지 않습니다.");
+
+        User existUser = validateUser(request.getUserId(), request.getCurPassword());
+        if(existUser == null){
+            // 로깅용 msg
+            String logMsg = String.format("유저 ID[%s], 비밀번호[%s]에 해당하는 유저를 찾을 수 없음, 비밀번호 변경 실패",
+                    request.getUserId(), request.getCurPassword());
+            log.info(logMsg);
+
+            // Exception Throw 용 msg
+            String exceptionMsg = String.format("[%s]의 비밀번호가 틀렸습니다.", request.getUserId());
+            throw new NoSuchElementException(exceptionMsg);
+        }
+
+        existUser.setPassword(passwordEncoder.encode(request.getAfterPassword()));
+
+        userRepository.save(existUser);
+        return existUser.getPassword();
     }
 }

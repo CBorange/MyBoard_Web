@@ -1,71 +1,41 @@
 /*Input Element에 유효성검사 추가*/
-var nicknameInput = document.querySelector('#nickname');
-nicknameInput.addEventListener("keyup", (e) => {
-    validation_Nickname();
-});
+var afterPasswordInput = document.querySelector('#afterPassword');
+afterPasswordInput.addEventListener("keyup", (e) => {
+    validation_AfterPassword();
+})
 
-var emailInput = document.querySelector('#userEmailInput');
-emailInput.addEventListener("keyup", (e) => {
-    validation_Email();
-});
+// 변경 후 비밀번호
+function validation_AfterPassword(){
+    var afterPasswordInput = document.querySelector('#afterPassword');
 
-// 닉네임
-function validation_Nickname(){
-    var nicknameInput = document.querySelector('#nickname');
+    const match = tryMatch_AfterPassword();
 
-    const match = tryMatch_Nickname();
-
-    nicknameInput.classList.remove('is-valid');
-    nicknameInput.classList.remove('is-invalid');
+    afterPasswordInput.classList.remove('is-valid');
+    afterPasswordInput.classList.remove('is-invalid');
     // Valid
     if(match){
-        nicknameInput.classList.add('is-valid');
+        afterPasswordInput.classList.add('is-valid');
         // Invalid
     } else {
-        nicknameInput.classList.add('is-invalid');
-    }
-}
-function tryMatch_Nickname(){
-    var nicknameInput = document.querySelector('#nickname');
-
-    // 이메일 유효성 검사 Regex
-    const regexPattern = /^(?=.*[a-zA-Z0-9가-힣])[a-zA-Z0-9가-힣]{2,12}$/;
-    const match = regexPattern.test(nicknameInput.value);
-    return match;
-}
-
-// 이메일
-function validation_Email(){
-    var emailInput = document.querySelector('#userEmailInput');
-
-    const match = tryMatch_Email();
-
-    emailInput.classList.remove('is-valid');
-    emailInput.classList.remove('is-invalid');
-    // Valid
-    if(match){
-        emailInput.classList.add('is-valid');
-        // Invalid
-    } else {
-        emailInput.classList.add('is-invalid');
+        afterPasswordInput.classList.add('is-invalid');
     }
 }
 
-function tryMatch_Email(){
-    var emailInput = document.querySelector('#userEmailInput');
-    // 이메일 유효성 검사 Regex
-    const regexPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    const match = regexPattern.test(emailInput.value);
+function tryMatch_AfterPassword(){
+    var afterPasswordInput = document.querySelector('#afterPassword');
+    // 비밀번호 유효성 검사 Regex
+    // 최소 8자 이상, 영문 및 숫자 포함 필수, 영문 대문자 또는 특수문자 1개이상 포함
+    const regexPattern = /^(?=.*[A-Z!@#$%^&*])[A-Za-z0-9!@#$%^&*]{8,}$/;
+    const match = regexPattern.test(afterPasswordInput.value);
     return match;
 }
 
 function onSubmitChange(){
-    const changeUserInfoForm = document.querySelector('#changeUserInfoForm');
+    const changeUserPasswordForm = document.querySelector('#changeUserPasswordForm');
 
     // 유효성 검사
-    validation_Email();
-    validation_Nickname();
-    var inputList = document.querySelectorAll('#changeUserInfoForm input');
+    validation_AfterPassword();
+    var inputList = document.querySelectorAll('#changeUserPasswordForm input');
     for(inputTag of inputList){
         if(inputTag.classList.contains('is-invalid')){
             alert('적용할 수 없습니다. 잘못된 부분을 수정한 후 다시 시도해주세요.');
@@ -74,13 +44,12 @@ function onSubmitChange(){
     }
 
     const sendData = {
-        userID : changeUserInfoForm.elements['username'].value,
-        email : changeUserInfoForm.elements['email'].value,
-        nickname : changeUserInfoForm.elements['nickname'].value,
-        curPassword : changeUserInfoForm.elements['cur_password'].value,
+        userId : changeUserPasswordForm.elements['username'].value,
+        curPassword : changeUserPasswordForm.elements['cur_password'].value,
+        afterPassword : changeUserPasswordForm.elements['change_password'].value,
     };
 
-    let msg = '유저정보 변경 성공, 다시 로그인 해주세요';
+    let msg = '비밀번호 변경 성공, 다시 로그인 해주세요';
     const resultArea = document.querySelector('#resultArea');
     const resultMsg = document.querySelector('#resultMsg');
     const goToLoginBtn = document.querySelector('#goToLoginBtn');
@@ -93,9 +62,9 @@ function onSubmitChange(){
         headers.append(tokenInfo.header, tokenInfo.token);
     }
 
-    const url = makeURL('/user');
+    const url = makeURL('/user/password');
     fetch(url, {
-        method: 'PATCH',
+        method: 'PUT',
         headers: headers,
         body: JSON.stringify(sendData)
     })
