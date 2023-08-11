@@ -1,40 +1,17 @@
+// input element id 선언
+const afterPasswordInputId = '#afterPassword';
+
 /*Input Element에 유효성검사 추가*/
 var afterPasswordInput = document.querySelector('#afterPassword');
 afterPasswordInput.addEventListener("keyup", (e) => {
-    validation_AfterPassword();
+    validationInput(afterPasswordInputId, passwordRegexExp);
 })
-
-// 변경 후 비밀번호
-function validation_AfterPassword(){
-    var afterPasswordInput = document.querySelector('#afterPassword');
-
-    const match = tryMatch_AfterPassword();
-
-    afterPasswordInput.classList.remove('is-valid');
-    afterPasswordInput.classList.remove('is-invalid');
-    // Valid
-    if(match){
-        afterPasswordInput.classList.add('is-valid');
-        // Invalid
-    } else {
-        afterPasswordInput.classList.add('is-invalid');
-    }
-}
-
-function tryMatch_AfterPassword(){
-    var afterPasswordInput = document.querySelector('#afterPassword');
-    // 비밀번호 유효성 검사 Regex
-    // 최소 8자 이상, 영문 및 숫자 포함 필수, 영문 대문자 또는 특수문자 1개이상 포함
-    const regexPattern = /^(?=.*[A-Z!@#$%^&*])[A-Za-z0-9!@#$%^&*]{8,}$/;
-    const match = regexPattern.test(afterPasswordInput.value);
-    return match;
-}
 
 function onSubmitChange(){
     const changeUserPasswordForm = document.querySelector('#changeUserPasswordForm');
 
     // 유효성 검사
-    validation_AfterPassword();
+    validationInput(afterPasswordInputId, passwordRegexExp);
     var inputList = document.querySelectorAll('#changeUserPasswordForm input');
     for(inputTag of inputList){
         if(inputTag.classList.contains('is-invalid')){
@@ -92,18 +69,4 @@ function onSubmitChange(){
         resultMsg.style.color = "red";
         resultMsg.innerText = error;
     });
-}
-
-function onClickPasswordEye(inputSelector, eyeImgSelector){
-    var passwordInput = document.querySelector(inputSelector);
-    var eyeImgTag = document.querySelector(eyeImgSelector);
-
-    if(passwordInput.getAttribute('type') == 'text'){
-        passwordInput.setAttribute('type', 'password');
-        eyeImgTag.setAttribute('src', '/img/eye-x.png');
-    }
-    else{
-        passwordInput.setAttribute('type', 'text');
-        eyeImgTag.setAttribute('src', '/img/eye.png');
-    }
 }

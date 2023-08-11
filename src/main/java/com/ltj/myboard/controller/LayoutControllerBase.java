@@ -27,12 +27,15 @@ public class LayoutControllerBase {
     @Value("${server.buildversion}")
     private String buildVersion;
 
+    @Value("${server.connect-url}")
+    private String serverConnectUrl;
+
     @Autowired
     private BoardService boardService;
 
     @ModelAttribute("versionInfo")
     public VersionInfo versionInfo(){
-        VersionInfo versionInfo = new VersionInfo(activatedProfile, buildVersion);
+        VersionInfo versionInfo = new VersionInfo(activatedProfile, buildVersion, serverConnectUrl);
         return versionInfo;
     }
 

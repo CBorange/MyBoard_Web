@@ -72,7 +72,7 @@ public class UserController {
     // 회원가입 기능 실행
     @PostMapping("/user")
     @ResponseBody
-    public ResponseEntity register(@RequestBody RegistUserRequest request){
+    public ResponseEntity register(@Valid @RequestBody RegistUserRequest request){
         User newUser = authService.registerUser(request);
         return new ResponseEntity<User>(newUser, HttpStatus.CREATED);
     }

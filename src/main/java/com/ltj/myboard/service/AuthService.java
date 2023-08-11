@@ -79,6 +79,8 @@ public class AuthService {
     }
 
     public User registerUser(RegistUserRequest request) {
+        validateRegistUserParamWithException(request);
+
         User newUser = new User();
         newUser.setEmail(request.getEmail());
         newUser.setNickname(request.getNickname());
@@ -99,13 +101,44 @@ public class AuthService {
         return newUser;
     }
 
+    private void validateRegistUserParamWithException(RegistUserRequest request){
+        // 아이디 중복검사
+        long cnt = userRepository.countById(request.getUserID());
+        if(cnt > 0)
+            throw new IllegalArgumentException("이미 사용중인 아이디 입니다.");
+        // 이메일 중복검사
+        cnt = userRepository.countByEmail(request.getEmail());
+        if(cnt > 0)
+            throw new IllegalArgumentException("이미 사용중인 이메일 입니다.");
+        // 닉네임 중복검사
+        cnt = userRepository.countByNickname(request.getNickname());
+        if(cnt > 0)
+            throw new IllegalArgumentException("이미 사용중인 닉네임 입니다.");
+    }
+
     private boolean validateUserIsSame(String requestUserId){
         SecurityContext context = SecurityContextHolder.getContext();
-        UserDetailsImpl userDetails = (UserDetailsImpl)context .getAuthentication().getPrincipal();
+        UserDetails userDetails = (UserDetails)context .getAuthentication().getPrincipal();
         String curUserId = userDetails.getUsername();
         if(!curUserId.equals(requestUserId)){
             return false;
         }
+        return true;
+    }
+
+    private boolean validateEmailExists(String requestUserId, String requestEmail){
+        long cnt = userRepository.countByEmailAndIdNot(requestEmail, requestUserId);
+        // 변경하려는 이메일을 사용하고 있으면서 현재 Request를 시도한 유저와 같지 않은 아이디를 가진 케이스의 개수
+        if(cnt > 0)
+            return false;
+        return true;
+    }
+
+    private boolean validateNicknameExists(String requestUserId, String requestNickname){
+        long cnt = userRepository.countByNicknameAndIdNot(requestNickname, requestUserId);
+        // 변경하려는 닉네임을 사용하고 있으면서 현재 Request를 시도한 유저와 같지 않은 아이디를 가진 케이스의 개수
+        if(cnt > 0)
+            return false;
         return true;
     }
 
@@ -125,6 +158,13 @@ public class AuthService {
             String exceptionMsg = String.format("[%s]의 비밀번호가 틀렸습니다.", request.getUserID());
             throw new NoSuchElementException(exceptionMsg);
         }
+
+        // 이미 다른 유저가 사용중인 이메일 인지
+        if(!validateEmailExists(request.getUserID(), request.getEmail()))
+            throw new IllegalArgumentException("이미 사용중인 이메일 입니다.");
+
+        if(!validateNicknameExists(request.getUserID(), request.getNickname()))
+            throw new IllegalArgumentException("이미 사용중인 닉네임 입니다.");
 
         existUser.setNickname(request.getNickname());
         existUser.setEmail(request.getEmail());

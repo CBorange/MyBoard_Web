@@ -17,15 +17,17 @@ import java.lang.annotation.Target;
 public class ChangeUserInfoRequest {
     // 이메일 : 기본 이메일 구성(가운데 @ 기호, @ 우측에 .으로 시작하는 도메인)
     @NotEmpty(message = "이메일은 필수값입니다.")
-    @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")
+    @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$",
+             message = "유효하지 않은 이메일 형식입니다.")
     private String email;
 
     // 닉네임 : 2~12자 이내, 영문, 숫자, 한글 사용가능
     @NotEmpty(message = "닉네임은 필수값입니다.")
-    @Pattern(regexp = "^(?=.*[a-zA-Z0-9가-힣])[a-zA-Z0-9가-힣]{2,12}$")
+    @Pattern(regexp = "^(?=.*[a-zA-Z0-9가-힣])[a-zA-Z0-9가-힣]{2,12}$",
+             message = "유효하지 않은 닉네임 입니다.")
     private String nickname;
 
-    @NotEmpty(message = "유저ID는 필수값입니다.")
+    @NotEmpty(message = "아이디는 필수값입니다.")
     private String userID;
 
     @NotEmpty(message = "현재 비밀번호는 필수값입니다.")

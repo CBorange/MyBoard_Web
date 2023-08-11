@@ -76,7 +76,9 @@ public class WebSecurityConfig {
             .antMatchers("/changeuserinfo").authenticated()
                 .antMatchers("/changeuserpassword").authenticated()
             .antMatchers("/apitest").authenticated()
-            .antMatchers("/user/**").authenticated()
+            .antMatchers(HttpMethod.PATCH,"/user").authenticated()
+            .antMatchers(HttpMethod.PUT,"/user/password").authenticated()
+            .antMatchers("/user/notification/**").authenticated()
             .antMatchers("/admin/**").hasAuthority("ROLE_" + UserGradeLevel.Admin.getValue())
             .anyRequest().permitAll(); // 그 외 나머지 API는 권한 없어도 접근 가능
 
@@ -108,7 +110,7 @@ public class WebSecurityConfig {
                 //.expiredUrl("/expired");
 
         // test
-        http.csrf().disable();
+        //http.csrf().disable();
 
         return http.build();
     }

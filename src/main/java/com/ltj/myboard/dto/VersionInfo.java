@@ -9,4 +9,5 @@ import lombok.Setter;
 public class VersionInfo {
     private String deployEnvironment;
     private String buildVersion;
+    private String serverConnectUrl;
 }

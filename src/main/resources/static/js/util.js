@@ -1,5 +1,5 @@
 function makeURL(resource) {
-    var generatedURL = host + resource;
+    var generatedURL = serverConnectURL + resource;
     return generatedURL;
 }
 

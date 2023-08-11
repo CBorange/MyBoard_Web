@@ -1,70 +1,24 @@
+// input element id 선언
+const nicknameInputId = '#nickname';
+const emailInputId = '#userEmailInput';
+
 /*Input Element에 유효성검사 추가*/
-var nicknameInput = document.querySelector('#nickname');
+var nicknameInput = document.querySelector(nicknameInputId);
 nicknameInput.addEventListener("keyup", (e) => {
-    validation_Nickname();
+    validationInput(nicknameInputId, nicknameRegexExp);
 });
 
 var emailInput = document.querySelector('#userEmailInput');
 emailInput.addEventListener("keyup", (e) => {
-    validation_Email();
+    validationInput(emailInputId, emailRegexExp);
 });
-
-// 닉네임
-function validation_Nickname(){
-    var nicknameInput = document.querySelector('#nickname');
-
-    const match = tryMatch_Nickname();
-
-    nicknameInput.classList.remove('is-valid');
-    nicknameInput.classList.remove('is-invalid');
-    // Valid
-    if(match){
-        nicknameInput.classList.add('is-valid');
-        // Invalid
-    } else {
-        nicknameInput.classList.add('is-invalid');
-    }
-}
-function tryMatch_Nickname(){
-    var nicknameInput = document.querySelector('#nickname');
-
-    // 이메일 유효성 검사 Regex
-    const regexPattern = /^(?=.*[a-zA-Z0-9가-힣])[a-zA-Z0-9가-힣]{2,12}$/;
-    const match = regexPattern.test(nicknameInput.value);
-    return match;
-}
-
-// 이메일
-function validation_Email(){
-    var emailInput = document.querySelector('#userEmailInput');
-
-    const match = tryMatch_Email();
-
-    emailInput.classList.remove('is-valid');
-    emailInput.classList.remove('is-invalid');
-    // Valid
-    if(match){
-        emailInput.classList.add('is-valid');
-        // Invalid
-    } else {
-        emailInput.classList.add('is-invalid');
-    }
-}
-
-function tryMatch_Email(){
-    var emailInput = document.querySelector('#userEmailInput');
-    // 이메일 유효성 검사 Regex
-    const regexPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    const match = regexPattern.test(emailInput.value);
-    return match;
-}
 
 function onSubmitChange(){
     const changeUserInfoForm = document.querySelector('#changeUserInfoForm');
 
     // 유효성 검사
-    validation_Email();
-    validation_Nickname();
+    validationInput(nicknameInputId, nicknameRegexExp);
+    validationInput(emailInputId, emailRegexExp);
     var inputList = document.querySelectorAll('#changeUserInfoForm input');
     for(inputTag of inputList){
         if(inputTag.classList.contains('is-invalid')){
@@ -123,18 +77,4 @@ function onSubmitChange(){
         resultMsg.style.color = "red";
         resultMsg.innerText = error;
     });
-}
-
-function onClickPasswordEye(inputSelector, eyeImgSelector){
-    var passwordInput = document.querySelector(inputSelector);
-    var eyeImgTag = document.querySelector(eyeImgSelector);
-
-    if(passwordInput.getAttribute('type') == 'text'){
-        passwordInput.setAttribute('type', 'password');
-        eyeImgTag.setAttribute('src', '/img/eye-x.png');
-    }
-    else{
-        passwordInput.setAttribute('type', 'text');
-        eyeImgTag.setAttribute('src', '/img/eye.png');
-    }
 }
