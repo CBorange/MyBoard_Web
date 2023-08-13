@@ -1,0 +1,9 @@
+<!DOCTYPE html>
+<html xmlns:th="http://thymeleaf.org">
+    <th:block th:fragment="find-user-result">
+        <div>
+            <h2>유저 계정찾기</h2>
+            <p th:text="${toMail} + ' 이메일에 연결된 계정을 확인하는 링크입니다.'"></p>
+        </div>
+    </th:block>
+</html>

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://thymeleaf.org">
+    <head>
+        <title>MyBoard Service</title>
+        <link rel="stylesheet" href="/css/bootstrap/bootstrap.css">
+        <script src="/js/bootstrap/bootstrap.bundle.js"></script>
+    </head>
+    <body>
+        <h2>유저 계정찾기 안내</h2>
+        <p>유저 계정찾기 안내메일 입니다.</p>
+        <p th:text="${toMail} + ' 이메일에 연결된 계정을 확인하는 링크입니다.'"></p>
+        <p>아래 링크를 클릭하면 계정의 ID를 확인할 수 있습니다.</p>
+
+        <form method="put" th:action="/user/password/change-temporary">
+            <input type="hidden" name="linkParam" th:value="${linkParam}" />
+            <a onclick="this.parentNode.submit();">유저계정확인</a>
+        </form>
+        <br/>
+        <p>*주의*</p>
+        <p>링크를 클릭하면 기존 비밀번호는 초기화 됩니다.</p>
+        <p>안내되는 임시 비밀번호로 로그인 하신 후 반드시 비밀번호를 변경해주세요.</p>
+    </body>
+</html>

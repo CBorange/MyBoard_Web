@@ -1,4 +1,5 @@
 package com.ltj.myboard.service;
+import com.ltj.myboard.domain.FindUserPending;
 import com.ltj.myboard.domain.User;
 import com.ltj.myboard.domain.UserGrade;
 import com.ltj.myboard.dto.auth.ChangeUserInfoRequest;
@@ -8,8 +9,10 @@ import com.ltj.myboard.dto.auth.TokenResponseDTO;
 import com.ltj.myboard.model.JwtTokenProvider;
 import com.ltj.myboard.model.UserDetailsImpl;
 import com.ltj.myboard.model.UserGradeLevel;
+import com.ltj.myboard.repository.FindUserPendingRepository;
 import com.ltj.myboard.repository.UserGradeRepository;
 import com.ltj.myboard.repository.UserRepository;
+import com.ltj.myboard.util.MyStringUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -22,9 +25,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.rmi.server.UID;
 import java.util.Date;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -33,6 +38,7 @@ public class AuthService {
     private final UserRepository userRepository;
     private final UserGradeRepository userGradeRepository;
     private final PasswordEncoder passwordEncoder;
+    private final FindUserPendingRepository findUserPendingRepository;
 
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
@@ -194,5 +200,40 @@ public class AuthService {
 
         userRepository.save(existUser);
         return existUser.getPassword();
+    }
+
+    public String chnageUserPasswordTemporallyByFindUserRequest(String linkParam){
+        // 유저정보 찾기 시도 하여 생성된 unique link parameter 값으로 다시 Redis DB에서 조회하여
+        // 연결된 유저의 비밀번호를 랜덤한 문자열의 임시비밀번호로 변경한다.
+        FindUserPending request = findUserPendingRepository.findByUniqueLinkParam(linkParam);
+        String userId = request.getUserId();
+
+        User foundUser = userRepository.findById(userId).orElseThrow(
+                () -> new NoSuchElementException("유저 임시비밀번호로 변경 중 오류발생, " + userId + "에 해당하는 유저 ID를 찾을 수 없음"));
+
+        String randomStr = MyStringUtil.generate_RandomAlphanumeric();
+        foundUser.setPassword(randomStr);
+        userRepository.save(foundUser);
+
+        return foundUser.getPassword();
+    }
+
+    // 유저정보 찾기 시도를 대기상태로 생성한다(Redis DB에 저장)
+    public FindUserPending addFindUserStateToPending(String userEmail){
+        // email로 유저정보 조회, 없는 유저의 경우 exception throw
+        User user = userRepository.findByEmail(userEmail).orElseThrow(
+            () -> new NoSuchElementException("등록되지 않은 이메일 입니다.")
+        );
+
+        // Redis 데이터 생성
+        FindUserPending newState = new FindUserPending();
+        newState.setUserId(user.getId());
+
+        UUID uniqueLink = UUID.randomUUID();
+        newState.setUniqueLinkParam(uniqueLink.toString());
+
+        findUserPendingRepository.save(newState);
+
+        return newState;
     }
 }
