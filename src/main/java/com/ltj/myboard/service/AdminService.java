@@ -2,8 +2,8 @@ package com.ltj.myboard.service;
 
 import com.ltj.myboard.domain.User;
 import com.ltj.myboard.dto.admin.AdminChangePassword;
-import com.ltj.myboard.repository.UserGradeRepository;
-import com.ltj.myboard.repository.UserRepository;
+import com.ltj.myboard.repository.jpa.UserGradeRepository;
+import com.ltj.myboard.repository.jpa.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;

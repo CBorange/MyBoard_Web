@@ -7,7 +7,7 @@ import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
 
-@EnableRedisRepositories
+@EnableRedisRepositories(basePackages = {"com.ltj.myboard.repository.redis"})
 @Configuration
 public class RedisConfig {
     @Value("${spring.redis.host}")

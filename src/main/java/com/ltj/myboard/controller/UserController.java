@@ -4,21 +4,15 @@ import com.ltj.myboard.domain.*;
 import com.ltj.myboard.dto.auth.ChangeUserInfoRequest;
 import com.ltj.myboard.dto.auth.ChangeUserPasswordRequest;
 import com.ltj.myboard.dto.auth.RegistUserRequest;
-import com.ltj.myboard.model.UserDetailsImpl;
 import com.ltj.myboard.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.mail.MailSendException;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import javax.mail.MessagingException;
 import javax.servlet.http.Cookie;
@@ -31,11 +25,11 @@ import java.util.NoSuchElementException;
 @RequiredArgsConstructor
 @Slf4j
 public class UserController {
-    private final AuthService authService;
     private final EmailService emailService;
     private final UserNotiService userNotiService;
     private final PostService postService;
     private final CommentService commentService;
+    private final UserService userService;
 
     @PostMapping("/user/notification/{notificationId}/read")
     public ResponseEntity readNotification(@PathVariable int notificationId){
@@ -73,14 +67,14 @@ public class UserController {
     @PostMapping("/user")
     @ResponseBody
     public ResponseEntity register(@Valid @RequestBody RegistUserRequest request){
-        User newUser = authService.registerUser(request);
+        User newUser = userService.registerUser(request);
         return new ResponseEntity<User>(newUser, HttpStatus.CREATED);
     }
 
     // 유저정보 수정 기능 실행
     @PatchMapping("/user")
     public ResponseEntity changeUserInfo(HttpServletRequest request, @Valid @RequestBody ChangeUserInfoRequest requestDTO){
-        User changedUser = authService.changeUserInfo(requestDTO);
+        User changedUser = userService.changeUserInfo(requestDTO);
 
         logoutManually(request);
         return new ResponseEntity<User>(changedUser, HttpStatus.OK);
@@ -89,7 +83,7 @@ public class UserController {
     // 유저 비밀번호 변경 기능 실행
     @PutMapping("/user/password")
     public ResponseEntity changePassword(HttpServletRequest request, @Valid @RequestBody ChangeUserPasswordRequest requestDTO){
-        String changedPassword = authService.changeUserPassword(requestDTO);
+        String changedPassword = userService.changeUserPassword(requestDTO);
 
         logoutManually(request);
         return new ResponseEntity<String>(changedPassword, HttpStatus.OK);
@@ -98,11 +92,11 @@ public class UserController {
     @PostMapping("/user/find")
     public ResponseEntity findUserInfo(@RequestParam("userEmail") String userEmail){
         // Redis에 유저정보 탐색 대기 저장
-        FindUserPending pending = authService.addFindUserStateToPending(userEmail);
+        FindUserRequest pending = userService.makeFindUserRequestAndSetToPending(userEmail);
 
         // 메일로 비밀번호 초기화 링크 전송
         try{
-            emailService.sendFindUserConfirmMail(userEmail, pending.getUniqueLinkParam());
+            emailService.sendFindUserConfirmMail(userEmail, pending.getUniqueLink());
         } catch (MessagingException e){
             // Global Exception Handler가 처리할 수 있도록 IllegalStateException으로 변환
             throw new IllegalStateException("메일 전송 실패 : " + e.getMessage());
@@ -116,10 +110,15 @@ public class UserController {
         // 유저의 비밀번호를 임시 비밀번호로 변경한다.
         // 유저가 계정찾기를 시도했을 때 생성하여 Redis DB에 저장된 랜덤 유니크값 으로 다시 유저를 조회해서
         // 해당 유저의 비밀번호값을 랜덤 문자열로 변경시킨다.
-        String tempPassword = authService.chnageUserPasswordTemporallyByFindUserRequest(linkParam);
+        User targetUser = userService.chnageUserPasswordTemporallyByFindUserRequest(linkParam);
+        String tempPassword = targetUser.getPassword();
 
         // 계정 아이디 및 임시 비밀번호 보여주는 최종 확인 및 로그인 안내 화면으로 이동
-        return new ResponseEntity(HttpStatus.PERMANENT_REDIRECT);
+        String redirectURL = String.format("/find-user-result?linkParam=%s", linkParam);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Location", redirectURL);
+        return new ResponseEntity(HttpStatus.SEE_OTHER);
     }
 
     // 수동으로 Logout 처리 실행

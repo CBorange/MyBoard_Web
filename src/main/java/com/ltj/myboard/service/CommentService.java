@@ -1,24 +1,19 @@
 package com.ltj.myboard.service;
 
 import com.ltj.myboard.domain.*;
-import com.ltj.myboard.dto.post.FilteredPost;
 import com.ltj.myboard.dto.post.OrderedComment;
 import com.ltj.myboard.model.ActivityHistoryTypes;
-import com.ltj.myboard.repository.CommentActivityHistoryRepository;
-import com.ltj.myboard.repository.CommentRepository;
-import com.ltj.myboard.repository.UserNotificationRepository;
+import com.ltj.myboard.repository.jpa.CommentActivityHistoryRepository;
+import com.ltj.myboard.repository.jpa.CommentRepository;
 import com.ltj.myboard.util.Ref;
-import com.ltj.myboard.util.UserNotiUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service

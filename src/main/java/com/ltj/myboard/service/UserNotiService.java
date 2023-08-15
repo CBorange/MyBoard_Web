@@ -1,7 +1,7 @@
 package com.ltj.myboard.service;
 
 import com.ltj.myboard.domain.UserNotification;
-import com.ltj.myboard.repository.UserNotificationRepository;
+import com.ltj.myboard.repository.jpa.UserNotificationRepository;
 import com.ltj.myboard.util.Ref;
 import com.ltj.myboard.util.UserNotiUtil;
 import lombok.RequiredArgsConstructor;

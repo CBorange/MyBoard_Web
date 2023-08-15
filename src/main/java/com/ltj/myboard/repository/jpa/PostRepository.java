@@ -1,4 +1,4 @@
-package com.ltj.myboard.repository;
+package com.ltj.myboard.repository.jpa;
 
 import com.ltj.myboard.domain.Post;
 import com.ltj.myboard.model.ActivityHistoryTypes;
@@ -13,7 +13,6 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
-@Repository
 public interface PostRepository extends JpaRepository<Post, Integer> {
     Optional<Post> findById(int postID);
     List<Post> findAllByBoardId(int boardID, Pageable pageable);

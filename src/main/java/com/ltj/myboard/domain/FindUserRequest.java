@@ -11,12 +11,12 @@ import org.springframework.data.redis.core.index.Indexed;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@RedisHash(value = "find_user_pending", timeToLive = 300)   // 유효시간 5분
-public class FindUserPending {
+@RedisHash(value = "find_user_request", timeToLive = 300L)   // 유효시간 5분
+public class FindUserRequest {
 
     @Id
     @Indexed
-    private String uniqueLinkParam;
+    private String uniqueLink;
 
     private String userId;
 }

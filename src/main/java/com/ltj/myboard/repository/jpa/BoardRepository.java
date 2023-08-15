@@ -1,4 +1,4 @@
-package com.ltj.myboard.repository;
+package com.ltj.myboard.repository.jpa;
 
 import com.ltj.myboard.domain.Board;
 import org.springframework.data.jpa.repository.JpaRepository;

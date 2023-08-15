@@ -1,22 +1,24 @@
 package myboard.user;
 import com.ltj.myboard.MyBoardApplication;
-import com.ltj.myboard.domain.FindUserPending;
-import com.ltj.myboard.repository.FindUserPendingRepository;
-import com.ltj.myboard.service.AuthService;
+import com.ltj.myboard.domain.FindUserRequest;
+import com.ltj.myboard.repository.redis.FindUserRequestRepository;
+import com.ltj.myboard.service.UserService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest(classes = MyBoardApplication.class)
+@Transactional
 public class FindUserRepositoryTest {
 
     @Autowired
-    private FindUserPendingRepository  findUserPendingRepository;
+    private FindUserRequestRepository findUserRequestRepository;
 
     @Autowired
-    private AuthService authService;
+    private UserService  userService;
 
     @Test
     public void addPendingStateForFindUserTest(){
@@ -24,10 +26,11 @@ public class FindUserRepositoryTest {
         String email = "test@example.com";
 
         // when
-        FindUserPending ret = authService.addFindUserStateToPending(email);
+        FindUserRequest ret = userService.makeFindUserRequestAndSetToPending(email);
 
         // then
-        FindUserPending found = findUserPendingRepository.findByUniqueLinkParam(ret.getUniqueLinkParam());
+        FindUserRequest found = findUserRequestRepository.findByUniqueLink(ret.getUniqueLink());
         Assertions.assertNotNull(found);
     }
+
 }

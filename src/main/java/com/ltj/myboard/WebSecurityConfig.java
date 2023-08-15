@@ -1,5 +1,4 @@
 package com.ltj.myboard;
-import com.ltj.myboard.model.JwtAuthenticationFilter;
 import com.ltj.myboard.model.JwtTokenProvider;
 import com.ltj.myboard.model.UserGradeLevel;
 import com.ltj.myboard.service.MyAuthenticationFailureHandler;
@@ -13,14 +12,10 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -33,8 +28,6 @@ public class WebSecurityConfig {
     MyAuthenticationFailureHandler myAuthenticationFailureHandler;
     @Autowired
     MyLogoutSuccessHandler myLogoutSuccessHandler;
-    @Autowired
-    JwtTokenProvider jwtTokenProvider;
 
     // URL Route 시, DispatcherServlet 동작 전 Filter 단계에서 처리할 Spring Security Filter Bean 등록 및 설정
     // Spring Security는 기본적으로 Cookie, Session을 사용하여 유저정보를 저장한다.

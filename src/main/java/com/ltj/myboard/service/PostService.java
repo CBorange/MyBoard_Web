@@ -4,7 +4,7 @@ package com.ltj.myboard.service;
 import com.ltj.myboard.domain.*;
 import com.ltj.myboard.dto.post.*;
 import com.ltj.myboard.model.ActivityHistoryTypes;
-import com.ltj.myboard.repository.*;
+import com.ltj.myboard.repository.jpa.*;
 import com.ltj.myboard.util.Ref;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Slf4j

@@ -2,7 +2,7 @@ package com.ltj.myboard.service;
 
 import com.ltj.myboard.domain.User;
 import com.ltj.myboard.model.UserDetailsImpl;
-import com.ltj.myboard.repository.UserRepository;
+import com.ltj.myboard.repository.jpa.UserRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;

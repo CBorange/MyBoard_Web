@@ -1,13 +1,12 @@
 package com.ltj.myboard.service;
 import com.ltj.myboard.domain.Board;
-import com.ltj.myboard.repository.BoardRepository;
+import com.ltj.myboard.repository.jpa.BoardRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
