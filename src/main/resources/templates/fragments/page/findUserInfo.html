@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<th:block th:fragment="findUserInfo">
+    <div class="mx-auto container-lg top-div">
+        <!--여백-->
+        <div style="height:35px;"></div>
+        <h1>유저 ID/PW 찾기</h1>
+        <br/>
+        <form onsubmit="return false" id="sendForm" novalidate>
+            <div class="d-flex flex-column">
+                <label>찾으려는 계정의 이메일을 입력해주세요.</label>
+                <label>이메일 계정으로 임시비밀번호 설정 안내메일을 보내드립니다.</label>
+                <br/>
+                <!--이메일-->
+                <div>
+                    <label class="form-label" for="emailInput">이메일주소</label>
+                    <input class="form-control" type="text" name="email" style="width:300px;" placeholder="이메일"
+                           id="emailInput"/>
+                    <div class="valid-feedback">
+                        유효한 이메일 입니다.
+                    </div>
+                    <div class="invalid-feedback">
+                        유효하지 않은 이메일 형식입니다.
+                    </div>
+                </div>
+            </div>
+            <br/>
+            <button class="btn btn-info" type="button" onclick="onClickSend()">
+                메일전송
+            </button>
+        </form>
+        <div id="resultArea" style="visibility: hidden;">
+            <p id="resultMsg">메일전송 성공</p>
+        </div>
+    </div>
+    <script src="/js/find-userinfo.js"></script>
+</th:block>
+</html>

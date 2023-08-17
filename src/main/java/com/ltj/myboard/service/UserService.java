@@ -1,5 +1,4 @@
 package com.ltj.myboard.service;
-import com.ltj.myboard.domain.FindUserRequest;
 import com.ltj.myboard.domain.User;
 import com.ltj.myboard.domain.UserGrade;
 import com.ltj.myboard.dto.auth.ChangeUserInfoRequest;
@@ -13,6 +12,7 @@ import com.ltj.myboard.repository.jpa.UserRepository;
 import com.ltj.myboard.util.MyStringUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -29,6 +29,9 @@ public class UserService {
     private final UserGradeRepository userGradeRepository;
     private final PasswordEncoder passwordEncoder;
     private final FindUserRequestRepository findUserRequestRepository;
+    private final RedisTemplate redisTemplate;
+
+    private final long findUserRequestPending_ttl = 300L;
 
     /**
      * 토큰 생성
@@ -200,9 +203,7 @@ public class UserService {
     public User chnageUserPasswordTemporallyByFindUserRequest(String linkParam){
         // 유저정보 찾기 시도 하여 생성된 unique link parameter 값으로 다시 Redis DB에서 조회하여
         // 연결된 유저의 비밀번호를 랜덤한 문자열의 임시비밀번호로 변경한다.
-        FindUserRequest request = findUserRequestRepository.findByUniqueLink(linkParam);
-        String userId = request.getUserId();
-
+        String userId = findUserRequestRepository.findByUniqueLink(linkParam);
         User foundUser = userRepository.findById(userId).orElseThrow(
                 () -> new NoSuchElementException("유저 임시비밀번호로 변경 중 오류발생, " + userId + "에 해당하는 유저 ID를 찾을 수 없음"));
 
@@ -214,21 +215,30 @@ public class UserService {
     }
 
     // 유저정보 찾기 시도를 대기상태로 생성한다(Redis DB에 저장)
-    public FindUserRequest makeFindUserRequestAndSetToPending(String userEmail){
+    public String makeFindUserRequestAndSetToPending(String userEmail){
         // email로 유저정보 조회, 없는 유저의 경우 exception throw
         User user = userRepository.findByEmail(userEmail).orElseThrow(
                 () -> new NoSuchElementException("등록되지 않은 이메일 입니다.")
         );
 
         // Redis 데이터 생성
-        FindUserRequest newState = new FindUserRequest();
-        newState.setUserId(user.getId());
-
         UUID uniqueLink = UUID.randomUUID();
-        newState.setUniqueLink(uniqueLink.toString());
+        String uniqueLinkStr = uniqueLink.toString();
 
-        findUserRequestRepository.save(newState);
+        // Redis 저장
+        findUserRequestRepository.save(uniqueLinkStr, user.getId(), findUserRequestPending_ttl);
 
-        return newState;
+        return uniqueLinkStr;
+    }
+
+    public User findByFindUserRequestUniqueLink(String linkParam){
+        String userId = findUserRequestRepository.findByUniqueLink(linkParam);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NoSuchElementException("유저정보 찾기 Request Link로 유저정보찾기 실패 " + linkParam + " key가 존재하지 않음"));
+        return user;
+    }
+
+    public void deleteFindUserRequest(String linkParam){
+        findUserRequestRepository.remove(linkParam);
     }
 }

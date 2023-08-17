@@ -1,4 +1,5 @@
 package com.ltj.myboard.controller;
+import com.ltj.myboard.domain.User;
 import com.ltj.myboard.dto.auth.ChangeUserInfoRequest;
 import com.ltj.myboard.dto.auth.TokenResponseDTO;
 import com.ltj.myboard.service.UserService;
@@ -25,7 +26,6 @@ public class UserViewController extends LayoutControllerBase {
     private String serverDomain;
 
     private final UserService userService;
-    private final RestTemplate restTemplate;
 
     // 로그인 페이지 반환, login post api는 spring security form login 자체적으로 제공한다.
     @GetMapping("/login")
@@ -59,11 +59,25 @@ public class UserViewController extends LayoutControllerBase {
         addLayoutModel_FragmentContent(model, "changeUserPassword.html", "changeUserPassword");
         return LayoutViewPath;
     }
+    
+    // 유저정보 찾기 페이지 반환
+    @GetMapping("/finduser")
+    public String findUserInfoPage(Model model){
+        addLayoutModel_FragmentContent(model, "findUserInfo.html", "findUserInfo");
+        return LayoutViewPath;
+    }
 
     // 유저정보 찾기 결과 페이지 반환
     @GetMapping("/find-user-result")
     public String findUserResultPage(Model model, @RequestParam(name = "linkParam") String linkParam){
         // FindUser UniqueLink로 Redis에 데이터 조회하여 FindUser Request 정보 얻어냄
+        User user = userService.findByFindUserRequestUniqueLink(linkParam);
+        String userId = user.getId();
+        String password = user.getPassword();
+
+        // model에 유저정보 추가
+        model.addAttribute("userId", userId);
+        model.addAttribute("password", password);
 
         addLayoutModel_FragmentContent(model, "find-user-result.html", "find-user-result");
         return LayoutViewPath;

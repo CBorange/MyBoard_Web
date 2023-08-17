@@ -3,8 +3,8 @@
     <th:block th:fragment="find-user-result">
         <div>
             <h2>유저 계정찾기 확인</h2>
-            <p th:text="'아이디 : ' + ${}"></p>
-            <p th:text="'임시비밀번호 : ' + ${}"></p>
+            <p th:text="'아이디 : ' + ${userId}"></p>
+            <p th:text="'임시비밀번호 : ' + ${password}"></p>
             <br/>
             <p>*주의*</p>
             <p>화면을 닫으면 더 이상 임시비밀번호를 확인할 수 없습니다.</p>

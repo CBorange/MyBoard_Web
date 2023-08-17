@@ -92,11 +92,11 @@ public class UserController {
     @PostMapping("/user/find")
     public ResponseEntity findUserInfo(@RequestParam("userEmail") String userEmail){
         // Redis에 유저정보 탐색 대기 저장
-        FindUserRequest pending = userService.makeFindUserRequestAndSetToPending(userEmail);
+        String uniqueLink = userService.makeFindUserRequestAndSetToPending(userEmail);
 
         // 메일로 비밀번호 초기화 링크 전송
         try{
-            emailService.sendFindUserConfirmMail(userEmail, pending.getUniqueLink());
+            emailService.sendFindUserConfirmMail(userEmail, uniqueLink);
         } catch (MessagingException e){
             // Global Exception Handler가 처리할 수 있도록 IllegalStateException으로 변환
             throw new IllegalStateException("메일 전송 실패 : " + e.getMessage());

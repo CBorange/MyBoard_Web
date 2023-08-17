@@ -27,14 +27,19 @@ public class EmailService {
         helper.setTo(toMail);
         helper.setSubject("MyBoard 계정 찾기 확인");
 
-        // Process Tyhmeleaf Mail Template
-        Context context = new Context();
-        context.setVariable("toMail", toMail);
-        context.setVariable("linkParam", confirmLinkId);
-
-        String html = templateEngine.process("find-user-mail.html", context);
+        String html = parseMailTemplate(toMail, confirmLinkId);
         helper.setText(html, true);
 
         mailSender.send(message);
+    }
+
+    public String parseMailTemplate(String toMail, String linkParam){
+        // Process Tyhmeleaf Mail Template
+        Context context = new Context();
+        context.setVariable("toMail", toMail);
+        context.setVariable("linkParam", linkParam);
+
+        String html = templateEngine.process("find-user-mail.html", context);
+        return html;
     }
 }

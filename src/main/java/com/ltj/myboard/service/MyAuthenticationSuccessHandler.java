@@ -41,9 +41,9 @@ public class MyAuthenticationSuccessHandler implements AuthenticationSuccessHand
             if(redirectURL != null){
                 String[] splitedURL = redirectURL.split("/");
                 String lastPath = splitedURL[splitedURL.length - 1];
-                if(lastPath.equals("register") || lastPath.equals("login")){
-                    // 회원가입 후 로그인 시 이전페이지가 회원가입 화면임, 홈으로 리다이렉트
-                    // 로그인 했는데 마지막 페이지가 login으로 돼있는 경우, 홈으로 리다이렉트
+
+                // 마지막 페이지가 게시판 혹은 게시글이 아닌경우 홈 화면으로 리다이렉트
+                if(!(lastPath.contains("/board") || lastPath.contains("/post"))){
                     redirectURL = "/";
                 }
 
