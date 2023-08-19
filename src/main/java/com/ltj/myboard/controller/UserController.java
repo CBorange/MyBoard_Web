@@ -3,6 +3,7 @@ package com.ltj.myboard.controller;
 import com.ltj.myboard.domain.*;
 import com.ltj.myboard.dto.auth.ChangeUserInfoRequest;
 import com.ltj.myboard.dto.auth.ChangeUserPasswordRequest;
+import com.ltj.myboard.dto.auth.FindUserResult;
 import com.ltj.myboard.dto.auth.RegistUserRequest;
 import com.ltj.myboard.service.*;
 import lombok.RequiredArgsConstructor;
@@ -110,15 +111,10 @@ public class UserController {
         // 유저의 비밀번호를 임시 비밀번호로 변경한다.
         // 유저가 계정찾기를 시도했을 때 생성하여 Redis DB에 저장된 랜덤 유니크값 으로 다시 유저를 조회해서
         // 해당 유저의 비밀번호값을 랜덤 문자열로 변경시킨다.
-        User targetUser = userService.chnageUserPasswordTemporallyByFindUserRequest(linkParam);
-        String tempPassword = targetUser.getPassword();
+        FindUserResult ret = userService.changeUserPasswordTemporallyByFindUserRequest(linkParam);
 
-        // 계정 아이디 및 임시 비밀번호 보여주는 최종 확인 및 로그인 안내 화면으로 이동
-        String redirectURL = String.format("/find-user-result?linkParam=%s", linkParam);
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Location", redirectURL);
-        return new ResponseEntity(HttpStatus.SEE_OTHER);
+        // 변경된 계정 반환
+        return new ResponseEntity(ret, HttpStatus.OK);
     }
 
     // 수동으로 Logout 처리 실행

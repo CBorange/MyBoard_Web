@@ -12,12 +12,10 @@
         <p th:text="${toMail} + ' 이메일에 연결된 계정을 확인하는 링크입니다.'"></p>
         <p>아래 링크를 클릭하면 계정의 ID를 확인할 수 있습니다.</p>
 
-        <form method="POST" action="http://localhost:8080/user/password/change-temporary?linkParam=afasf">
-            <input type="hidden" name="_method" value="PUT"/>
-            <button type="submit">유저계정확인</button>
-        </form>
-
         <br/>
+        <a th:href="${urlPath} + '/find-user-result?linkParam=' + ${linkParam}">유저계정확인</a>
+        <br/>
+
         <p>*주의*</p>
         <p>링크를 클릭하면 기존 비밀번호는 초기화 됩니다.</p>
         <p>안내되는 임시 비밀번호로 로그인 하신 후 반드시 비밀번호를 변경해주세요.</p>

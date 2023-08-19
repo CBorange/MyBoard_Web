@@ -1,6 +1,7 @@
 package com.ltj.myboard.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -17,6 +18,10 @@ import java.util.HashMap;
 @RequiredArgsConstructor
 @Service
 public class EmailService {
+
+    @Value("${server.connect-url}")
+    private String serverConnectUrl;
+
     private final SpringTemplateEngine templateEngine;
     private final JavaMailSender mailSender;
 
@@ -38,6 +43,7 @@ public class EmailService {
         Context context = new Context();
         context.setVariable("toMail", toMail);
         context.setVariable("linkParam", linkParam);
+        context.setVariable("urlPath", serverConnectUrl);
 
         String html = templateEngine.process("find-user-mail.html", context);
         return html;

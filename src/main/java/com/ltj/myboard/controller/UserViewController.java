@@ -70,16 +70,10 @@ public class UserViewController extends LayoutControllerBase {
     // 유저정보 찾기 결과 페이지 반환
     @GetMapping("/find-user-result")
     public String findUserResultPage(Model model, @RequestParam(name = "linkParam") String linkParam){
-        // FindUser UniqueLink로 Redis에 데이터 조회하여 FindUser Request 정보 얻어냄
-        User user = userService.findByFindUserRequestUniqueLink(linkParam);
-        String userId = user.getId();
-        String password = user.getPassword();
-
-        // model에 유저정보 추가
-        model.addAttribute("userId", userId);
-        model.addAttribute("password", password);
-
         addLayoutModel_FragmentContent(model, "find-user-result.html", "find-user-result");
+
+        model.addAttribute("linkParam", linkParam);
+
         return LayoutViewPath;
     }
 

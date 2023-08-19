@@ -1,16 +1,34 @@
+<!--이 화면이 호출될 때 임시비밀번호 설정 API 날림-->
 <!DOCTYPE html>
 <html xmlns:th="http://thymeleaf.org">
     <th:block th:fragment="find-user-result">
-        <div>
+        <script src="/js/find-user-result.js"></script>
+        <script th:inline="javascript">
+            // queryParam으로 넘어온 linkParam값 js 변수에 할당
+            linkParam = /*[[${linkParam}]]*/ null; // Default value can be null or any other suitable value
+        </script>
+        <div class="mx-auto container-lg top-div">
             <h2>유저 계정찾기 확인</h2>
-            <p th:text="'아이디 : ' + ${userId}"></p>
-            <p th:text="'임시비밀번호 : ' + ${password}"></p>
-            <br/>
-            <p>*주의*</p>
-            <p>화면을 닫으면 더 이상 임시비밀번호를 확인할 수 없습니다.</p>
-            <p>임시비밀번호로 로그인 후 비밀번호를 변경해주세요.</p>
-            <br/>
-            <button class="btn btn-primary">로그인</button>
+            <div id="resultMain">
+                <p>
+                    <label>아이디 : </label>
+                    <label id="label_userId">로드중...</label>
+                </p>
+                <p>
+                    <label>임시 비밀번호 : </label>
+                    <label id="label_password">로드중...</label>
+                </p>
+                <br/>
+                <p>*주의*</p>
+                <p>화면을 닫으면 더 이상 임시비밀번호를 확인할 수 없습니다.</p>
+                <p>임시비밀번호로 로그인 후 비밀번호를 변경해주세요.</p>
+                <br/>
+                <a class="btn btn-secondary" role="button" th:href="'/login'">로그인</a>
+            </div>
+            <div id="failedArea" style="display:none;">
+                <br/>
+                <h4 style="color:red;">만료되었거나 잘못된 링크입니다..</h4>
+            </div>
         </div>
     </th:block>
 </html>

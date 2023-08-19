@@ -1,10 +1,7 @@
 package com.ltj.myboard.service;
 import com.ltj.myboard.domain.User;
 import com.ltj.myboard.domain.UserGrade;
-import com.ltj.myboard.dto.auth.ChangeUserInfoRequest;
-import com.ltj.myboard.dto.auth.ChangeUserPasswordRequest;
-import com.ltj.myboard.dto.auth.RegistUserRequest;
-import com.ltj.myboard.dto.auth.TokenResponseDTO;
+import com.ltj.myboard.dto.auth.*;
 import com.ltj.myboard.model.UserGradeLevel;
 import com.ltj.myboard.repository.redis.FindUserRequestRepository;
 import com.ltj.myboard.repository.jpa.UserGradeRepository;
@@ -61,7 +58,13 @@ public class UserService {
     public User findUserByID(String ID)
     {
         User user = userRepository.findById(ID)
-                .orElseThrow(() -> new NoSuchElementException("cannot found userInformation by " + ID));
+                .orElseThrow(() -> new NoSuchElementException("cannot found userInformation by id : " + ID));
+        return user;
+    }
+
+    public User findUserByEmail(String email){
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new NoSuchElementException("cannot found userInformation by email : " + email));
         return user;
     }
 
@@ -200,7 +203,7 @@ public class UserService {
         return existUser.getPassword();
     }
 
-    public User chnageUserPasswordTemporallyByFindUserRequest(String linkParam){
+    public FindUserResult changeUserPasswordTemporallyByFindUserRequest(String linkParam){
         // 유저정보 찾기 시도 하여 생성된 unique link parameter 값으로 다시 Redis DB에서 조회하여
         // 연결된 유저의 비밀번호를 랜덤한 문자열의 임시비밀번호로 변경한다.
         String userId = findUserRequestRepository.findByUniqueLink(linkParam);
@@ -208,10 +211,15 @@ public class UserService {
                 () -> new NoSuchElementException("유저 임시비밀번호로 변경 중 오류발생, " + userId + "에 해당하는 유저 ID를 찾을 수 없음"));
 
         String randomStr = MyStringUtil.generate_RandomAlphanumeric();
-        foundUser.setPassword(randomStr);
+        foundUser.setPassword(passwordEncoder.encode(randomStr));
         userRepository.save(foundUser);
 
-        return foundUser;
+        // 비밀번호 변겨 완료되면 만료된 링크이므로 Redis에서 Request 데이터 삭제
+        findUserRequestRepository.remove(linkParam);
+
+        // DTO 생성
+        FindUserResult result = new FindUserResult(foundUser.getId(), randomStr);
+        return result;
     }
 
     // 유저정보 찾기 시도를 대기상태로 생성한다(Redis DB에 저장)

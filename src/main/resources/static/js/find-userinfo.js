@@ -34,6 +34,10 @@ function onClickSend(){
         headers.append(tokenInfo.header, tokenInfo.token);
     }
 
+    resultArea.style.visibility = "visible";
+    resultMsg.style.color = "black";
+    resultMsg.innerText = "메일을 전송중입니다 잠시만 기다려주세요...";
+
     const url = makeURL('/user/find');
     fetch(url, {
         method: 'POST',
@@ -42,24 +46,21 @@ function onClickSend(){
     })
     .then((response) => {
         console.log('onClickSend POST API 전송결과 : ', response);
-        resultMsg.style.color = "green";
         if(response.ok){
-            resultArea.style.visibility = "visible";
-                resultMsg.innerText = msg;
+            resultMsg.style.color = "green";
+            resultMsg.innerText = msg;
         }else{
             response.text().then(errorMsg => {
                 msg = errorMsg;
                 resultMsg.style.color = "red";
                 console.log('onClickSend API 결과 : ' + errorMsg)
 
-                resultArea.style.visibility = "visible";
                 resultMsg.innerText = msg;
             });
         }
     })
     .catch((error) => {
         console.log('onClickSend 실패 : ', error);
-        resultArea.style.visibility = "visible";
         resultMsg.style.color = "red";
         resultMsg.innerText = error;
     });
