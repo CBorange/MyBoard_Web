@@ -37,7 +37,10 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
             "           WHERE p.id = pa.postId AND pa.type = :like_type)) AND " +
             "      (:title IS NOT NULL AND p.title LIKE CONCAT('%', COALESCE(:title, ''), '%') OR " +
             "      :content IS NOT NULL AND p.content LIKE CONCAT('%', COALESCE(:content, ''), '%') OR " +
-            "      :nickname IS NOT NULL AND p.writerNickname LIKE CONCAT('%', COALESCE(:nickname, ''), '%')) " +
+            "      :nickname IS NOT NULL AND p.writerNickname LIKE CONCAT('%', COALESCE(:nickname, ''), '%')) AND " +
+            "      (0 < (SELECT count(type) " +
+            "             FROM board b " +
+            "             WHERE p.boardId = b.id AND b.boardType.type = com.ltj.myboard.domain.BoardTypeDefiner.Common)) " +
             "ORDER BY createdDay DESC")
     Page<Post> findBestsByCondition(@Param("title") String title,
                                     @Param("content") String content,
