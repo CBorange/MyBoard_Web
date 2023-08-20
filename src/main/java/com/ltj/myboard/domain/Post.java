@@ -1,16 +1,11 @@
 package com.ltj.myboard.domain;
-import com.ltj.myboard.model.ActivityHistoryTypes;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import org.hibernate.annotations.NotFound;
-import org.hibernate.annotations.NotFoundAction;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 @Entity(name = "post")
 @Getter

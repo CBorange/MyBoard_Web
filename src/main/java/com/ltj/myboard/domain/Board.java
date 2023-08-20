@@ -41,6 +41,9 @@ public class Board {
     @Column(name = "sort_order")
     private int sortOrder;
 
+    @Column(name = "writable_grade")
+    private int writableGrade;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_board_id", referencedColumnName = "id", nullable = true)
     private Board parentBoard = null;
@@ -48,4 +51,12 @@ public class Board {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "parentBoard", cascade = CascadeType.REMOVE)
     @OrderBy("sort_order")
     private List<Board> childBoards;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "type", referencedColumnName = "type", nullable = false)
+    private BoardType boardType;
+
+    public boolean canWritable(int userGrade){
+        return (writableGrade & userGrade) > 0;
+    }
 }

@@ -1,6 +1,5 @@
 package com.ltj.myboard;
-import com.ltj.myboard.model.JwtTokenProvider;
-import com.ltj.myboard.model.UserGradeLevel;
+import com.ltj.myboard.domain.UserGradeLevel;
 import com.ltj.myboard.service.MyAuthenticationFailureHandler;
 import com.ltj.myboard.service.MyAuthenticationSuccessHandler;
 import com.ltj.myboard.service.MyLogoutSuccessHandler;

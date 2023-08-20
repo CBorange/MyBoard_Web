@@ -2,7 +2,7 @@ package com.ltj.myboard.service;
 import com.ltj.myboard.domain.User;
 import com.ltj.myboard.domain.UserGrade;
 import com.ltj.myboard.dto.auth.*;
-import com.ltj.myboard.model.UserGradeLevel;
+import com.ltj.myboard.domain.UserGradeLevel;
 import com.ltj.myboard.repository.redis.FindUserRequestRepository;
 import com.ltj.myboard.repository.jpa.UserGradeRepository;
 import com.ltj.myboard.repository.jpa.UserRepository;

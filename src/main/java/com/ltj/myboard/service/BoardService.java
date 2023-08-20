@@ -30,7 +30,7 @@ public class BoardService{
     }
 
     public List<Board> getAllRootBoards(){
-        return boardRepository.findAllByParentBoardIsNull();
+        return boardRepository.findAllByParentBoardIsNullOrderBySortOrder();
     }
 
     public List<Board> getAllLeafBoards(){

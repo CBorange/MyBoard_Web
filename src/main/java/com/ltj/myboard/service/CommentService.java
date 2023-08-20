@@ -2,7 +2,7 @@ package com.ltj.myboard.service;
 
 import com.ltj.myboard.domain.*;
 import com.ltj.myboard.dto.post.OrderedComment;
-import com.ltj.myboard.model.ActivityHistoryTypes;
+import com.ltj.myboard.domain.ActivityHistoryTypes;
 import com.ltj.myboard.repository.jpa.CommentActivityHistoryRepository;
 import com.ltj.myboard.repository.jpa.CommentRepository;
 import com.ltj.myboard.util.Ref;

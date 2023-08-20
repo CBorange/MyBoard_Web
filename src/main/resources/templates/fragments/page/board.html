@@ -24,7 +24,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                        <th:block th:each="filteredPost : ${filteredPostList}">
+                        <th:block th:each="filteredPost : ${pageDataList}">
                             <tr>
                                 <td class="table_row_title">
                                     <a th:href="'/post/' + ${filteredPost.getPostData().getId()}">
@@ -67,7 +67,7 @@
                             <img src="/img/search_icon.png" style="width: 30px; height: 30px;">
                         </button>
                     </form>
-                    <th:block th:if="${userInfo != null}">
+                    <th:block th:if="${userInfo != null && boardInfo.canWritable(userInfo.getGrade())}">
                         <form class="ms-auto" th:action="@{/writepostform/-1}">
                             <!--글쓰기 Button-->
                             <input type="hidden" th:name="boardID" th:value="${boardInfo.getId()}">

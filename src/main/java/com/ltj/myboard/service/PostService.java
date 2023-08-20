@@ -3,7 +3,7 @@ package com.ltj.myboard.service;
 
 import com.ltj.myboard.domain.*;
 import com.ltj.myboard.dto.post.*;
-import com.ltj.myboard.model.ActivityHistoryTypes;
+import com.ltj.myboard.domain.ActivityHistoryTypes;
 import com.ltj.myboard.repository.jpa.*;
 import com.ltj.myboard.util.Ref;
 import lombok.RequiredArgsConstructor;

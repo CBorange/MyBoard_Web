@@ -18,7 +18,7 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        int grade = user.getUserGrade().getGrade();
+        int grade = user.getUserGrade().getGrade().getValue();
         SimpleGrantedAuthority authority = new SimpleGrantedAuthority(ROLE_PREFIX + String.valueOf(grade));
         Collection<GrantedAuthority> authorities = new ArrayList<>();   // 사용자가 여러개의 권한을 가질 수 있으므로 List로 처리
         authorities.add(authority);

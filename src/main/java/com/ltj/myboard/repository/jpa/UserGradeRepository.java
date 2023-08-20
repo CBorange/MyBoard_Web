@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
-public interface UserGradeRepository extends JpaRepository<UserGrade, String> {
+public interface UserGradeRepository extends JpaRepository<UserGrade, Integer> {
     Optional<UserGrade> findByGrade(int grade);
     Optional<UserGrade> findByCaption(String caption);
 }

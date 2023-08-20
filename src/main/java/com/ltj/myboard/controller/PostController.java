@@ -107,8 +107,9 @@ public class PostController extends LayoutControllerBase {
                                 Sort.by(Sort.Direction.ASC, "createdDay")),
                                 totalPageRef);
 
-        // 페이지 개수 구하기
         long commentCount = commentService.getCommentCountByPost(id);
+
+        // 페이지 개수 구하기
         int pageCount = totalPageRef.getValue();
         if(pageCount == 0)
             pageCount = 1;

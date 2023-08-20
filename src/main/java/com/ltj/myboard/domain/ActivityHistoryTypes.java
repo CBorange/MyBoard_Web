@@ -1,4 +1,4 @@
-package com.ltj.myboard.model;
+package com.ltj.myboard.domain;
 
 /**
  * Post, Comment 등의 활동기록 데이터 타입 enum*/

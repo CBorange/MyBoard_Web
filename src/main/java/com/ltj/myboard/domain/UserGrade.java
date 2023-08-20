@@ -4,17 +4,18 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
-@Entity(name = "usergrade")
+@Entity(name = "user_grade")
 @Getter
-@Setter
-public class UserGrade {
+public class UserGrade implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    private int grade;
+    @Convert(converter = UserGradeLevelConverter.class)
+    private UserGradeLevel grade;
 
     private String caption;
 

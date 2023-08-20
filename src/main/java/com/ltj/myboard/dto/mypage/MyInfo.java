@@ -15,4 +15,5 @@ public class MyInfo {
     private String email;
     private String registerDay;
     private String loginDay;
+    private int grade;
 }

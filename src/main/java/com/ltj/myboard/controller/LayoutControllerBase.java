@@ -61,7 +61,8 @@ public class LayoutControllerBase {
                 user.getNickname(),
                 user.getEmail(),
                 user.getRegisterDay() == null ? "None" : user.getRegisterDay().toString(),
-                user.getLoginDay() == null ? "None" : user.getLoginDay().toString()
+                user.getLoginDay() == null ? "None" : user.getLoginDay().toString(),
+                user.getUserGrade().getGrade().getValue()
         );
 
         return response;

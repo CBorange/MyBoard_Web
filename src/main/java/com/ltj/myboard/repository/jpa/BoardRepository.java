@@ -10,7 +10,7 @@ import java.util.Optional;
 public interface BoardRepository extends JpaRepository<Board, Integer> {
     Optional<Board> findBoardById(int id);
     List<Board> findAll();
-    List<Board> findAllByParentBoardIsNull();
+    List<Board> findAllByParentBoardIsNullOrderBySortOrder();
 
     @Query("SELECT b " +
             "FROM board b " +

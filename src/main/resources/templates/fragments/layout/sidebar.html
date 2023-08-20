@@ -77,11 +77,6 @@
                                 </div>
                             </th:block>
                         </div>
-                        <!--Section2 : 베스트 게시판(고정)-->
-                        <br>
-                        <a class="navlinkitem mx-3" th:href="'/board/best'">
-                            <span th:text="베스트"></span>
-                        </a>
                         <!--Section2 : 게시판 리스트(DB 데이터)-->
                         <th:block th:each="rootBoard : ${rootBoards}">
                             <th:block th:if="${rootBoard.getChildBoards().stream().count() == 0}">
