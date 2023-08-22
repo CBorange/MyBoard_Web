@@ -42,6 +42,10 @@
         </tbody>
     </table>
 
+    <div class="d-flex flex-row-reverse">
+        <button class="btn btn-secondary" th:onclick="readAllNotification([[${userInfo.getUserId()}]])">모두 읽음처리</button>
+    </div>
+
     <!--알림 데이터 메인 테이블 / 하단 페이지 제어 및 버튼 구분선-->
     <hr/>
     <!--하단 페이지 제어 버튼-->

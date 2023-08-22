@@ -8,12 +8,20 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-@Setter
 public class MyInfo {
     private String userId;
+
+    @Setter
     private String nickname;
+
     private String email;
+
+    @Setter
     private String registerDay;
+
     private String loginDay;
+
+    private long notificationCnt;
+
     private int grade;
 }

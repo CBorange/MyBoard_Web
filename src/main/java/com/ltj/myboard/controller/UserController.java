@@ -32,7 +32,7 @@ public class UserController {
     private final CommentService commentService;
     private final UserService userService;
 
-    @PostMapping("/user/notification/{notificationId}/read")
+    @PatchMapping("/user/notification/{notificationId}/read")
     public ResponseEntity readNotification(@PathVariable int notificationId){
         UserNotification notification = null;
         notification = userNotiService.getNotificationById(notificationId);
@@ -62,6 +62,12 @@ public class UserController {
             default:
                 throw new NoSuchElementException(String.format("a notification[id : %d] doesn't have content type", notificationId));
         }
+    }
+
+    @PutMapping("/user/notification/read")
+    public ResponseEntity readAllNotification(@RequestParam String userId){
+        userNotiService.readAllNotification(userId);
+        return new ResponseEntity(HttpStatus.OK);
     }
 
     // 회원가입 기능 실행

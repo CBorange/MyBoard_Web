@@ -5,6 +5,8 @@ import com.ltj.myboard.dto.VersionInfo;
 import com.ltj.myboard.dto.mypage.MyInfo;
 import com.ltj.myboard.model.UserDetailsImpl;
 import com.ltj.myboard.service.BoardService;
+import com.ltj.myboard.service.UserNotiService;
+import com.ltj.myboard.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
@@ -17,8 +19,6 @@ import java.util.List;
 
 @Controller
 public class LayoutControllerBase {
-
-
     protected final String LayoutViewPath = "layout/default_layout.html";
 
     @Value("${spring.profiles.active}")
@@ -29,6 +29,9 @@ public class LayoutControllerBase {
 
     @Value("${server.connect-url}")
     private String serverConnectUrl;
+
+    @Autowired
+    private UserNotiService userNotiService;
 
     @Autowired
     private BoardService boardService;
@@ -55,6 +58,7 @@ public class LayoutControllerBase {
 
         UserDetailsImpl userDetails = (UserDetailsImpl)principal;
         User user = userDetails.getUser();
+        long notiCnt = userNotiService.getCountUnreadUserNotifications(user.getId());
 
         MyInfo response = new MyInfo(
                 user.getId(),
@@ -62,6 +66,7 @@ public class LayoutControllerBase {
                 user.getEmail(),
                 user.getRegisterDay() == null ? "None" : user.getRegisterDay().toString(),
                 user.getLoginDay() == null ? "None" : user.getLoginDay().toString(),
+                notiCnt,
                 user.getUserGrade().getGrade().getValue()
         );
 

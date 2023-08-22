@@ -20,6 +20,11 @@ import java.util.NoSuchElementException;
 public class UserNotiService {
     private final UserNotificationRepository userNotificationRepository;
 
+    public long getCountUnreadUserNotifications(String userId){
+        long cnt = userNotificationRepository.countByUserIdAndReadFalse(userId);
+        return cnt;
+    }
+
     public List<UserNotification> getUserNotifications(String userId, PageRequest pageRequest, Ref<Integer> totalPageRef){
         Page<UserNotification> queryRet = userNotificationRepository.findAllByUserId(userId, pageRequest);
         List<UserNotification> retList = queryRet.getContent();
@@ -39,6 +44,14 @@ public class UserNotiService {
     public void readNotification(UserNotification notification){
         notification.setRead(true);
         userNotificationRepository.save(notification);
+    }
+
+    public void readAllNotification(String userId){
+        List<UserNotification> notifications = userNotificationRepository.findAllByUserId(userId);
+        for(UserNotification notification : notifications){
+            notification.setRead(true);
+        }
+        userNotificationRepository.saveAll(notifications);
     }
 
     private void setDefaultForNotification(UserNotification notification){

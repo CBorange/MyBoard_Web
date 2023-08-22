@@ -43,12 +43,23 @@
                     </div>
                     <!--item3 : 유저정보 버튼-->
                     <th:block th:if="${userInfo != null}">
-                        <div class="userInfo-link">
-                            <a class="me-2" style="position: relative;" th:href="'/mypage/myinfo'">
-                                <!--<span class="nav-counter">10</span>-->
-                                <img src="/img/user.png" style="width: 30px; height :30px;"/>
-                                <span style="color: white;" th:text="${userInfo.getNickname()}"></span>
-                            </a>
+                        <div class="d-flex flex-row">
+                            <!--유저 알림-->
+                            <div>
+                                <a class="me-4" style="position: relative;" th:href="'/mypage/notification'">
+                                    <th:block th:if="${userInfo.getNotificationCnt() > 0}">
+                                        <span class="nav-counter" th:text="${userInfo.getNotificationCnt()}"></span>
+                                    </th:block>
+                                    <img src="/img/bell.png" style="width: 35px; height :35px;"/>
+                                </a>
+                                <!--내정보-->
+                            </div>
+                            <div class="userInfo-link">
+                                <a class="me-2" style="position: relative;" th:href="'/mypage/myinfo'">
+                                    <img src="/img/user.png" style="width: 35px; height :35px;"/>
+                                    <span style="color: white;" th:text="${userInfo.getNickname()}"></span>
+                                </a>
+                            </div>
                         </div>
                     </th:block>
                     <th:block th:if="${userInfo == null}">
