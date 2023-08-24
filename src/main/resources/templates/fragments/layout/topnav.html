@@ -7,39 +7,41 @@
             <div class="mx-auto container-lg bg-transparent">
                 <div class="d-flex flex-row justify-content-between align-items-center" style="height: 60px;">
                     <!--item1 : Collapse Button, Logo-->
-                    <div class="d-flex flex-row ms-2">
+                    <div class="d-flex flex-row align-items-center ms-2">
                         <!--Sidebar Collapse Button-->
                         <button class="sidemenu-btn me-2" type="button" data-bs-toggle="collapse"
                                 data-bs-target="#collapseSidebar" aria-expanded="false" aria-controls="collapseSidebar">
                             <img src="/img/menu.png" style="width: 50px; height :50px;"/>
                         </button>
-                        <a class="navlinkitem" href="/">MyBoard</a>
+                        <a style="font-family: 'KCCMurukmuruk', sans-serif; font-size: 30px;" class="navlinkitem" href="/">ltj-MyBoard</a>
                     </div>
                     <!--item2 : Link List-->
-                    <div class="d-flex flex-row d-none d-lg-block">
-                        <!--DB에 저장된 게시판 리스트 출력-->
-                        <th:block th:each="rootBoard : ${rootBoards}">
-                            <th:block th:if="${rootBoard.getChildBoards().stream().count() == 0}">
-                                <a class="navlinkitem mx-3" th:href="'/board/' + ${rootBoard.getId()}">
-                                    <span th:text="${rootBoard.getName()}"></span>
-                                </a>
-                            </th:block>
-                            <th:block th:unless="${rootBoard.getChildBoards().stream().count() == 0}">
-                                <div class="d-inline-flex dropdown">
-                                    <a class="dropdown-toggle navlinkitem mx-3" href="#" id="dropdownMenuLink-0"
-                                       data-bs-toggle="dropdown" aria-expanded="false">
+                    <div class="link-list">
+                        <div class="d-flex flex-row d-none d-lg-block">
+                            <!--DB에 저장된 게시판 리스트 출력-->
+                            <th:block th:each="rootBoard : ${rootBoards}">
+                                <th:block th:if="${rootBoard.getChildBoards().stream().count() == 0}">
+                                    <a class="navlinkitem mx-3" th:href="'/board/' + ${rootBoard.getId()}">
                                         <span th:text="${rootBoard.getName()}"></span>
                                     </a>
-                                    <ul class="dropdown-menu" aria-lebelledby="dropdownMenuLink-0" style="min-width: inherit;">
-                                        <th:block th:each="childBoard : ${rootBoard.getChildBoards()}">
-                                            <li><a class="dropdown-item" th:href="'/board/' + ${childBoard.getId()}">
-                                                <span th:text="${childBoard.getName()}"></span></a>
-                                            </li>
-                                        </th:block>
-                                    </ul>
-                                </div>
+                                </th:block>
+                                <th:block th:unless="${rootBoard.getChildBoards().stream().count() == 0}">
+                                    <div class="d-inline-flex dropdown">
+                                        <a class="dropdown-toggle navlinkitem mx-3" href="#" id="dropdownMenuLink-0"
+                                           data-bs-toggle="dropdown" aria-expanded="false">
+                                            <span th:text="${rootBoard.getName()}"></span>
+                                        </a>
+                                        <ul class="dropdown-menu" aria-lebelledby="dropdownMenuLink-0" style="min-width: inherit;">
+                                            <th:block th:each="childBoard : ${rootBoard.getChildBoards()}">
+                                                <li><a class="dropdown-item" th:href="'/board/' + ${childBoard.getId()}">
+                                                    <span th:text="${childBoard.getName()}"></span></a>
+                                                </li>
+                                            </th:block>
+                                        </ul>
+                                    </div>
+                                </th:block>
                             </th:block>
-                        </th:block>
+                        </div>
                     </div>
                     <!--item3 : 유저정보 버튼-->
                     <th:block th:if="${userInfo != null}">

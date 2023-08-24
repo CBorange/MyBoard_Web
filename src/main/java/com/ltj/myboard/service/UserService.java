@@ -96,7 +96,7 @@ public class UserService {
         newUser.setRegisterDay(new Date());
 
         // 회원가입 시 기본 등급은 유저
-        UserGrade defaultGrade = userGradeRepository.findByGrade(UserGradeLevel.User.getValue()).orElseThrow(
+        UserGrade defaultGrade = userGradeRepository.findByGrade(UserGradeLevel.User).orElseThrow(
                 () -> {
                     String msg = String.format("registUser 오류발생, 유저 등급 값[%d]에 해당하는 유저 등급 데이터가 존재하지 않음",
                             UserGradeLevel.User.getValue());
