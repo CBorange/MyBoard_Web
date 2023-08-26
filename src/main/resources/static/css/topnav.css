@@ -11,6 +11,24 @@
     }
 }
 
+@media (max-width: 460px){
+    .logo{
+        text-decoration: none;
+        color: white;
+        font-family: 'KCCMurukmuruk', sans-serif;
+        font-size: 20px;
+    }
+}
+
+@media (min-width: 461px){
+    .logo{
+        text-decoration: none;
+        color: white;
+        font-family: 'KCCMurukmuruk', sans-serif;
+        font-size: 30px;
+    }
+}
+
 .sidemenu-btn{
     background-color: transparent;
     border:none;
