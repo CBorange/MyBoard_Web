@@ -102,13 +102,15 @@ public class CommentService {
     }
 
     @Transactional
-    public Comment insertComment( int postID, String postWriterId, Comment parentComment, String writerID, String writerNickname, String content) {
+    public Comment insertComment( int postID, String postWriterId, Comment parentComment, String writerID, String content) {
+        // 유저 검색
+        User user = userService.findUserByID(writerID);
+
         // 댓글 작성
         Comment newComment = new Comment();
         newComment.setPostId(postID);
         newComment.setParentComment(parentComment);
-        newComment.setWriterId(writerID);
-        newComment.setWriterNickname(writerNickname);
+        newComment.setWriter(user);
         newComment.setContent(content);
         newComment.setCreatedDay(new Date());
         newComment.setModifyDay(new Date());
@@ -117,9 +119,9 @@ public class CommentService {
 
         // 알림 보내기
         if(parentComment == null){  // 신규 댓글 -> 게시글 작성자 한테 알림 보내기
-            userNotiService.makeNotificationForComment(writerID, writerNickname, postWriterId, content, newComment.getId());
+            userNotiService.makeNotificationForComment(writerID, user.getNickname(), postWriterId, content, newComment.getId());
         } else{ // 대댓글 -> 원댓글 작성자 한테 알림 보내기
-            userNotiService.makeNotificationForSubComment(writerID, writerNickname, parentComment.getWriterId(), content, newComment.getId());
+            userNotiService.makeNotificationForSubComment(writerID, user.getNickname(), parentComment.getWriter().getId(), content, newComment.getId());
         }
 
         return newComment;

@@ -30,14 +30,14 @@
                                     <a th:href="'/post/' + ${filteredPost.getPostData().getId()}">
                                         <span class="title_span" th:text="${filteredPost.getPostData().getTitle()}"></span>
                                         <th:block th:if="${filteredPost.getCommentCount() > 0}">
-                                            <span class="ms-1" th:text="${filteredPost.getCommentCount()}"></span>
+                                            <span class="ms-4" th:text="${'[' + filteredPost.getCommentCount() + ']'}"></span>
                                         </th:block>
                                     </a>
                                 </td>
                                 <td class="text-center">
                                     <th:block th:replace="fragments/widget/userinfo_contextmenu.html :: userinfo_contextmenu
-                                                (${boardInfo.getId()}, ${filteredPost.getPostData().getWriterId()},
-                                                 ${filteredPost.getPostData().getWriterNickname()})"/>
+                                                (${boardInfo.getId()}, ${filteredPost.getPostData().getWriter().getId()},
+                                                 ${filteredPost.getPostData().getWriter().getNickname()})"/>
                                 </td>
                                 <td class="text-center"><span th:text="${filteredPost.getLikeCount()}"></span></td>
                                 <td class="text-center"><span th:text="${#dates.format(filteredPost.getPostData().getCreatedDay(),'yyyy-MM-dd')}"></span></td>

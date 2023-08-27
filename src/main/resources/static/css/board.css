@@ -1,8 +1,12 @@
 .table_row_title > a {
+    white-space: nowrap;
     text-decoration: none;
 }
 
 .table_row_title > a > span.title_span{
+
+    overflow: hidden;
+    text-overflow: ellipsis;
     color: black;
 }
 @media (min-width: 580px) {

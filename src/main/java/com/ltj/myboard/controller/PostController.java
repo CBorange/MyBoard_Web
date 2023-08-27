@@ -20,6 +20,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.validation.Valid;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
@@ -135,7 +136,7 @@ public class PostController extends LayoutControllerBase {
     }
 
     @PostMapping("/post")
-    public ResponseEntity submitPost(@RequestBody SubmitPostData submitPostData) throws IOException {
+    public ResponseEntity submitPost(@Valid @RequestBody SubmitPostData submitPostData) throws IOException {
         Post insertedPost = postService.submitPostProcess(submitPostData);
         String redirectURL = String.format("/post/%d", insertedPost.getId());
 

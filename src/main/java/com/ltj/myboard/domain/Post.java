@@ -19,12 +19,6 @@ public class Post {
     @Column(name="board_id")
     private int boardId;
 
-    @Column(name="writer_id")
-    private String writerId;
-
-    @Column(name="writer_nickname")
-    private String writerNickname;
-
     private String title;
 
     @Column(columnDefinition = "LONGTEXT")
@@ -46,6 +40,10 @@ public class Post {
 
     @Column(name="delete_day")
     private Date deleteDay;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "writer_id", referencedColumnName = "id")
+    private User writer;
 
     // JPA에서 매핑된 객체에 대해 변경이 일어날 경우
     // insert -> update -> delete 순으로 처리한다.

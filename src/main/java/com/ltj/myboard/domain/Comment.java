@@ -18,12 +18,6 @@ public class Comment {
     @Column(name="post_id", nullable = false)
     private int postId;
 
-    @Column(name = "writer_id")
-    private String writerId;
-
-    @Column(name="writer_nickname")
-    private String writerNickname;
-
     @Column(columnDefinition = "LONGTEXT")
     private String content;
 
@@ -35,6 +29,10 @@ public class Comment {
 
     @Column(name = "delete_day")
     private Date deleteDay;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "writer_id", referencedColumnName = "id")
+    private User writer;
 
     // 부모 Comment
     @ManyToOne(fetch = FetchType.LAZY)

@@ -22,7 +22,9 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
             "WHERE p.boardId = :boardId AND " +
             "      (:title IS NOT NULL AND p.title LIKE CONCAT('%', COALESCE(:title, ''), '%') OR " +
             "      :content IS NOT NULL AND p.content LIKE CONCAT('%', COALESCE(:content, ''), '%') OR " +
-            "      :nickname IS NOT NULL AND p.writerNickname LIKE CONCAT('%', COALESCE(:nickname, ''), '%')) " +
+            "      p.writer.id = ALL (SELECT id " +
+            "                        FROM user " +
+            "                        WHERE nickname LIKE CONCAT('%', COALESCE(:nickname,''), '%'))) " +
             "ORDER BY createdDay DESC")
     Page<Post> findAllByCondition(@Param("boardId") int boardId,
                                   @Param("title") String title,
@@ -37,7 +39,9 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
             "           WHERE p.id = pa.postId AND pa.type = :like_type)) AND " +
             "      (:title IS NOT NULL AND p.title LIKE CONCAT('%', COALESCE(:title, ''), '%') OR " +
             "      :content IS NOT NULL AND p.content LIKE CONCAT('%', COALESCE(:content, ''), '%') OR " +
-            "      :nickname IS NOT NULL AND p.writerNickname LIKE CONCAT('%', COALESCE(:nickname, ''), '%')) AND " +
+            "      p.writer.id = ALL (SELECT id " +
+            "                        FROM user " +
+            "                        WHERE nickname LIKE CONCAT('%', COALESCE(:nickname,''), '%'))) AND " +
             "      (0 < (SELECT count(type) " +
             "             FROM board b " +
             "             WHERE p.boardId = b.id AND b.boardType.type = com.ltj.myboard.domain.BoardTypeDefiner.Common)) " +

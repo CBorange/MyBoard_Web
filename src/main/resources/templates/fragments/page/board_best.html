@@ -36,7 +36,7 @@
                                 </th:block>
                             </a>
                         </td>
-                        <td class="text-center"><span th:text="${filteredPost.getPostData().getWriterNickname()}"></span></td>
+                        <td class="text-center"><span th:text="${filteredPost.getPostData().getWriter().getNickname()}"></span></td>
                         <td class="text-center"><span th:text="${filteredPost.getLikeCount()}"></span></td>
                         <td class="text-center"><span th:text="${#dates.format(filteredPost.getPostData().getCreatedDay(),'yyyy-MM-dd')}"></span></td>
                     </tr>

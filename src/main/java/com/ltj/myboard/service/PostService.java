@@ -166,34 +166,34 @@ public class PostService{
             submittedPost = insertPost(submitPostData.getTitle(),
                                         submitPostData.getContent(),
                                         submitPostData.getBoardId(),
-                                        submitPostData.getWriterId(),
-                                        submitPostData.getWriterNickname());
+                                        submitPostData.getWriterId());
         } else {
             // 1-2. 게시글 내용 수정
             submittedPost = updatePost(submitPostData.getTitle(),
                                         submitPostData.getContent(),
-                                        submitPostData.getPostId(),
-                                        submitPostData.getWriterId(),
-                                        submitPostData.getWriterNickname());
+                                        submitPostData.getPostId());
         }
 
         // 2. 게시글에 등록된 파일 state에 따라 적절한 처리 실행
         // * 게시글 '생성'의 경우 insert State만 들어올 것이고, '수정'의 경우 복합적으로 State가 들어올 것임
         PostFileDelta[] targetFiles = submitPostData.getImageSource();
-        for(PostFileDelta delta : targetFiles){
-            submitPostFile(submittedPost.getId(), delta);
+        if(targetFiles != null){
+            for(PostFileDelta delta : targetFiles){
+                submitPostFile(submittedPost.getId(), delta);
+            }
         }
-        
+
         return submittedPost;
     }
 
-    private Post insertPost(String title, String content, int boardID, String writerID, String writerNickname) {
+    private Post insertPost(String title, String content, int boardID, String writerID) {
+        User writer = userService.findUserByID(writerID);
+
         Post newPost = new Post();
         newPost.setTitle(title);
         newPost.setContent(content);
         newPost.setBoardId(boardID);
-        newPost.setWriterId(writerID);
-        newPost.setWriterNickname(writerNickname);
+        newPost.setWriter(writer);
         newPost.setCreatedDay(new Date());
         newPost.setModifyDay(new Date());
 
@@ -201,13 +201,11 @@ public class PostService{
         return newPost;
     }
 
-    private Post updatePost(String title, String content, int postID, String writerID, String writerNickname){
+    private Post updatePost(String title, String content, int postID){
         Post foundPost = findPostByID(postID);
 
         foundPost.setTitle(title);
         foundPost.setContent(content);
-        foundPost.setWriterId(writerID);
-        foundPost.setWriterNickname(writerNickname);
         foundPost.setModifyDay(new Date());
 
         postRepository.save(foundPost);
@@ -267,7 +265,7 @@ public class PostService{
         Post post = findPostByID(postId);
         User user = userService.findUserByID(userId);
 
-        userNotiService.makeNotificationForLike(userId, user.getNickname(), post.getWriterId(), post.getTitle(), postId);
+        userNotiService.makeNotificationForLike(userId, user.getNickname(), post.getWriter().getId(), post.getTitle(), postId);
 
         return newHistory;
     }
@@ -307,7 +305,7 @@ public class PostService{
         Post post = findPostByID(postId);
         User user = userService.findUserByID(userId);
 
-        userNotiService.makeNotificationForDisLike(userId, user.getNickname(), post.getWriterId(), post.getTitle(), postId);
+        userNotiService.makeNotificationForDisLike(userId, user.getNickname(), post.getWriter().getId(), post.getTitle(), postId);
 
         return newHistory;
     }

@@ -3,12 +3,18 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import javax.validation.constraints.NotEmpty;
+
 @Getter
 @Setter
 @ToString
 public class SubmitPostData {
+    @NotEmpty(message = "제목을 입력해주세요.")
     private String title;
+
+    @NotEmpty(message = "내용을 입력해주세요.")
     private String content;
+
     private PostFileDelta[] imageSource;
 
     // submit 하는 post의 상태, insert(신규 생성) or update(수정)
@@ -19,7 +25,6 @@ public class SubmitPostData {
 
     private int boardId;
     private String writerId;
-    private String writerNickname;
 
     public static boolean checkIsInsertData(SubmitPostData submitPostData){
         String state = submitPostData.getState().toLowerCase();

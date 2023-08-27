@@ -39,7 +39,6 @@ public class CommentController {
                 submitCommentData.getPostWriterId(),
                 foundParentComment,
                 submitCommentData.getWriterId(),
-                submitCommentData.getWriterNickname(),
                 submitCommentData.getContent());
 
         return new ResponseEntity<String>(HttpStatus.CREATED);

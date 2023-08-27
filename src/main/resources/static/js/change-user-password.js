@@ -30,6 +30,7 @@ function onSubmitChange(){
     const resultArea = document.querySelector('#resultArea');
     const resultMsg = document.querySelector('#resultMsg');
     const goToLoginBtn = document.querySelector('#goToLoginBtn');
+    const submitBtn = document.querySelector('#submitBtn');
 
     var headers = new Headers();
     headers.append('Content-Type', 'application/json');
@@ -51,6 +52,7 @@ function onSubmitChange(){
         if(response.ok){
             resultArea.style.visibility = "visible";
             goToLoginBtn.style.visibility = "visible";
+            submitBtn.style.visibility = 'hidden';
             resultMsg.innerText = msg;
         }else{
             response.text().then(errorMsg => {

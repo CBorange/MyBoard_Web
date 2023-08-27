@@ -5,13 +5,13 @@
     font-style: normal;
 }
 
-@media (max-width: 1199px) {
+@media (max-width: 1399px) {
     .link-list{
         display: none;
     }
 }
 
-@media (max-width: 460px){
+@media (max-width: 480px){
     .logo{
         text-decoration: none;
         color: white;
@@ -20,7 +20,7 @@
     }
 }
 
-@media (min-width: 461px){
+@media (min-width: 481px){
     .logo{
         text-decoration: none;
         color: white;

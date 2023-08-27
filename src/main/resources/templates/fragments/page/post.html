@@ -24,7 +24,7 @@
                     <!--작성자 이름-->
                     <img src="/img/user.png" style="width: 20px; height: 20px;"/>
                     <th:block th:replace="fragments/widget/userinfo_contextmenu.html :: userinfo_contextmenu
-                    (${boardInfo.getId()}, ${postInfo.getWriterId()}, ${postInfo.getWriterNickname()})"/>
+                    (${boardInfo.getId()}, ${postInfo.getWriter().getId()}, ${postInfo.getWriter().getNickname()})"/>
                     <!--작성 일자-->
                     <img class="ms-3" src="/img/calendar.png" style="width: 20px; height: 20px;"/>
                     <span class="ms-1" th:text="${#dates.format(postInfo.getCreatedDay(), 'yyyy-MM-dd')}"></span>
@@ -49,7 +49,7 @@
 
                                 <!--드랍다운 메뉴-->
                                 <ul class="dropdown-menu" style="min-width: inherit;" aria-labelledby="modifyMenubutton">
-                                    <th:block th:if="${postInfo.getWriterId() == userInfo.getUserId()}">
+                                    <th:block th:if="${postInfo.getWriter().getId() == userInfo.getUserId()}">
                                         <li>
                                             <a class="dropdown-item"
                                                th:href="${'/writepostform/' + postInfo.getId() + '?boardID=' + boardInfo.getId()}">수정</a>
@@ -106,14 +106,14 @@
                                 <!--작성자-->
                                 <div class="ms-2">
                                     <th:block th:replace="fragments/widget/userinfo_contextmenu.html :: userinfo_contextmenu
-                                                (${boardInfo.getId()}, ${comment.getCommentData().getWriterId()},
-                                                 ${comment.getCommentData().getWriterNickname()})"/>
+                                                (${boardInfo.getId()}, ${comment.getCommentData().getWriter().getId()},
+                                                 ${comment.getCommentData().getWriter().getNickname()})"/>
                                 </div>
                                 <!--작성일-->
                                 <span class="ms-auto">작성일: </span>
                                 <span class="ms-2 me-2" th:text="${#dates.format(comment.getCommentData().getCreatedDay(),'yyyy-MM-dd')}"></span>
                                 <!--댓글 제어 드롭다운 form-->
-                                <th:block th:if="${userInfo != null && comment.getCommentData().getWriterId() == userInfo.getUserId()}">
+                                <th:block th:if="${userInfo != null && comment.getCommentData().getWriter().getId() == userInfo.getUserId()}">
                                     <div class="ms-2">
                                         <div class="dropdown">
                                             <!--메뉴 toggle 버튼-->
@@ -197,14 +197,14 @@
                                     <!--작성자-->
                                     <div class="ms-2">
                                         <th:block th:replace="fragments/widget/userinfo_contextmenu.html :: userinfo_contextmenu
-                                                (${boardInfo.getId()}, ${subComment.getWriterId()},
-                                                 ${subComment.getWriterNickname()})"/>
+                                                (${boardInfo.getId()}, ${subComment.getWriter().getId()},
+                                                 ${subComment.getWriter().getNickname()})"/>
                                     </div>
                                     <!--작성일-->
                                     <span class="ms-auto">작성일: </span>
                                     <span class="ms-2 me-2" th:text="${#dates.format(subComment.getCreatedDay(),'yyyy-MM-dd')}"></span>
                                     <!--댓글 제어 드롭다운 form-->
-                                    <th:block th:if="${userInfo != null && comment.getCommentData().getWriterId() == userInfo.getUserId()}">
+                                    <th:block th:if="${userInfo != null && comment.getCommentData().getWriter().getId() == userInfo.getUserId()}">
                                         <div class="ms-2">
                                             <div class="dropdown">
                                                 <!--메뉴 toggle 버튼-->
@@ -286,11 +286,10 @@
                             <form class="ms-4" onsubmit="return false;" style="display:none;"
                               th:id="'subReplyForm_' + ${comment.getCommentData().getId()}">
                                 <div class="d-flex flex-column">
-                                    <input type="hidden" name="postWriterID" th:value="${postInfo.getWriterId()}">
+                                    <input type="hidden" name="postWriterID" th:value="${postInfo.getWriter().getId()}">
                                     <input type="hidden" name="postID" th:value="${postInfo.getId()}">
                                     <input type="hidden" name="parentCommentID" th:value="${comment.getCommentData().getId()}">
                                     <input type="hidden" name="writerID" th:value="${userInfo.getUserId()}">
-                                    <input type="hidden" name="writerNickname" th:value="${userInfo.getNickname()}">
                                     <textarea name="content" class="form-control" style="min-height:80px;"></textarea>
                                     <div class="my-2 d-flex flex-row-reverse">
                                         <input type="button" class="btn btn-info" value="등록"
@@ -348,10 +347,9 @@
                 <th:block th:if="${userInfo != null}">
                     <form id="subReplyForm">
                         <div class="d-flex flex-column">
-                            <input type="hidden" name="postWriterID" th:value="${postInfo.getWriterId()}">
+                            <input type="hidden" name="postWriterID" th:value="${postInfo.getWriter().getId()}">
                             <input type="hidden" name="postID" th:value="${postInfo.getId()}">
                             <input type="hidden" name="writerID" th:value="${userInfo.getUserId()}">
-                            <input type="hidden" name="writerNickname" th:value="${userInfo.getNickname()}">
                             <textarea name="content" class="form-control" style="min-height:80px;"></textarea>
                             <div class="my-2 d-flex flex-row-reverse">
                                 <input type="button" class="btn btn-info" value="등록"

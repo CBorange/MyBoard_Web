@@ -1,5 +1,5 @@
 let editorRef;
-let nowSubmitting = false;
+let hasSubmitted = false;
 let editMode;
 
 // 수정 모드일 경우 editor에 content 로드할 때 DB에 저장된 content에서 img 태그만 발라내어 여기에 저장해둔다(원본)
@@ -152,6 +152,19 @@ function getDeletedImages(){
 // 게시글 생성 또는 수정 POST API 호출
 // submitState : 신규 게시글 등록(insert), 기존 게시글 수정(update)로 들어옴
 function onSubmitPost(submitState) {
+    const writePostForm = document.querySelector('#writePostForm');
+
+    // 제목, 타이틀 비어있는지 검증
+    var title = writePostForm.elements['title'].value;
+    var content = editorRef.getData();
+    if(title == null || title === ""){
+        alert('제목을 입력하세요.');
+        return;
+    }
+    if(content == null || content === ""){
+        alert('내용을 입력하세요.');
+        return;
+    }
 
     // submitPost 호출할 때 서버에 넘기는 Image Delta 데이터는 일차적으로
     // insert 데이터와 delete 데이터로 분리하여 전달한다.
@@ -168,16 +181,14 @@ function onSubmitPost(submitState) {
         finalImageSources.push(deletedImages[i]);
     }
 
-    const writePostForm = document.querySelector('#writePostForm');
     const sendData = {
         state : submitState,
-        title: writePostForm.elements['title'].value,
-        content: editorRef.getData(),
+        title: title,
+        content: content,
         imageSource: finalImageSources,
         postId: writePostForm.elements['postID'].value,
         boardId: writePostForm.elements['boardID'].value,
         writerId: writePostForm.elements['writerID'].value,
-        writerNickname: writePostForm.elements['writerNickname'].value,
     };
 
     const url = makeURL('/post');
@@ -196,13 +207,21 @@ function onSubmitPost(submitState) {
         body: JSON.stringify(sendData)
     })
     .then((response) => {
-        console.log('onSubmitPost POST API 전송결과 : ', response);
-        nowSubmitting = true;
-        if(response.redirected)
-            window.location.href = response.url;
+        if(response.ok){
+            console.log('onSubmitPost POST API 전송결과 : ', response);
+            hasSubmitted = true;
+            if(response.redirected)
+                window.location.href = response.url;
+        } else{
+            response.text().then(errorMsg => {
+                console.log('onSubmitPost 실패 : ', errorMsg);
+                alert(errorMsg);
+            });
+        }
     })
     .catch((error) => {
         console.log('onSubmitPost 실패 : ', error);
+        alert(error);
     });
 }
 
@@ -233,7 +252,8 @@ function sendFTPDeleteImage(targetImageFileName){
 // 브라우저 관련 event 처리
 // 새로고침, 닫기, 뒤로가기 등 작성중 취소 이벤트 처리(FTP 파일제거)
 window.addEventListener('beforeunload', function(e){
-    if(nowSubmitting)
+    // 정상적으로 게시글 작성 전송하고 나서 Page 이동시에도 여기 들어옴, return 처리
+    if(hasSubmitted)
         return 0;
 
     var imageSources = getUnsubmittedImages();

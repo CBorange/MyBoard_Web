@@ -48,7 +48,7 @@
                         <div class="d-flex flex-row">
                             <!--유저 알림-->
                             <div>
-                                <a class="me-4" style="position: relative;" th:href="'/mypage/notification'">
+                                <a class="me-2" style="position: relative;" th:href="'/mypage/notification'">
                                     <th:block th:if="${userInfo.getNotificationCnt() > 0}">
                                         <span class="nav-counter" th:text="${userInfo.getNotificationCnt()}"></span>
                                     </th:block>
@@ -56,10 +56,11 @@
                                 </a>
                                 <!--내정보-->
                             </div>
-                            <div class="userInfo-link">
+                            <div class="userInfo-link" style="max-width: 150px; white-space: nowrap; overflow:hidden; text-overflow: ellipsis;">
                                 <a class="me-2" style="position: relative;" th:href="'/mypage/myinfo'">
                                     <img src="/img/user.png" style="width: 35px; height :35px;"/>
                                     <span style="color: white;" th:text="${userInfo.getNickname()}"></span>
+                                    <!--<span style="color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" th:text="${userInfo.getNickname()}"></span>-->
                                 </a>
                             </div>
                         </div>
