@@ -31,4 +31,9 @@ Repository는 DAO로써 요구사항에 따라 DB에 CRUD를 실행합니다.
 
 # DB 설계
 
-# 배포환경
+# 배포환경  
+
+![image](https://github.com/CBorange/MyBoard_Web/assets/31188689/6422930f-4528-43d2-a31f-3fb8f67b5584)
+
+AWS EC2 환경(Linux Ubuntu Host) 에서 Docker Container 가상화를 통해 구성하였습니다.
+
