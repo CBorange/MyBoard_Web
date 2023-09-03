@@ -17,7 +17,7 @@ MySQL, JPA, Redis
 
 # Front/Back 설계  
 
-![image](https://github.com/CBorange/MyBoard_Web/assets/31188689/d2e925b2-bb27-4d56-b571-016d7bcdebd5)
+![image](https://github.com/CBorange/MyBoard_Web/assets/31188689/4d212d45-1b1c-44e3-8b74-3556a7426734)
 
 Client는 **Native JS**로 개발하였습니다.  
 Server의 API Request Flow는 **Controller, Service, Repository** 3가지 모듈의 연결로 구현하였습니다.  
