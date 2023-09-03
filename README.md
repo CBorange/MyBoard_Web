@@ -35,5 +35,10 @@ Repository는 DAO로써 요구사항에 따라 DB에 CRUD를 실행합니다.
 
 ![image](https://github.com/CBorange/MyBoard_Web/assets/31188689/6422930f-4528-43d2-a31f-3fb8f67b5584)
 
-AWS EC2 환경(Linux Ubuntu Host) 에서 Docker Container 가상화를 통해 구성하였습니다.
+AWS EC2 환경(Linux Ubuntu Host) 에서 Docker Container 가상화를 통해 구성하였습니다.  
 
+![image](https://github.com/CBorange/MyBoard_Web/assets/31188689/b04f8600-b4b4-466b-a325-9e35828e54e4)
+
+Jekins, Git을 통해 CI/CD 환경을 구축하였습니다.  
+Dev, Release 서버를 각각 다른 Container로 구성하여 개발/배포 환경을 분리하였습니다.  
+Nginx Reverse Proxy Server를 통해 하나의 Domain/SSL 인증서를 통해 서비스에 접속할 수 있도록 구성하였습니다.  
