@@ -30,7 +30,10 @@ Repository는 DAO로써 요구사항에 따라 DB에 CRUD를 실행합니다.
 특히 유저 기능을 개발하는데 있어서 DTO Validation 기능을 테스트 할 때  
 빠르게 작업할 수 있었습니다.  
 
-# DB 설계
+# DB 설계  
+
+![image](https://github.com/CBorange/MyBoard_Web/assets/31188689/56c7a0e6-e351-4fd2-8ef8-19639b5f8fd6)  
+MySQL RDB를 사용하여 게시판 DB를 설계하였습니다.
 
 # 배포환경  
 
