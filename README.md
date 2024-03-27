@@ -35,7 +35,7 @@ Repository는 DAO로써 요구사항에 따라 DB에 CRUD를 실행합니다.
 
 ![image](https://github.com/CBorange/MyBoard_Web/assets/31188689/f9408803-f968-4e85-aa7e-7b7f4ef8bdcc)  
 ERD Cloud : [링크](https://www.erdcloud.com/d/t6oFY6dkMXK3EdH4F)  
-MySQL RDB를 사용하여 게시판 DB를 설계하였습니다.
+MySQL을 사용하여 게시판 DB를 설계하였습니다.
 
 # 배포환경  
 
