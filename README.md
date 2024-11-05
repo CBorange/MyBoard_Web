@@ -19,7 +19,7 @@ MySQL, JPA, Redis
 
 # Client/Server 설계  
 
-![image](https://github.com/CBorange/MyBoard_Web/assets/31188689/4d212d45-1b1c-44e3-8b74-3556a7426734)
+![image](https://github.com/user-attachments/assets/40b70a83-c091-4a55-a6ef-72e19f5d631f)
 
 Client는 **Native JS**로 개발하였습니다.  
 Server의 API Request Flow는 **Controller, Service, Repository** 3가지 모듈의 연결로 구현하였습니다.  
@@ -43,7 +43,7 @@ MySQL을 사용하여 게시판 DB를 설계하였습니다.
 
 AWS EC2 환경(Linux Ubuntu Host) 에서 Docker Container 가상화를 통해 구성하였습니다.  
 
-![image](https://github.com/CBorange/MyBoard_Web/assets/31188689/b04f8600-b4b4-466b-a325-9e35828e54e4)
+![image](https://github.com/user-attachments/assets/b41ccde0-12a3-4d7b-9c2f-04b3551bb944)
 
 Jekins, Git을 통해 CI/CD 환경을 구축하였습니다.  
 Dev, Release 서버를 각각 다른 Container로 구성하여 개발/배포 환경을 분리하였습니다.  
