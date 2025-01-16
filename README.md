@@ -1,5 +1,5 @@
 # MyBoard
-서비스 접속 : https://ltj-myboard.kro.kr/  
+서비스 접속(접속불가) : https://ltj-myboard.kro.kr/  
 개발 블로그 : [링크](https://iceorange-etc.tistory.com/category/%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%B0%8D/SpringBoot)  
 
 MyBoard는 Spring Boot로 개발한 커뮤니티 게시판 프로젝트 입니다.  
